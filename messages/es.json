@@ -1,0 +1,19 @@
+{
+  "Nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "flights": "Vuelos"
+  },
+  "HomePage": {
+    "title": "Bienvenido a Flight Radar",
+    "body": "Sigue los vuelos en tiempo real. Este es un texto de relleno para la página de inicio mientras se preparan el diseño y los datos definitivos."
+  },
+  "AboutPage": {
+    "title": "Acerca de este proyecto",
+    "body": "Flight Radar es un proyecto ligero de seguimiento de vuelos, creado con Next.js, TypeScript y Tailwind CSS."
+  },
+  "FlightsPage": {
+    "title": "Vuelos",
+    "body": "Esta página mostrará más adelante un panel de seguimiento de vuelos en tiempo real. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  }
+}

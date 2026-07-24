@@ -1,0 +1,19 @@
+{
+  "Nav": {
+    "home": "Home",
+    "about": "About",
+    "flights": "Flights"
+  },
+  "HomePage": {
+    "title": "Welcome to Flight Radar",
+    "body": "Track flights in real time. This is placeholder text for the home page while the real design and data are wired up."
+  },
+  "AboutPage": {
+    "title": "About this project",
+    "body": "Flight Radar is a light-weight flight tracking project, built with Next.js, TypeScript and Tailwind CSS."
+  },
+  "FlightsPage": {
+    "title": "Flights",
+    "body": "This page will eventually show a live flight tracking dashboard. For now it's placeholder text used to verify routing and localization."
+  }
+}

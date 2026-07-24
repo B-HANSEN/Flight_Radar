@@ -1,0 +1,19 @@
+{
+  "Nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "flights": "Flüge"
+  },
+  "HomePage": {
+    "title": "Willkommen bei Flight Radar",
+    "body": "Verfolgen Sie Flüge in Echtzeit. Dies ist Platzhaltertext für die Startseite, während das eigentliche Design und die Daten eingerichtet werden."
+  },
+  "AboutPage": {
+    "title": "Über dieses Projekt",
+    "body": "Flight Radar ist ein leichtgewichtiges Flugverfolgungsprojekt, entwickelt mit Next.js, TypeScript und Tailwind CSS."
+  },
+  "FlightsPage": {
+    "title": "Flüge",
+    "body": "Diese Seite wird später ein Live-Dashboard zur Flugverfolgung anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  }
+}
