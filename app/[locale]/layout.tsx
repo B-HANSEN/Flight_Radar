@@ -1,33 +1,33 @@
-import type {Metadata} from 'next';
-import {NextIntlClientProvider, hasLocale} from 'next-intl';
-import {getMessages, setRequestLocale} from 'next-intl/server';
-import {notFound} from 'next/navigation';
-import {routing} from '@/i18n/routing';
-import Nav from '@/components/Nav';
-import '../globals.css';
+import type { Metadata } from "next"
+import { NextIntlClientProvider, hasLocale } from "next-intl"
+import { getMessages, setRequestLocale } from "next-intl/server"
+import { notFound } from "next/navigation"
+import { routing } from "@/i18n/routing"
+import Nav from "@/components/Nav"
+import "../globals.css"
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({locale}));
+  return routing.locales.map((locale) => ({ locale }))
 }
 
 export const metadata: Metadata = {
-  title: 'Flight Radar',
-  description: 'A light-weight flight radar demo'
-};
+  title: "Flight Radar",
+  description: "A light-weight flight radar demo",
+}
 
 export default async function LocaleLayout({
   children,
-  params
+  params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{locale: string}>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }) {
-  const {locale} = await params;
+  const { locale } = await params
   if (!hasLocale(routing.locales, locale)) {
-    notFound();
+    notFound()
   }
-  setRequestLocale(locale);
-  const messages = await getMessages();
+  setRequestLocale(locale)
+  const messages = await getMessages()
 
   return (
     <html lang={locale}>
@@ -38,5 +38,5 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
       </body>
     </html>
-  );
+  )
 }

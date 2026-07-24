@@ -1,0 +1,4 @@
+node_modules
+.next
+storybook-static
+package-lock.json

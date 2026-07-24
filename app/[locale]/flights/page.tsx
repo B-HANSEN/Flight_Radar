@@ -1,15 +1,19 @@
-import {getTranslations, setRequestLocale} from 'next-intl/server';
-import {routing} from '@/i18n/routing';
-import PageHeading from '@/components/PageHeading';
+import { getTranslations, setRequestLocale } from "next-intl/server"
+import { routing } from "@/i18n/routing"
+import PageHeading from "@/components/PageHeading"
 
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({locale}));
+  return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function FlightsPage({params}: {params: Promise<{locale: string}>}) {
-  const {locale} = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations('FlightsPage');
+export default async function FlightsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations("FlightsPage")
 
-  return <PageHeading title={t('title')} description={t('body')} />;
+  return <PageHeading title={t("title")} description={t("body")} />
 }
