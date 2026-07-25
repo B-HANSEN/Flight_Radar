@@ -18,6 +18,7 @@ npm run format              # prettier --write .
 npm run format:check        # prettier --check .
 npm run test                # vitest run (single run)
 npm run test:watch          # vitest watch mode
+npm run test:coverage       # vitest run with coverage; enforces 80% lines/branches/functions/statements per component
 npm run storybook           # storybook dev, port 6006
 npm run build-storybook     # static storybook build
 ```
@@ -34,6 +35,7 @@ Run a single test file: `npx vitest run components/PageHeading.test.tsx`
 
 ## Conventions
 
-- No semicolons, single quotes (`.prettierrc.json`). Run `npm run format` before committing.
+- No semicolons, single quotes (`.prettierrc.json`). `.vscode/settings.json` runs Prettier on save; `npm run format` is the manual/CI fallback.
 - Components must be WCAG-AA 2.2 compatible and SEO/AEO-compatible (per `TODO.md`); the Storybook a11y addon is wired up (`test: 'todo'` in `.storybook/preview.tsx`) — check its output when adding components.
+- Each component under `/components` needs a `*.test.tsx` covering it at ≥80% lines/branches/functions/statements (`npm run test:coverage`, configured per-file in `vitest.config.ts`). `*.stories.tsx` files are excluded from coverage.
 - A `/playwright` e2e folder is planned but not yet set up.
