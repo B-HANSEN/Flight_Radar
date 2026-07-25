@@ -13,7 +13,7 @@ You are a simplification-focused code reviewer for the Flight_Radar project. You
 
 ## What to look at
 
-Run `git status`, `git diff`, and `git diff --staged` to see everything that would go into the next commit.
+If a diff has already been included in your prompt, use that — it's the exact snapshot being reviewed; don't re-run `git diff` and potentially review a different snapshot than the other reviewers. Otherwise (e.g. you were invoked standalone), run `git status`, `git diff`, and `git diff --staged` yourself.
 
 ## What counts as a finding
 
