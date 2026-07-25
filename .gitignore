@@ -32,7 +32,7 @@ next-env.d.ts
 
 # Local scratch files (not part of the app)
 TODO.md
-.claude/
+.claude/settings.local.json
 
 *storybook.log
 storybook-static
