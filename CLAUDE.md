@@ -33,6 +33,16 @@ Run a single test file: `npx vitest run components/PageHeading.test.tsx`
 - **Components**: all React components live flat in `/components` (no subfolders per component), are functional/typed with a `Props` type, and each ships a `*.stories.tsx` (CSF3) alongside optional `*.test.tsx`. Storybook only picks up stories under `components/**` (see `.storybook/main.ts`). The Storybook preview wraps every story in `NextIntlClientProvider` with the English messages, so components relying on `useTranslations` render correctly in isolation.
 - **Styling**: Tailwind utility classes directly in JSX; no CSS modules or styled-components in use.
 
+## Commit messages
+
+Use Conventional Commits: `<type>(<scope>): <description>`.
+
+- `type` is one of `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`, `build`, `ci`, `perf`.
+- `scope` is optional and names the area touched (e.g. `nav`, `i18n`, `flights`, `storybook`) — omit it if the change is repo-wide.
+- `description` is lowercase, imperative mood, no trailing period (e.g. `fix(nav): correct locale-aware link href`).
+- Add a body only when the _why_ isn't obvious from the diff; wrap at ~72 chars.
+- Breaking changes get a `!` after the type/scope (`feat(routing)!: drop de locale`) plus a `BREAKING CHANGE:` footer explaining the migration.
+
 ## Conventions
 
 - No semicolons, single quotes (`.prettierrc.json`). `.vscode/settings.json` runs Prettier on save; `npm run format` is the manual/CI fallback.
