@@ -9,7 +9,8 @@
     "flights": "Flüge",
     "aircraft": "Flugzeuge",
     "mailing": "Mitteilungen",
-    "documents": "Dokumente"
+    "documents": "Dokumente",
+    "language": "Sprache ändern"
   },
   "HomePage": {
     "title": "Willkommen bei Flight Radar",
@@ -22,5 +23,34 @@
   "FlightsPage": {
     "title": "Flüge",
     "body": "Diese Seite wird später ein Live-Dashboard zur Flugverfolgung anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MePage": {
+    "title": "Ich",
+    "body": "Diese Seite wird später Ihr persönliches Profil und gespeicherte Flüge anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "NewsPage": {
+    "title": "Neuigkeiten",
+    "body": "Diese Seite wird später die neuesten Luftfahrtnachrichten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "SchedulePage": {
+    "title": "Flugplan",
+    "body": "Diese Seite wird später aktuelle Abflug- und Ankunftszeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "AircraftPage": {
+    "title": "Flugzeuge",
+    "body": "Diese Seite wird später Details zu verfolgten Flugzeugen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MailingPage": {
+    "title": "Mitteilungen",
+    "body": "Diese Seite wird später Ihre Benachrichtigungen und Mitteilungseinstellungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "DocumentsPage": {
+    "title": "Dokumente",
+    "body": "Diese Seite wird später Ihre gespeicherten Dokumente und Berichte anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "NotFoundPage": {
+    "title": "Sieht so aus, als wäre diese Seite vom Radar verschwunden.",
+    "body": "Wir haben den gesamten Luftraum abgesucht und konnten sie nicht finden. Vielleicht wurde sie verschoben oder ist nie gestartet.",
+    "cta": "Zurück zur Startseite"
   }
 }

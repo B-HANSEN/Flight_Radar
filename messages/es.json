@@ -9,7 +9,8 @@
     "flights": "Vuelos",
     "aircraft": "Aeronaves",
     "mailing": "Correspondencia",
-    "documents": "Documentos"
+    "documents": "Documentos",
+    "language": "Cambiar idioma"
   },
   "HomePage": {
     "title": "Bienvenido a Flight Radar",
@@ -22,5 +23,34 @@
   "FlightsPage": {
     "title": "Vuelos",
     "body": "Esta página mostrará más adelante un panel de seguimiento de vuelos en tiempo real. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MePage": {
+    "title": "Yo",
+    "body": "Esta página mostrará más adelante tu perfil personal y vuelos guardados. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "NewsPage": {
+    "title": "Noticias",
+    "body": "Esta página mostrará más adelante las últimas noticias de aviación. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "SchedulePage": {
+    "title": "Horario",
+    "body": "Esta página mostrará más adelante los horarios de salida y llegada en vivo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "AircraftPage": {
+    "title": "Aeronaves",
+    "body": "Esta página mostrará más adelante detalles sobre las aeronaves rastreadas. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MailingPage": {
+    "title": "Correspondencia",
+    "body": "Esta página mostrará más adelante tus notificaciones y preferencias de correspondencia. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "DocumentsPage": {
+    "title": "Documentos",
+    "body": "Esta página mostrará más adelante tus documentos y reportes guardados. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "NotFoundPage": {
+    "title": "Parece que esta página desapareció del radar.",
+    "body": "Escaneamos todo el espacio aéreo y no pudimos encontrarla. Puede que se haya movido, o que nunca haya despegado.",
+    "cta": "Volver al inicio"
   }
 }
