@@ -1,7 +1,6 @@
 ---
 name: accessibility-reviewer
 description: Reviews uncommitted UI/frontend changes for WCAG 2.2 Level AA compliance before a commit. Use proactively whenever the user is about to commit UI changes, or asks for an "accessibility review", "a11y check", or "WCAG check". Does not check correctness bugs or general code simplification (use correctness-reviewer / simplification-reviewer for those).
-model: haiku
 tools:
   - Read
   - Grep
