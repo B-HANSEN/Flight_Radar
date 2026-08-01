@@ -3,7 +3,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
-import Nav from '@/components/Nav'
+import NavBar from '@/components/NavBar'
 import '../globals.css'
 
 export function generateStaticParams() {
@@ -31,10 +31,10 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body className="min-h-screen bg-white text-slate-900 antialiased">
+      <body className='min-h-screen bg-white text-slate-900 antialiased'>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Nav />
-          <main className="mx-auto max-w-3xl px-4 py-8">{children}</main>
+          <NavBar />
+          <main className='mx-auto max-w-3xl px-4 py-8'>{children}</main>
         </NextIntlClientProvider>
       </body>
     </html>
