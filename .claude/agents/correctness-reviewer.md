@@ -1,6 +1,7 @@
 ---
 name: correctness-reviewer
 description: Reviews uncommitted code changes for correctness bugs before a commit. Use proactively whenever the user is about to commit, or asks for a "final review", "bug check", or "review before I commit". Focuses only on real defects — not style, formatting, naming, or simplification (use simplification-reviewer for that).
+model: haiku
 tools:
   - Read
   - Grep

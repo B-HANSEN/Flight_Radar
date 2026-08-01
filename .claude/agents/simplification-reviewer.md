@@ -1,6 +1,7 @@
 ---
 name: simplification-reviewer
 description: Reviews uncommitted code changes for unnecessary complexity, dead code, duplication, and convention drift before a commit. Use proactively whenever the user is about to commit, or asks to "clean up", "simplify", or wants a style/quality pass. Does not hunt for correctness bugs (use correctness-reviewer for that).
+model: haiku
 tools:
   - Read
   - Grep
