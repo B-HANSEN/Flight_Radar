@@ -10,5 +10,8 @@
   "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "css.lint.unknownAtRules": "ignore",
-  "css.colorDecorators.enable": false
+  "css.colorDecorators.enable": false,
+  "eslint.options": {
+    "overrideConfigFile": "config/eslint.config.mjs"
+  }
 }

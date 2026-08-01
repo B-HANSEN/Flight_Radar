@@ -43,5 +43,3 @@ components/      React components, documented with Storybook
 i18n/            next-intl routing/navigation/request config
 messages/        Translation files (en, de, es)
 ```
-
-See `TODO.md` for the project outline and roadmap.
