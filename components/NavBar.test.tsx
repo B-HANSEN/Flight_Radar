@@ -102,8 +102,9 @@ describe('NavBar', () => {
   it('forces the collapsed mobile layout when the collapsed prop is set', () => {
     renderNavBar({ collapsed: true })
     const homeLink = screen.getByRole('link', { name: 'Home' })
-    expect(homeLink.parentElement).toHaveClass('hidden')
-    expect(homeLink.parentElement).not.toHaveClass('md:flex')
+    const list = homeLink.closest('ul')
+    expect(list).toHaveClass('hidden')
+    expect(list).not.toHaveClass('md:flex')
   })
 
   it('calls onMenuClick when the hamburger button is clicked', () => {

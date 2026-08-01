@@ -1,8 +1,15 @@
 {
   "Nav": {
+    "primary": "Navegación principal",
+    "menu": "Menú",
     "home": "Inicio",
-    "about": "Acerca de",
-    "flights": "Vuelos"
+    "me": "Yo",
+    "news": "Noticias",
+    "schedule": "Horario",
+    "flights": "Vuelos",
+    "aircraft": "Aeronaves",
+    "mailing": "Correspondencia",
+    "documents": "Documentos"
   },
   "HomePage": {
     "title": "Bienvenido a Flight Radar",

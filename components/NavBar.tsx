@@ -50,6 +50,9 @@ const items: NavItem[] = [
   { key: 'documents', href: '/documents', icon: FileText },
 ]
 
+const focusRing =
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black-300'
+
 export default function NavBar({
   activePath,
   collapsed = false,
@@ -69,61 +72,70 @@ export default function NavBar({
         type='button'
         aria-label={t('menu')}
         onClick={onMenuClick}
-        className='flex h-4.5 w-6 flex-none flex-col justify-between'
+        className={`flex size-6 flex-none items-center justify-center ${focusRing}`}
       >
-        <span className='h-[2.5px] rounded-xs bg-white' />
-        <span className='h-[2.5px] rounded-xs bg-white' />
-        <span className='h-[2.5px] rounded-xs bg-white' />
+        <span className='flex h-4.5 w-6 flex-col justify-between'>
+          <span className='h-[2.5px] rounded-xs bg-black-300' />
+          <span className='h-[2.5px] rounded-xs bg-black-300' />
+          <span className='h-[2.5px] rounded-xs bg-black-300' />
+        </span>
       </button>
 
       <div className='flex flex-none items-center gap-2.5'>
         <div className='flex size-8.5 items-center justify-center rounded-lg bg-blue-300'>
-          <Radar size={20} className='text-yellow-200' />
+          <Radar size={20} className='text-yellow-200' aria-hidden='true' />
         </div>
-        <span className='text-md font-bold tracking-[0.01em] text-white'>
+        <span className='text-md font-bold tracking-[0.01em] text-black-300'>
           Flight Radar
         </span>
       </div>
 
-      <div
-        className={`flex-1 items-center gap-1 ${collapsed ? 'hidden' : 'hidden md:flex'}`}
+      <ul
+        className={`list-none flex-1 items-center gap-1 ${collapsed ? 'hidden' : 'hidden md:flex'}`}
       >
         {items.map(({ key, href, icon: Icon }) => {
           const isActive = currentPath === href
           return (
-            <Link
-              key={key}
-              href={href}
-              onClick={() => onItemClick?.(href)}
-              aria-current={isActive ? 'page' : undefined}
-              className={`flex min-w-19 flex-col items-center justify-center gap-0.75 rounded-lg px-4 py-2 ${
-                isActive ? 'bg-blue-300' : 'hover:bg-white/14'
-              }`}
-            >
-              <Icon
-                size={20}
-                className={isActive ? 'text-yellow-200' : 'text-white'}
-              />
-              <span className='text-xs font-semibold tracking-[0.01em] text-white'>
-                {t(key)}
-              </span>
-            </Link>
+            <li key={key}>
+              <Link
+                href={href}
+                onClick={() => onItemClick?.(href)}
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex min-w-19 flex-col items-center justify-center gap-0.75 rounded-lg px-4 py-2 ${
+                  isActive
+                    ? `bg-blue-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`
+                    : `hover:bg-white/14 ${focusRing}`
+                }`}
+              >
+                <Icon
+                  size={20}
+                  className={isActive ? 'text-yellow-200' : 'text-black-300'}
+                  aria-hidden='true'
+                />
+                <span
+                  className={`text-xs font-semibold tracking-[0.01em] ${isActive ? 'text-white' : 'text-black-300'}`}
+                >
+                  {t(key)}
+                </span>
+              </Link>
+            </li>
           )
         })}
-      </div>
+      </ul>
 
-      <div className='ml-auto flex flex-none items-center gap-2 text-xs font-semibold text-white'>
+      <ul className='ml-auto flex list-none flex-none items-center gap-2 text-xs font-semibold text-black-300'>
         {routing.locales.map((locale) => (
-          <Link
-            key={locale}
-            href={pathname ?? '/'}
-            locale={locale}
-            className='uppercase hover:underline'
-          >
-            {locale}
-          </Link>
+          <li key={locale}>
+            <Link
+              href={pathname ?? '/'}
+              locale={locale}
+              className={`rounded-sm px-2 py-1 uppercase hover:underline ${focusRing}`}
+            >
+              {locale}
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </nav>
   )
 }
