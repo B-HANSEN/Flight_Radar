@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
-import { routing } from '@/i18n/routing'
+import LanguageSwitcher from './LanguageSwitcher'
 
 type NavItemKey =
   | 'home'
@@ -123,19 +123,9 @@ export default function NavBar({
         })}
       </ul>
 
-      <ul className='ml-auto flex list-none flex-none items-center gap-2 text-xs font-semibold text-black-300'>
-        {routing.locales.map((locale) => (
-          <li key={locale}>
-            <Link
-              href={pathname ?? '/'}
-              locale={locale}
-              className={`rounded-sm px-2 py-1 uppercase hover:underline ${focusRing}`}
-            >
-              {locale}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <div className='ml-auto flex-none'>
+        <LanguageSwitcher />
+      </div>
     </nav>
   )
 }
