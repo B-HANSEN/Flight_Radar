@@ -25,8 +25,28 @@
     "body": "Diese Seite wird später ein Live-Dashboard zur Flugverfolgung anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "MePage": {
-    "title": "Ich",
-    "body": "Diese Seite wird später Ihr persönliches Profil und gespeicherte Flüge anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "profileCard": {
+      "tabsLabel": "Profilbereiche",
+      "tabs": {
+        "information": "Informationen",
+        "emergency": "Notfall"
+      },
+      "editLabel": "Profil bearbeiten",
+      "lockLabel": "Profil sperren",
+      "avatarAlt": "Profilfoto",
+      "fields": {
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "birthday": "Geburtstag",
+        "info": "Info",
+        "role": "Rolle"
+      },
+      "emergencyFields": {
+        "name": "Name der Kontaktperson",
+        "relation": "Beziehung",
+        "phone": "Telefon der Kontaktperson"
+      }
+    }
   },
   "NewsPage": {
     "title": "Neuigkeiten",

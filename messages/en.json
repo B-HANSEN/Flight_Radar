@@ -25,8 +25,28 @@
     "body": "This page will eventually show a live flight tracking dashboard. For now it's placeholder text used to verify routing and localization."
   },
   "MePage": {
-    "title": "Me",
-    "body": "This page will eventually show your personal profile and saved flights. For now it's placeholder text used to verify routing and localization."
+    "profileCard": {
+      "tabsLabel": "Profile sections",
+      "tabs": {
+        "information": "Information",
+        "emergency": "Emergency"
+      },
+      "editLabel": "Edit profile",
+      "lockLabel": "Lock profile",
+      "avatarAlt": "Profile photo",
+      "fields": {
+        "email": "Email",
+        "phone": "Phone",
+        "birthday": "Birthday",
+        "info": "Info",
+        "role": "Role"
+      },
+      "emergencyFields": {
+        "name": "Contact name",
+        "relation": "Relation",
+        "phone": "Contact phone"
+      }
+    }
   },
   "NewsPage": {
     "title": "News",

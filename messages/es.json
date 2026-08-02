@@ -25,8 +25,28 @@
     "body": "Esta página mostrará más adelante un panel de seguimiento de vuelos en tiempo real. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "MePage": {
-    "title": "Yo",
-    "body": "Esta página mostrará más adelante tu perfil personal y vuelos guardados. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "profileCard": {
+      "tabsLabel": "Secciones del perfil",
+      "tabs": {
+        "information": "Información",
+        "emergency": "Emergencia"
+      },
+      "editLabel": "Editar perfil",
+      "lockLabel": "Bloquear perfil",
+      "avatarAlt": "Foto de perfil",
+      "fields": {
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "birthday": "Cumpleaños",
+        "info": "Info",
+        "role": "Rol"
+      },
+      "emergencyFields": {
+        "name": "Nombre de contacto",
+        "relation": "Relación",
+        "phone": "Teléfono de contacto"
+      }
+    }
   },
   "NewsPage": {
     "title": "Noticias",

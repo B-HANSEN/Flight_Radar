@@ -1,9 +1,23 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
-import PageHeading from '@/components/PageHeading'
+import ProfileCard from '@/components/ProfileCard'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
+}
+
+const PLACEHOLDER_PROFILE = {
+  name: 'Doe, John',
+  email: 'john.doe@example.com',
+  phone: '+34 600 123 456',
+  birthday: '14 March 1994',
+  info: 'PPL online · Q1 2025',
+  role: 'Student',
+  emergencyContact: {
+    name: 'Jane Doe',
+    relation: 'Sister',
+    phone: '+34 600 987 654',
+  },
 }
 
 export default async function MePage({
@@ -13,7 +27,6 @@ export default async function MePage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const t = await getTranslations('MePage')
 
-  return <PageHeading title={t('title')} description={t('body')} />
+  return <ProfileCard {...PLACEHOLDER_PROFILE} />
 }
