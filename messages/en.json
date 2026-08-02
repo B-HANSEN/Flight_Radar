@@ -30,7 +30,7 @@
   },
   "NewsPage": {
     "title": "News",
-    "body": "This page will eventually show the latest aviation news. For now it's placeholder text used to verify routing and localization."
+    "body": "Safety bulletins, maintenance reminders, and operational updates for pilots and ground crew."
   },
   "SchedulePage": {
     "title": "Schedule",
@@ -52,5 +52,124 @@
     "title": "Looks like this page went off the radar.",
     "body": "We scanned the whole airspace and couldn't find it. It may have moved, or never took off.",
     "cta": "Back to Home"
+  },
+  "NewsBulletins": {
+    "reminder": {
+      "title": "Reporting aircraft defects",
+      "intro": "All pilots and users are reminded of the importance of immediately reporting any defect, damage, or anomaly detected on an aircraft.",
+      "checklist": [
+        "Any issue, even minor, must be reported to operations and maintenance.",
+        "This includes cracks, missing fasteners, and any other abnormal condition detected.",
+        "Early reporting allows the issue to be assessed and resolved before the next flight."
+      ],
+      "callout": "Do not assume the defect has already been reported by someone else.",
+      "howToReportTitle": "How to report it",
+      "howToReport": [
+        "Speak directly to maintenance or hangar staff",
+        "Submit a squawk through Flight Radar",
+        "Where appropriate, submit a safety report via QR code"
+      ]
+    },
+    "procedure": {
+      "title": "Safety Bulletin: In-flight alternator failure",
+      "postedDate": "Posted 6 July 2026",
+      "summary": "Reminder of the basic procedure for an in-flight alternator failure. Quick, orderly action is essential to conserve battery, keep essential equipment running, and return safely.",
+      "cardTitle": "Alternator failure",
+      "steps": [
+        {
+          "title": "Cycle alternator",
+          "detail": "Alternator and master: OFF then ON. Check whether charge indication (amps/volts) returns to normal."
+        },
+        {
+          "title": "Check circuit breakers",
+          "detail": "If breakers are in and the warning light stays on, alternator failure is confirmed."
+        },
+        {
+          "title": "Reduce electrical load",
+          "detail": "Turn off unnecessary lights. Transponder off if needed to conserve battery."
+        },
+        {
+          "title": "Communicate",
+          "detail": "Inform ATC, declare PAN PAN, state alternator failure, advise return to field."
+        },
+        {
+          "title": "Decide",
+          "detail": "Return to departure airport or divert to the nearest suitable field."
+        }
+      ],
+      "photoAlt": "Instrument panel with the alternator warning light illuminated",
+      "warning": "An inoperative alternator can cause loss of essential equipment. Act quickly and follow the procedure.",
+      "consequencesTitle": "Possible consequences",
+      "consequences": [
+        "Loss of radio",
+        "Loss of lighting",
+        "Loss of instruments",
+        "Electric flaps inoperative"
+      ]
+    },
+    "reference": {
+      "title": "Applicable minimum altitudes",
+      "intro": "Reminder of the legal and internal minimum altitudes applicable to VFR flights and school operations.",
+      "situationHeader": "Situation",
+      "minimumHeader": "Minimum",
+      "tables": [
+        {
+          "title": "1. Legal minimums — private flights / members",
+          "rows": [
+            {
+              "situation": "Day VFR over cities, towns, or gatherings",
+              "minimum": "1,000 ft above the highest obstacle within 600 m"
+            },
+            {
+              "situation": "Day VFR in all other areas",
+              "minimum": "500 ft above ground/water, or 500 ft above obstacles within 150 m"
+            },
+            {
+              "situation": "Night VFR over high terrain",
+              "minimum": "2,000 ft above the highest obstacle within 8 km"
+            },
+            {
+              "situation": "Night VFR in all other areas",
+              "minimum": "1,000 ft above the highest obstacle within 8 km"
+            }
+          ]
+        },
+        {
+          "title": "2. Internal school minimums",
+          "rows": [
+            {
+              "situation": "Non-mountainous, elevation below 5,000 ft",
+              "minimum": "1,000 ft above any obstacle within 5 NM"
+            },
+            {
+              "situation": "Mountainous, elevation above 5,000 ft",
+              "minimum": "2,000 ft above any obstacle within 8 NM"
+            },
+            {
+              "situation": "Single-engine manoeuvres",
+              "minimum": "2,000 ft terrain separation"
+            },
+            {
+              "situation": "Multi-engine, simulated failure",
+              "minimum": "3,000 ft terrain separation"
+            }
+          ]
+        }
+      ]
+    },
+    "maintenance": {
+      "titlePrefix": "Do not forget to reinstall",
+      "titleHighlight": "the oil cap",
+      "titleSuffix": "after the check",
+      "aircraftTypes": "TECNAM P92 • TECNAM P2008 • TECNAM P2006",
+      "labelA": "Separate dipstick and oil cap",
+      "textA": "On these aircraft the oil cap and dipstick are separate parts. After the check, make sure both are correctly installed.",
+      "labelB": "Recommendation",
+      "textB": "During the check, leave the oil cap in a visible place on the outer surface so it prevents the cowling from closing — a reminder to reinstall it.",
+      "before": "Before",
+      "after": "After — cap reinstalled",
+      "photoBeforeAlt": "Engine bay with the oil cap removed",
+      "photoAfterAlt": "Engine bay with the oil cap reinstalled, marked with an arrow"
+    }
   }
 }

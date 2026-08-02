@@ -30,7 +30,7 @@
   },
   "NewsPage": {
     "title": "Noticias",
-    "body": "Esta página mostrará más adelante las últimas noticias de aviación. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "body": "Boletines de seguridad, recordatorios de mantenimiento y actualizaciones operativas para pilotos y personal de tierra."
   },
   "SchedulePage": {
     "title": "Horario",
@@ -52,5 +52,124 @@
     "title": "Parece que esta página desapareció del radar.",
     "body": "Escaneamos todo el espacio aéreo y no pudimos encontrarla. Puede que se haya movido, o que nunca haya despegado.",
     "cta": "Volver al inicio"
+  },
+  "NewsBulletins": {
+    "reminder": {
+      "title": "Notificación de defectos en la aeronave",
+      "intro": "Se recuerda a todos los pilotos y usuarios la importancia de notificar de inmediato cualquier defecto, daño o anomalía detectada en una aeronave.",
+      "checklist": [
+        "Cualquier incidencia, por menor que sea, debe notificarse a operaciones y mantenimiento.",
+        "Esto incluye grietas, fijaciones faltantes y cualquier otra condición anómala detectada.",
+        "La notificación temprana permite evaluar y resolver el problema antes del siguiente vuelo."
+      ],
+      "callout": "No asuma que el defecto ya ha sido notificado por otra persona.",
+      "howToReportTitle": "Cómo notificarlo",
+      "howToReport": [
+        "Hable directamente con mantenimiento o el personal de hangar",
+        "Envíe un parte de avería a través de Flight Radar",
+        "Cuando proceda, envíe un informe de seguridad mediante código QR"
+      ]
+    },
+    "procedure": {
+      "title": "Boletín de seguridad: fallo de alternador en vuelo",
+      "postedDate": "Publicado el 6 de julio de 2026",
+      "summary": "Recordatorio del procedimiento básico ante un fallo de alternador en vuelo. Una actuación rápida y ordenada es esencial para conservar la batería, mantener en funcionamiento el equipo esencial y regresar con seguridad.",
+      "cardTitle": "Fallo de alternador",
+      "steps": [
+        {
+          "title": "Reiniciar el alternador",
+          "detail": "Alternador e interruptor principal: APAGAR y luego ENCENDER. Comprobar si la indicación de carga (amperios/voltios) vuelve a la normalidad."
+        },
+        {
+          "title": "Comprobar los disyuntores",
+          "detail": "Si los disyuntores están conectados y la luz de aviso permanece encendida, el fallo del alternador queda confirmado."
+        },
+        {
+          "title": "Reducir la carga eléctrica",
+          "detail": "Apagar las luces innecesarias. Apagar el transpondedor si es necesario para conservar la batería."
+        },
+        {
+          "title": "Comunicar",
+          "detail": "Informar a ATC, declarar PAN PAN, indicar fallo de alternador y avisar del regreso al campo."
+        },
+        {
+          "title": "Decidir",
+          "detail": "Regresar al aeródromo de salida o desviarse al aeródromo adecuado más cercano."
+        }
+      ],
+      "photoAlt": "Panel de instrumentos con la luz de aviso del alternador encendida",
+      "warning": "Un alternador inoperativo puede provocar la pérdida de equipos esenciales. Actúe con rapidez y siga el procedimiento.",
+      "consequencesTitle": "Posibles consecuencias",
+      "consequences": [
+        "Pérdida de radio",
+        "Pérdida de iluminación",
+        "Pérdida de instrumentos",
+        "Flaps eléctricos inoperativos"
+      ]
+    },
+    "reference": {
+      "title": "Alturas mínimas aplicables",
+      "intro": "Recordatorio de las alturas mínimas legales e internas aplicables a los vuelos VFR y a las operaciones de la escuela.",
+      "situationHeader": "Situación",
+      "minimumHeader": "Mínimo",
+      "tables": [
+        {
+          "title": "1. Mínimos legales — vuelos particulares / socios",
+          "rows": [
+            {
+              "situation": "VFR diurno sobre ciudades, poblaciones o concentraciones de personas",
+              "minimum": "1.000 ft sobre el obstáculo más alto en un radio de 600 m"
+            },
+            {
+              "situation": "VFR diurno en el resto de zonas",
+              "minimum": "500 ft sobre el suelo/agua, o 500 ft sobre obstáculos en un radio de 150 m"
+            },
+            {
+              "situation": "VFR nocturno sobre terreno elevado",
+              "minimum": "2.000 ft sobre el obstáculo más alto en un radio de 8 km"
+            },
+            {
+              "situation": "VFR nocturno en el resto de zonas",
+              "minimum": "1.000 ft sobre el obstáculo más alto en un radio de 8 km"
+            }
+          ]
+        },
+        {
+          "title": "2. Mínimos internos de la escuela",
+          "rows": [
+            {
+              "situation": "Zona no montañosa, elevación inferior a 5.000 ft",
+              "minimum": "1.000 ft sobre cualquier obstáculo en un radio de 5 NM"
+            },
+            {
+              "situation": "Zona montañosa, elevación superior a 5.000 ft",
+              "minimum": "2.000 ft sobre cualquier obstáculo en un radio de 8 NM"
+            },
+            {
+              "situation": "Maniobras monomotor",
+              "minimum": "2.000 ft de separación con el terreno"
+            },
+            {
+              "situation": "Bimotor, fallo simulado",
+              "minimum": "3.000 ft de separación con el terreno"
+            }
+          ]
+        }
+      ]
+    },
+    "maintenance": {
+      "titlePrefix": "No olvide volver a colocar",
+      "titleHighlight": "el tapón de aceite",
+      "titleSuffix": "después de la revisión",
+      "aircraftTypes": "TECNAM P92 • TECNAM P2008 • TECNAM P2006",
+      "labelA": "Varilla y tapón de aceite separados",
+      "textA": "En estas aeronaves, el tapón de aceite y la varilla son piezas independientes. Después de la revisión, asegúrese de que ambas estén correctamente colocadas.",
+      "labelB": "Recomendación",
+      "textB": "Durante la revisión, deje el tapón de aceite en un lugar visible sobre la superficie exterior para que impida cerrar el capó, como recordatorio para volver a colocarlo.",
+      "before": "Antes",
+      "after": "Después — tapón colocado",
+      "photoBeforeAlt": "Compartimento del motor con el tapón de aceite retirado",
+      "photoAfterAlt": "Compartimento del motor con el tapón de aceite colocado, marcado con una flecha"
+    }
   }
 }

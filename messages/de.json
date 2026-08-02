@@ -30,7 +30,7 @@
   },
   "NewsPage": {
     "title": "Neuigkeiten",
-    "body": "Diese Seite wird später die neuesten Luftfahrtnachrichten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "body": "Sicherheitsbulletins, Wartungserinnerungen und Betriebsupdates für Piloten und Bodenpersonal."
   },
   "SchedulePage": {
     "title": "Flugplan",
@@ -52,5 +52,124 @@
     "title": "Sieht so aus, als wäre diese Seite vom Radar verschwunden.",
     "body": "Wir haben den gesamten Luftraum abgesucht und konnten sie nicht finden. Vielleicht wurde sie verschoben oder ist nie gestartet.",
     "cta": "Zurück zur Startseite"
+  },
+  "NewsBulletins": {
+    "reminder": {
+      "title": "Meldung von Luftfahrzeugmängeln",
+      "intro": "Alle Piloten und Nutzer werden daran erinnert, wie wichtig es ist, jeden Mangel, Schaden oder jede Auffälligkeit an einem Luftfahrzeug unverzüglich zu melden.",
+      "checklist": [
+        "Jedes Problem, auch ein kleines, muss dem Betrieb und der Wartung gemeldet werden.",
+        "Dazu zählen Risse, fehlende Befestigungsteile und jeder andere festgestellte ungewöhnliche Zustand.",
+        "Eine frühzeitige Meldung ermöglicht es, das Problem vor dem nächsten Flug zu bewerten und zu beheben."
+      ],
+      "callout": "Gehen Sie nicht davon aus, dass der Mangel bereits von jemand anderem gemeldet wurde.",
+      "howToReportTitle": "So melden Sie es",
+      "howToReport": [
+        "Wenden Sie sich direkt an die Wartung oder das Hangarpersonal",
+        "Reichen Sie eine Störungsmeldung über Flight Radar ein",
+        "Reichen Sie, falls angebracht, einen Sicherheitsbericht per QR-Code ein"
+      ]
+    },
+    "procedure": {
+      "title": "Sicherheitsbulletin: Lichtmaschinenausfall im Flug",
+      "postedDate": "Veröffentlicht am 6. Juli 2026",
+      "summary": "Erinnerung an das grundlegende Verfahren bei einem Lichtmaschinenausfall im Flug. Schnelles, geordnetes Handeln ist entscheidend, um die Batterie zu schonen, wichtige Geräte am Laufen zu halten und sicher zurückzukehren.",
+      "cardTitle": "Lichtmaschinenausfall",
+      "steps": [
+        {
+          "title": "Lichtmaschine zurücksetzen",
+          "detail": "Lichtmaschine und Hauptschalter: AUS, dann EIN. Prüfen, ob die Ladeanzeige (Ampere/Volt) wieder normale Werte zeigt."
+        },
+        {
+          "title": "Sicherungen prüfen",
+          "detail": "Sind die Sicherungen eingerastet und leuchtet die Warnleuchte weiter, ist der Lichtmaschinenausfall bestätigt."
+        },
+        {
+          "title": "Elektrische Last reduzieren",
+          "detail": "Nicht benötigte Beleuchtung ausschalten. Transponder bei Bedarf ausschalten, um die Batterie zu schonen."
+        },
+        {
+          "title": "Kommunizieren",
+          "detail": "ATC informieren, PAN PAN erklären, Lichtmaschinenausfall angeben und die Rückkehr zum Flugplatz ankündigen."
+        },
+        {
+          "title": "Entscheiden",
+          "detail": "Zum Startflugplatz zurückkehren oder zum nächstgelegenen geeigneten Flugplatz ausweichen."
+        }
+      ],
+      "photoAlt": "Instrumentenbrett mit aufleuchtender Lichtmaschinen-Warnleuchte",
+      "warning": "Eine ausgefallene Lichtmaschine kann zum Ausfall wichtiger Geräte führen. Schnell handeln und dem Verfahren folgen.",
+      "consequencesTitle": "Mögliche Folgen",
+      "consequences": [
+        "Ausfall des Funkgeräts",
+        "Ausfall der Beleuchtung",
+        "Ausfall der Instrumente",
+        "Elektrische Klappen funktionsunfähig"
+      ]
+    },
+    "reference": {
+      "title": "Geltende Mindestflughöhen",
+      "intro": "Erinnerung an die gesetzlichen und internen Mindestflughöhen für Sichtflüge (VFR) und den Schulbetrieb.",
+      "situationHeader": "Situation",
+      "minimumHeader": "Mindesthöhe",
+      "tables": [
+        {
+          "title": "1. Gesetzliche Mindesthöhen — Privatflüge / Mitglieder",
+          "rows": [
+            {
+              "situation": "Tag-VFR über Städten, Ortschaften oder Menschenansammlungen",
+              "minimum": "1.000 ft über dem höchsten Hindernis innerhalb von 600 m"
+            },
+            {
+              "situation": "Tag-VFR in allen anderen Gebieten",
+              "minimum": "500 ft über Grund/Wasser, oder 500 ft über Hindernissen innerhalb von 150 m"
+            },
+            {
+              "situation": "Nacht-VFR über hohem Gelände",
+              "minimum": "2.000 ft über dem höchsten Hindernis innerhalb von 8 km"
+            },
+            {
+              "situation": "Nacht-VFR in allen anderen Gebieten",
+              "minimum": "1.000 ft über dem höchsten Hindernis innerhalb von 8 km"
+            }
+          ]
+        },
+        {
+          "title": "2. Interne Mindesthöhen der Flugschule",
+          "rows": [
+            {
+              "situation": "Nicht gebirgig, Höhe unter 5.000 ft",
+              "minimum": "1.000 ft über jedem Hindernis innerhalb von 5 NM"
+            },
+            {
+              "situation": "Gebirgig, Höhe über 5.000 ft",
+              "minimum": "2.000 ft über jedem Hindernis innerhalb von 8 NM"
+            },
+            {
+              "situation": "Einmotorige Manöver",
+              "minimum": "2.000 ft Geländeabstand"
+            },
+            {
+              "situation": "Mehrmotorig, simulierter Ausfall",
+              "minimum": "3.000 ft Geländeabstand"
+            }
+          ]
+        }
+      ]
+    },
+    "maintenance": {
+      "titlePrefix": "Vergessen Sie nicht,",
+      "titleHighlight": "den Öleinfülldeckel",
+      "titleSuffix": "nach der Kontrolle wieder einzusetzen",
+      "aircraftTypes": "TECNAM P92 • TECNAM P2008 • TECNAM P2006",
+      "labelA": "Peilstab und Öleinfülldeckel getrennt",
+      "textA": "Bei diesen Luftfahrzeugen sind Öleinfülldeckel und Peilstab getrennte Teile. Stellen Sie nach der Kontrolle sicher, dass beide korrekt eingesetzt sind.",
+      "labelB": "Empfehlung",
+      "textB": "Legen Sie den Öleinfülldeckel während der Kontrolle sichtbar auf die Außenhaut, sodass er das Schließen der Motorhaube verhindert — als Erinnerung, ihn wieder einzusetzen.",
+      "before": "Vorher",
+      "after": "Nachher — Deckel wieder eingesetzt",
+      "photoBeforeAlt": "Motorraum mit entferntem Öleinfülldeckel",
+      "photoAfterAlt": "Motorraum mit wieder eingesetztem Öleinfülldeckel, mit Pfeil markiert"
+    }
   }
 }
