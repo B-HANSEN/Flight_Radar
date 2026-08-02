@@ -60,7 +60,7 @@ export default function NavBar({
   onItemClick,
 }: Props) {
   const t = useTranslations('Nav')
-  const pathname = usePathname()
+  const pathname = usePathname() ?? '/'
   const currentPath = activePath ?? pathname
 
   return (

@@ -127,4 +127,13 @@ describe('NavBar', () => {
       screen.getByRole('button', { name: 'Change language: English' }),
     ).toBeInTheDocument()
   })
+
+  it('falls back to / for the active state when there is no current pathname', () => {
+    mockUsePathname.mockReturnValue(null)
+    renderNavBar()
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+  })
 })

@@ -29,6 +29,7 @@ export default function LanguageSwitcher() {
   const pathname = usePathname() ?? '/'
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!open) return
@@ -42,6 +43,7 @@ export default function LanguageSwitcher() {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setOpen(false)
+        triggerRef.current?.focus()
       }
     }
 
@@ -56,6 +58,7 @@ export default function LanguageSwitcher() {
   return (
     <div ref={containerRef} className='relative'>
       <button
+        ref={triggerRef}
         type='button'
         aria-haspopup='true'
         aria-expanded={open}
@@ -81,7 +84,7 @@ export default function LanguageSwitcher() {
                 className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-black-300 hover:bg-blue-100 ${focusRing}`}
               >
                 <span aria-hidden='true'>{FLAGS[item]}</span>
-                {NAMES[item]}
+                <span lang={item}>{NAMES[item]}</span>
               </Link>
             </li>
           ))}

@@ -75,6 +75,7 @@ describe('LanguageSwitcher', () => {
       const link = screen.getByRole('link', { name: new RegExp(name) })
       expect(link).toHaveAttribute('href', '/flights')
       expect(link).toHaveAttribute('data-locale', locale)
+      expect(screen.getByText(name)).toHaveAttribute('lang', locale)
     })
   })
 
@@ -103,15 +104,17 @@ describe('LanguageSwitcher', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('closes the menu when Escape is pressed', () => {
+  it('closes the menu when Escape is pressed and returns focus to the trigger', () => {
     renderLanguageSwitcher()
-    fireEvent.click(screen.getByRole('button'))
+    const button = screen.getByRole('button')
+    fireEvent.click(button)
     expect(screen.getByRole('link', { name: /Deutsch/ })).toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(
       screen.queryByRole('link', { name: /Deutsch/ }),
     ).not.toBeInTheDocument()
+    expect(button).toHaveFocus()
   })
 
   it('closes the menu on an outside click', () => {
