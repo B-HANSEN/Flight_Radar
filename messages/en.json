@@ -59,8 +59,19 @@
     "body": "This page will eventually show live departure and arrival schedules. For now it's placeholder text used to verify routing and localization."
   },
   "AircraftPage": {
-    "title": "Aircraft",
-    "body": "This page will eventually show details about tracked aircraft. For now it's placeholder text used to verify routing and localization."
+    "title": "Aircraft"
+  },
+  "AircraftDirectory": {
+    "title": "Aircraft directory",
+    "searchLabel": "Search aircraft",
+    "searchPlaceholder": "Search",
+    "resultCount": "{count, plural, one {# aircraft found} other {# aircraft found}}",
+    "noResults": "No aircraft matched your search.",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "page": "Page {number}",
+    "paginationLabel": "Pagination",
+    "photoAlt": "{type} ({arcid})"
   },
   "MailingPage": {
     "title": "Mailing",

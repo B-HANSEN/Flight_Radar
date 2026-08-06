@@ -59,8 +59,19 @@
     "body": "Esta página mostrará más adelante los horarios de salida y llegada en vivo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "AircraftPage": {
-    "title": "Aeronaves",
-    "body": "Esta página mostrará más adelante detalles sobre las aeronaves rastreadas. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Aeronaves"
+  },
+  "AircraftDirectory": {
+    "title": "Directorio de aeronaves",
+    "searchLabel": "Buscar aeronaves",
+    "searchPlaceholder": "Buscar",
+    "resultCount": "{count, plural, one {# aeronave encontrada} other {# aeronaves encontradas}}",
+    "noResults": "Ninguna aeronave coincide con tu búsqueda.",
+    "previousPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "page": "Página {number}",
+    "paginationLabel": "Paginación",
+    "photoAlt": "{type} ({arcid})"
   },
   "MailingPage": {
     "title": "Correspondencia",

@@ -59,8 +59,19 @@
     "body": "Diese Seite wird später aktuelle Abflug- und Ankunftszeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "AircraftPage": {
-    "title": "Flugzeuge",
-    "body": "Diese Seite wird später Details zu verfolgten Flugzeugen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "Flugzeuge"
+  },
+  "AircraftDirectory": {
+    "title": "Flugzeugverzeichnis",
+    "searchLabel": "Flugzeuge suchen",
+    "searchPlaceholder": "Suchen",
+    "resultCount": "{count, plural, one {# Flugzeug gefunden} other {# Flugzeuge gefunden}}",
+    "noResults": "Keine Flugzeuge entsprechen Ihrer Suche.",
+    "previousPage": "Vorherige Seite",
+    "nextPage": "Nächste Seite",
+    "page": "Seite {number}",
+    "paginationLabel": "Seitennavigation",
+    "photoAlt": "{type} ({arcid})"
   },
   "MailingPage": {
     "title": "Mitteilungen",
