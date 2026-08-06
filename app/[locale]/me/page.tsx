@@ -8,6 +8,7 @@ export function generateStaticParams() {
 
 const PLACEHOLDER_PROFILE = {
   name: 'Doe, John',
+  avatarSrc: '/me/john-doe.webp',
   email: 'john.doe@example.com',
   phone: '+34 600 123 456',
   birthday: '14 March 1994',
@@ -28,5 +29,9 @@ export default async function MePage({
   const { locale } = await params
   setRequestLocale(locale)
 
-  return <ProfileCard {...PLACEHOLDER_PROFILE} />
+  return (
+    <div className='ml-[calc(50%-50vw)] w-screen pl-8 sm:pl-12'>
+      <ProfileCard {...PLACEHOLDER_PROFILE} />
+    </div>
+  )
 }

@@ -52,7 +52,7 @@ export default function BulletinMaintenanceCard() {
             <div className={captionClasses}>{t('before')}</div>
             <div className={photoWrapperClasses}>
               <Image
-                src='/news/engine-bay-before.png'
+                src='/news/engine-bay-before.webp'
                 alt={t('photoBeforeAlt')}
                 fill
                 sizes='(min-width: 768px) 240px, 100vw'
@@ -64,7 +64,7 @@ export default function BulletinMaintenanceCard() {
             <div className={captionClasses}>{t('after')}</div>
             <div className={photoWrapperClasses}>
               <Image
-                src='/news/engine-bay-after.png'
+                src='/news/engine-bay-after.webp'
                 alt={t('photoAfterAlt')}
                 fill
                 sizes='(min-width: 768px) 240px, 100vw'

@@ -3,7 +3,7 @@ import BulletinReminderCard from './BulletinReminderCard'
 
 const meta: Meta<typeof BulletinReminderCard> = {
   component: BulletinReminderCard,
-  title: 'Components/BulletinReminderCard',
+  title: 'Components/BulletinCards/BulletinReminderCard',
 }
 export default meta
 

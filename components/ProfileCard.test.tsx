@@ -90,7 +90,7 @@ describe('ProfileCard', () => {
   })
 
   it('renders the avatar photo when avatarSrc is given', () => {
-    renderCard({ avatarSrc: '/news/instrument-panel.png' })
+    renderCard({ avatarSrc: '/news/instrument-panel.webp' })
     const image = screen.getByAltText('Profile photo')
     expect(image.tagName).toBe('IMG')
     expect(image).toHaveAttribute('src')

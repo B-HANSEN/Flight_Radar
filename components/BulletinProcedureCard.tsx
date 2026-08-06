@@ -58,7 +58,7 @@ export default function BulletinProcedureCard() {
           <div className='flex flex-col gap-3.5'>
             <div className='relative h-50 w-full overflow-hidden rounded-lg'>
               <Image
-                src='/news/instrument-panel.png'
+                src='/news/instrument-panel.webp'
                 alt={t('photoAlt')}
                 fill
                 sizes='(min-width: 768px) 220px, 100vw'

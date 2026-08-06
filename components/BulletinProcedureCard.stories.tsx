@@ -3,7 +3,7 @@ import BulletinProcedureCard from './BulletinProcedureCard'
 
 const meta: Meta<typeof BulletinProcedureCard> = {
   component: BulletinProcedureCard,
-  title: 'Components/BulletinProcedureCard',
+  title: 'Components/BulletinCards/BulletinProcedureCard',
 }
 export default meta
 
