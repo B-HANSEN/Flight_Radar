@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --config config/eslint.config.mjs",
+    "lint": "eslint --config config/eslint.config.mjs && node config/check-image-formats.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run --config config/vitest.config.ts",

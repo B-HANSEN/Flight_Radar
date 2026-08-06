@@ -49,3 +49,4 @@ Use Conventional Commits: `<type>(<scope>): <description>`.
 - Components must be WCAG-AA 2.2 compatible and SEO/AEO-compatible (per `TODO.md`); the Storybook a11y addon is wired up (`test: 'todo'` in `.storybook/preview.tsx`) — check its output when adding components.
 - Each component under `/components` needs a `*.test.tsx` covering it at ≥80% lines/branches/functions/statements (`npm run test:coverage`, configured per-file in `vitest.config.ts`). `*.stories.tsx` files are excluded from coverage.
 - A `/playwright` e2e folder is planned but not yet set up.
+- Raster images under `/public` must be `.webp` (`config/check-image-formats.mjs`, run as part of `npm run lint`, fails the build if a `.png`/`.jpg`/`.jpeg`/`.gif`/`.bmp`/`.tiff` is found) — `.svg`/`.ico` are exempt. Convert with `cwebp -q 90 in.png -o out.webp`.
