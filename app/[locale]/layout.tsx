@@ -30,7 +30,7 @@ export default async function LocaleLayout({
   const messages = await getMessages()
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className='scroll-pt-16 md:scroll-pt-18'>
       <body className='min-h-screen overflow-x-hidden bg-white text-slate-900 antialiased'>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <NavBar />

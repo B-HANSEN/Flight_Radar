@@ -16,6 +16,7 @@ import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { focusRing } from '@/lib/styles'
 import LanguageSwitcher from './LanguageSwitcher'
+import NavClock from './NavClock'
 
 type NavItemKey =
   | 'home'
@@ -64,7 +65,7 @@ export default function NavBar({
   return (
     <nav
       aria-label={t('primary')}
-      className={`flex items-center gap-7 bg-blue-200 px-5 font-primary ${collapsed ? 'h-16' : 'h-16 md:h-18'}`}
+      className={`sticky top-0 z-30 flex items-center gap-7 bg-blue-200 px-5 font-primary ${collapsed ? 'h-16' : 'h-16 md:h-18'}`}
     >
       <button
         type='button'
@@ -121,7 +122,8 @@ export default function NavBar({
         })}
       </ul>
 
-      <div className='ml-auto flex-none'>
+      <div className='ml-auto flex flex-none items-center gap-4'>
+        <NavClock />
         <LanguageSwitcher />
       </div>
     </nav>

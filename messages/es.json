@@ -11,8 +11,8 @@
     "mailing": "Correspondencia",
     "documents": "Documentos",
     "language": "Cambiar idioma",
-    "localTime": "Hora local",
-    "zuluTime": "Hora Zulú (UTC)"
+    "localTime": "Hora Local",
+    "zuluTime": "Hora Zulú"
   },
   "HomePage": {
     "title": "Bienvenido a Flight Radar",
