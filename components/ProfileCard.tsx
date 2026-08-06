@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { focusRing } from '@/lib/styles'
 
 type EmergencyContact = {
   name: string
@@ -42,9 +43,6 @@ type Row = {
   label: string
   value: string
 }
-
-const focusRing =
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black-300'
 
 function FieldRow({
   icon: Icon,

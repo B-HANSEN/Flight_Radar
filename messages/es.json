@@ -73,6 +73,40 @@
     "body": "Escaneamos todo el espacio aéreo y no pudimos encontrarla. Puede que se haya movido, o que nunca haya despegado.",
     "cta": "Volver al inicio"
   },
+  "RecordTabBar": {
+    "label": "Secciones del expediente",
+    "agenda": "Agenda",
+    "certificates": "Certificados",
+    "courses": "Cursos",
+    "signatures": "Firmas",
+    "logbook": "Diario de vuelo",
+    "flightDutyTimes": "Horas de vuelo / servicio",
+    "documents": "Documentos",
+    "solo": "Solo",
+    "availability": "Disponibilidad",
+    "emails": "Correos"
+  },
+  "AgendaCalendar": {
+    "calendarLabel": "Calendario mensual de agenda",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "refresh": "Actualizar",
+    "viewDocuments": "Ver documentos",
+    "viewCancelations": "Ver cancelaciones",
+    "weekdaysShort": ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+    "today": "Hoy",
+    "allDay": "Todo el día",
+    "notAvailable": "No disponible"
+  },
+  "BookingDetailModal": {
+    "title": "Detalles de la reserva",
+    "close": "Cerrar",
+    "paragraphs": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+    ]
+  },
   "NewsBulletins": {
     "reminder": {
       "title": "Notificación de defectos en la aeronave",

@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
+import { focusRing } from '@/lib/styles'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -19,9 +20,6 @@ const NAMES: Record<Locale, string> = {
   de: 'Deutsch',
   es: 'Español',
 }
-
-const focusRing =
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black-300'
 
 export default function LanguageSwitcher() {
   const t = useTranslations('Nav')

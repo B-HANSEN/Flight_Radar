@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
+import { focusRing } from '@/lib/styles'
 import LanguageSwitcher from './LanguageSwitcher'
 
 type NavItemKey =
@@ -49,9 +50,6 @@ const items: NavItem[] = [
   { key: 'mailing', href: '/mailing', icon: Mail },
   { key: 'documents', href: '/documents', icon: FileText },
 ]
-
-const focusRing =
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black-300'
 
 export default function NavBar({
   activePath,
