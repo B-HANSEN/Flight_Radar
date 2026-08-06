@@ -10,7 +10,9 @@
     "aircraft": "Aircraft",
     "mailing": "Mailing",
     "documents": "Documents",
-    "language": "Change language"
+    "language": "Change language",
+    "localTime": "Local time",
+    "zuluTime": "Zulu time (UTC)"
   },
   "HomePage": {
     "title": "Welcome to Flight Radar",
@@ -97,6 +99,45 @@
     "today": "Today",
     "allDay": "All day",
     "notAvailable": "Not available"
+  },
+  "MeAgendaPage": {
+    "title": "Agenda"
+  },
+  "MeCertificatesPage": {
+    "title": "Certificates",
+    "body": "This page will eventually show your certificates and ratings. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeCoursesPage": {
+    "title": "Courses",
+    "body": "This page will eventually show your enrolled courses and training progress. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeSignaturesPage": {
+    "title": "Signatures",
+    "body": "This page will eventually show your training signatures and instructor sign-offs. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeLogbookPage": {
+    "title": "Logbook",
+    "body": "This page will eventually show your flight logbook entries. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeFlightDutyTimesPage": {
+    "title": "Flight / Duty times",
+    "body": "This page will eventually show your flight and duty time records. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeDocumentsPage": {
+    "title": "Documents",
+    "body": "This page will eventually show the documents attached to your record. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeSoloPage": {
+    "title": "Solo",
+    "body": "This page will eventually show your solo flight authorizations and endorsements. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeAvailabilityPage": {
+    "title": "Availability",
+    "body": "This page will eventually show your availability for bookings and rosters. For now it's placeholder text used to verify routing and localization."
+  },
+  "MeEmailsPage": {
+    "title": "Emails",
+    "body": "This page will eventually show emails and notifications related to your record. For now it's placeholder text used to verify routing and localization."
   },
   "BookingDetailModal": {
     "title": "Booking details",

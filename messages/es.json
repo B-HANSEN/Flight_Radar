@@ -10,7 +10,9 @@
     "aircraft": "Aeronaves",
     "mailing": "Correspondencia",
     "documents": "Documentos",
-    "language": "Cambiar idioma"
+    "language": "Cambiar idioma",
+    "localTime": "Hora local",
+    "zuluTime": "Hora Zulú (UTC)"
   },
   "HomePage": {
     "title": "Bienvenido a Flight Radar",
@@ -97,6 +99,45 @@
     "today": "Hoy",
     "allDay": "Todo el día",
     "notAvailable": "No disponible"
+  },
+  "MeAgendaPage": {
+    "title": "Agenda"
+  },
+  "MeCertificatesPage": {
+    "title": "Certificados",
+    "body": "Esta página mostrará más adelante tus certificados y habilitaciones. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeCoursesPage": {
+    "title": "Cursos",
+    "body": "Esta página mostrará más adelante tus cursos matriculados y tu progreso de formación. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeSignaturesPage": {
+    "title": "Firmas",
+    "body": "Esta página mostrará más adelante tus firmas de formación y las validaciones del instructor. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeLogbookPage": {
+    "title": "Diario de vuelo",
+    "body": "Esta página mostrará más adelante los registros de tu diario de vuelo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeFlightDutyTimesPage": {
+    "title": "Horas de vuelo / servicio",
+    "body": "Esta página mostrará más adelante tus registros de horas de vuelo y de servicio. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeDocumentsPage": {
+    "title": "Documentos",
+    "body": "Esta página mostrará más adelante los documentos asociados a tu expediente. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeSoloPage": {
+    "title": "Solo",
+    "body": "Esta página mostrará más adelante tus autorizaciones de vuelo solo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeAvailabilityPage": {
+    "title": "Disponibilidad",
+    "body": "Esta página mostrará más adelante tu disponibilidad para reservas y turnos. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  },
+  "MeEmailsPage": {
+    "title": "Correos",
+    "body": "Esta página mostrará más adelante los correos y notificaciones de tu expediente. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "BookingDetailModal": {
     "title": "Detalles de la reserva",

@@ -140,11 +140,11 @@ export default function ProfileCard({
   }
 
   return (
-    <section className='max-w-160 overflow-hidden rounded-xl border border-black-100 bg-white'>
+    <section className='max-w-lg overflow-hidden rounded-xl border border-black-100 bg-white'>
       <div className='flex items-center justify-between border-b border-black-100 px-7 pt-6 pb-5'>
-        <h1 className='font-primary text-[26px] font-bold text-black-300'>
+        <h2 className='font-primary text-[26px] font-bold text-black-300'>
           {name}
-        </h1>
+        </h2>
         <div className='flex gap-3.5 text-black-200'>
           <button
             type='button'

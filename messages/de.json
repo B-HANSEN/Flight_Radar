@@ -10,7 +10,9 @@
     "aircraft": "Flugzeuge",
     "mailing": "Mitteilungen",
     "documents": "Dokumente",
-    "language": "Sprache ändern"
+    "language": "Sprache ändern",
+    "localTime": "Ortszeit",
+    "zuluTime": "Zulu-Zeit (UTC)"
   },
   "HomePage": {
     "title": "Willkommen bei Flight Radar",
@@ -97,6 +99,45 @@
     "today": "Heute",
     "allDay": "Ganztägig",
     "notAvailable": "Nicht verfügbar"
+  },
+  "MeAgendaPage": {
+    "title": "Agenda"
+  },
+  "MeCertificatesPage": {
+    "title": "Zertifikate",
+    "body": "Diese Seite wird später Ihre Zertifikate und Berechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeCoursesPage": {
+    "title": "Kurse",
+    "body": "Diese Seite wird später Ihre belegten Kurse und Ihren Ausbildungsfortschritt anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeSignaturesPage": {
+    "title": "Unterschriften",
+    "body": "Diese Seite wird später Ihre Ausbildungsunterschriften und Fluglehrerbestätigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeLogbookPage": {
+    "title": "Flugbuch",
+    "body": "Diese Seite wird später Ihre Flugbucheinträge anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeFlightDutyTimesPage": {
+    "title": "Flug-/Dienstzeiten",
+    "body": "Diese Seite wird später Ihre Flug- und Dienstzeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeDocumentsPage": {
+    "title": "Dokumente",
+    "body": "Diese Seite wird später die Dokumente zu Ihrer Akte anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeSoloPage": {
+    "title": "Alleinflug",
+    "body": "Diese Seite wird später Ihre Alleinflugberechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeAvailabilityPage": {
+    "title": "Verfügbarkeit",
+    "body": "Diese Seite wird später Ihre Verfügbarkeit für Buchungen und Dienstpläne anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  },
+  "MeEmailsPage": {
+    "title": "E-Mails",
+    "body": "Diese Seite wird später E-Mails und Benachrichtigungen zu Ihrer Akte anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "BookingDetailModal": {
     "title": "Buchungsdetails",
