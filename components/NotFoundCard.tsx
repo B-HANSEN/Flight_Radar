@@ -9,20 +9,22 @@ type Props = {
 
 export default function NotFoundCard({ title, body, cta }: Props) {
   return (
-    <div className='relative isolate mx-auto w-190 overflow-hidden rounded-xl bg-blue-100'>
-      <div aria-hidden='true' className='absolute inset-0 -z-10'>
-        <div className='absolute bottom-0 left-1/2 size-225 -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-blue-200 opacity-50' />
-        <div className='absolute bottom-0 left-1/2 size-162.5 -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-blue-200 opacity-70' />
-        <div className='absolute bottom-0 left-1/2 size-100 -translate-x-1/2 translate-y-1/2 rounded-full border-2 border-blue-200' />
-      </div>
+    <div className='relative mx-auto w-190 overflow-hidden rounded-xl bg-blue-100'>
+      <div className='flex flex-col items-center justify-center gap-5.5 px-8 py-8 text-center'>
+        <div className='relative isolate flex flex-col items-center'>
+          <div aria-hidden='true'>
+            <div className='absolute top-7 left-1/2 -z-10 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-blue-200 opacity-50' />
+            <div className='absolute top-7 left-1/2 -z-10 size-58 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-blue-200 opacity-70' />
+            <div className='absolute top-7 left-1/2 -z-10 size-36 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-blue-200' />
+          </div>
 
-      <div className='relative z-10 flex flex-col items-center justify-center gap-5.5 px-8 py-8 text-center'>
-        <div className='flex size-14 items-center justify-center rounded-xl bg-blue-300'>
-          <Radar size={30} className='text-yellow-200' aria-hidden='true' />
-        </div>
+          <div className='flex size-14 items-center justify-center rounded-xl bg-blue-300'>
+            <Radar size={30} className='text-yellow-200' aria-hidden='true' />
+          </div>
 
-        <div className='font-primary text-[88px] font-bold tracking-tight text-blue-300'>
-          404
+          <div className='font-primary mt-5.5 text-[88px] font-bold tracking-tight text-blue-300'>
+            404
+          </div>
         </div>
 
         <h1 className='font-primary max-w-95 text-[22px] font-bold text-black-300'>
