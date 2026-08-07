@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useRef, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, FileText, RefreshCw } from 'lucide-react'
 import { focusRing } from '@/lib/styles'
@@ -18,6 +18,7 @@ type Props = {
 
 const MIN_MONTH: MonthKey = { year: 2026, month: 0 }
 const MAX_MONTHS_AHEAD = 3
+const DRAG_CLICK_THRESHOLD = 5
 
 function toMonthIndex(month: MonthKey): number {
   return month.year * 12 + month.month
@@ -75,6 +76,7 @@ export default function AgendaCalendar({
 }: Props) {
   const t = useTranslations('AgendaCalendar')
   const locale = useLocale()
+  const monthLabelId = useId()
   const today = useMemo(() => new Date(), [])
   const currentMonth = { year: today.getFullYear(), month: today.getMonth() }
   const maxMonth = addMonths(currentMonth, MAX_MONTHS_AHEAD)
@@ -83,6 +85,13 @@ export default function AgendaCalendar({
   )
   const [showCancelations, setShowCancelations] = useState(false)
   const [activeEvent, setActiveEvent] = useState<BookingEvent | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragState = useRef({
+    active: false,
+    startX: 0,
+    scrollLeft: 0,
+    dragged: false,
+  })
 
   const isAtMin = toMonthIndex(month) === toMonthIndex(MIN_MONTH)
   const isAtMax = toMonthIndex(month) === toMonthIndex(maxMonth)
@@ -114,6 +123,40 @@ export default function AgendaCalendar({
   const gridDates = useMemo(() => getMonthGridDates(month), [month])
   const todayISO = toISODate(today)
 
+  function handleScrollPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== 'mouse') return
+    if ((event.target as HTMLElement).closest('button, a')) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    dragState.current = {
+      active: true,
+      startX: event.clientX,
+      scrollLeft: event.currentTarget.scrollLeft,
+      dragged: false,
+    }
+    setIsDragging(true)
+  }
+
+  function handleScrollPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (!dragState.current.active) return
+    const delta = event.clientX - dragState.current.startX
+    if (Math.abs(delta) > DRAG_CLICK_THRESHOLD) dragState.current.dragged = true
+    event.currentTarget.scrollLeft = dragState.current.scrollLeft - delta
+  }
+
+  function handleScrollPointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    dragState.current.active = false
+    setIsDragging(false)
+  }
+
+  function handleScrollClickCapture(event: React.MouseEvent<HTMLDivElement>) {
+    if (dragState.current.dragged) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    dragState.current.dragged = false
+  }
+
   return (
     <section
       aria-label={t('calendarLabel')}
@@ -131,6 +174,7 @@ export default function AgendaCalendar({
         </button>
 
         <div
+          id={monthLabelId}
           className='min-w-35 font-primary text-md font-bold text-black-300'
           aria-live='polite'
         >
@@ -176,7 +220,17 @@ export default function AgendaCalendar({
         </label>
       </div>
 
-      <div className='overflow-x-auto'>
+      <div
+        role='group'
+        aria-labelledby={monthLabelId}
+        tabIndex={0}
+        className={`overflow-x-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+        onPointerDown={handleScrollPointerDown}
+        onPointerMove={handleScrollPointerMove}
+        onPointerUp={handleScrollPointerUp}
+        onPointerCancel={handleScrollPointerUp}
+        onClickCapture={handleScrollClickCapture}
+      >
         <div className='min-w-175'>
           <div className='grid grid-cols-7'>
             {weekdayLabels.map((label) => (

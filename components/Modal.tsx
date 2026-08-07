@@ -95,7 +95,10 @@ export default function Modal({
             <X size={20} aria-hidden='true' />
           </button>
         </div>
-        <div className='flex flex-col gap-3 overflow-y-auto px-6 py-5'>
+        <div
+          tabIndex={0}
+          className={`flex flex-col gap-3 overflow-y-auto px-6 py-5 ${focusRing}`}
+        >
           {children}
         </div>
       </div>

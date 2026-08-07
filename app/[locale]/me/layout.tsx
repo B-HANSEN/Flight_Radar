@@ -39,7 +39,7 @@ export default async function MeLayout({
           <TabBar />
           <div className='mt-6'>{children}</div>
         </div>
-        <div className='lg:w-lg lg:flex-none'>
+        <div className='lg:w-122 lg:flex-none 2xl:w-lg'>
           <ProfileCard {...PLACEHOLDER_PROFILE} />
         </div>
       </div>
