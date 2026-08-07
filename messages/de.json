@@ -115,8 +115,17 @@
     "title": "Agenda"
   },
   "MeCertificatesPage": {
-    "title": "Zertifikate",
-    "body": "Diese Seite wird später Ihre Zertifikate und Berechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "Zertifikate"
+  },
+  "CertificateList": {
+    "current": "Aktuelle Zertifikate",
+    "archived": "Archivierte Zertifikate",
+    "noCurrent": "Keine aktuellen Zertifikate",
+    "noArchived": "Keine archivierten Zertifikate",
+    "issued": "Ausgestellt",
+    "renewed": "Erneuert",
+    "expiration": "Ablauf",
+    "viewDocumentLabel": "Dokument anzeigen für {name}"
   },
   "CertificateDocumentModal": {
     "title": "Zertifikatsdokument",

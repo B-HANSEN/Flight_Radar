@@ -115,8 +115,17 @@
     "title": "Agenda"
   },
   "MeCertificatesPage": {
-    "title": "Certificates",
-    "body": "This page will eventually show your certificates and ratings. For now it's placeholder text used to verify routing and localization."
+    "title": "Certificates"
+  },
+  "CertificateList": {
+    "current": "Current certificates",
+    "archived": "Archived certificates",
+    "noCurrent": "No current certificates",
+    "noArchived": "No archived certificates",
+    "issued": "Issued",
+    "renewed": "Renewed",
+    "expiration": "Expiration",
+    "viewDocumentLabel": "View document for {name}"
   },
   "CertificateDocumentModal": {
     "title": "Certificate document",

@@ -115,8 +115,17 @@
     "title": "Agenda"
   },
   "MeCertificatesPage": {
-    "title": "Certificados",
-    "body": "Esta página mostrará más adelante tus certificados y habilitaciones. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Certificados"
+  },
+  "CertificateList": {
+    "current": "Certificados vigentes",
+    "archived": "Certificados archivados",
+    "noCurrent": "No hay certificados vigentes",
+    "noArchived": "No hay certificados archivados",
+    "issued": "Emitido",
+    "renewed": "Renovado",
+    "expiration": "Vencimiento",
+    "viewDocumentLabel": "Ver documento de {name}"
   },
   "CertificateDocumentModal": {
     "title": "Documento del certificado",

@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
-import PageHeading from '@/components/PageHeading'
+import CertificateList from '@/components/CertificateList'
+import { DUMMY_CERTIFICATES } from '@/components/CertificateList.data'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -15,5 +16,10 @@ export default async function MeCertificatesPage({
   setRequestLocale(locale)
   const t = await getTranslations('MeCertificatesPage')
 
-  return <PageHeading title={t('title')} description={t('body')} />
+  return (
+    <>
+      <h1 className='sr-only'>{t('title')}</h1>
+      <CertificateList certificates={DUMMY_CERTIFICATES} />
+    </>
+  )
 }

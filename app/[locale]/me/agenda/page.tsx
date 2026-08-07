@@ -1,6 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
-import PageHeading from '@/components/PageHeading'
 import AgendaCalendar from '@/components/AgendaCalendar'
 import { DUMMY_AGENDA_EVENTS } from '@/components/AgendaCalendar.data'
 
@@ -19,7 +18,7 @@ export default async function MeAgendaPage({
 
   return (
     <>
-      <PageHeading title={t('title')} />
+      <h1 className='sr-only'>{t('title')}</h1>
       <AgendaCalendar events={DUMMY_AGENDA_EVENTS} />
     </>
   )
