@@ -118,6 +118,16 @@
     "title": "Zertifikate",
     "body": "Diese Seite wird später Ihre Zertifikate und Berechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
+  "CertificateDocumentModal": {
+    "title": "Zertifikatsdokument",
+    "close": "Schließen",
+    "holder": "Inhaber",
+    "documentNumber": "Dokumentennr.",
+    "issued": "Ausgestellt",
+    "renewed": "Erneuert",
+    "expiration": "Ablauf",
+    "regulatoryNote": "Ausgestellt gemäß den geltenden EASA- und nationalen Lizenzierungsanforderungen. Zusammen mit einer gültigen Pilotenlizenz und einem Lichtbildausweis mitzuführen."
+  },
   "MeCoursesPage": {
     "title": "Kurse",
     "body": "Diese Seite wird später Ihre belegten Kurse und Ihren Ausbildungsfortschritt anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."

@@ -118,6 +118,16 @@
     "title": "Certificates",
     "body": "This page will eventually show your certificates and ratings. For now it's placeholder text used to verify routing and localization."
   },
+  "CertificateDocumentModal": {
+    "title": "Certificate document",
+    "close": "Close",
+    "holder": "Holder",
+    "documentNumber": "Document no.",
+    "issued": "Issued",
+    "renewed": "Renewed",
+    "expiration": "Expiration",
+    "regulatoryNote": "Issued under the applicable EASA and national licensing requirements. Carry together with a valid pilot licence and photographic identification."
+  },
   "MeCoursesPage": {
     "title": "Courses",
     "body": "This page will eventually show your enrolled courses and training progress. For now it's placeholder text used to verify routing and localization."

@@ -118,6 +118,16 @@
     "title": "Certificados",
     "body": "Esta página mostrará más adelante tus certificados y habilitaciones. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
+  "CertificateDocumentModal": {
+    "title": "Documento del certificado",
+    "close": "Cerrar",
+    "holder": "Titular",
+    "documentNumber": "N.º de documento",
+    "issued": "Emitido",
+    "renewed": "Renovado",
+    "expiration": "Vencimiento",
+    "regulatoryNote": "Emitido conforme a los requisitos de licencia de EASA y nacionales aplicables. Debe llevarse junto con una licencia de piloto válida y una identificación con fotografía."
+  },
   "MeCoursesPage": {
     "title": "Cursos",
     "body": "Esta página mostrará más adelante tus cursos matriculados y tu progreso de formación. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
