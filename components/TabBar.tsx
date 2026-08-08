@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { focusRing } from '@/lib/styles'
+import { useDragScroll } from '@/lib/useDragScroll'
 
 type TabKey =
   | 'agenda'
@@ -43,10 +44,16 @@ export default function TabBar({ activePath, onItemClick }: Props) {
   const t = useTranslations('RecordTabBar')
   const pathname = usePathname() ?? items[0].href
   const currentPath = activePath ?? pathname
+  const { isDragging, dragHandlers } = useDragScroll<HTMLUListElement>()
 
   return (
     <nav aria-label={t('label')} className='border-b border-black-100'>
-      <ul className='flex list-none gap-1 overflow-x-auto px-1'>
+      <ul
+        tabIndex={0}
+        aria-label={t('label')}
+        className={`flex list-none gap-1 overflow-x-auto px-1 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+        {...dragHandlers}
+      >
         {items.map(({ key, href }) => {
           const isActive = currentPath === href
           return (
