@@ -14,9 +14,32 @@
     "localTime": "Hora Local",
     "zuluTime": "Hora Zulú"
   },
-  "HomePage": {
-    "title": "Bienvenido a Flight Radar",
-    "body": "Sigue los vuelos en tiempo real. Este es un texto de relleno para la página de inicio mientras se preparan el diseño y los datos definitivos."
+  "Homepage": {
+    "greeting": "Bienvenido, {name}",
+    "weather": {
+      "label": "Briefing meteorológico",
+      "empty": "No hay partes meteorológicos disponibles."
+    },
+    "bookings": {
+      "title": "Mis reservas",
+      "empty": "No hay reservas próximas."
+    },
+    "signatures": {
+      "title": "Firmas pendientes",
+      "empty": "No hay firmas pendientes.",
+      "editLabel": "Editar firma de {label}"
+    },
+    "news": {
+      "title": "Últimas novedades",
+      "viewAll": "Ver todas las noticias",
+      "readMore": "Leer más",
+      "readMoreLabel": "Leer más sobre {title}",
+      "tags": {
+        "operations": "Operaciones",
+        "fuel": "Combustible",
+        "atc": "ATC"
+      }
+    }
   },
   "AboutPage": {
     "title": "Acerca de este proyecto",
@@ -138,16 +161,87 @@
     "regulatoryNote": "Emitido conforme a los requisitos de licencia de EASA y nacionales aplicables. Debe llevarse junto con una licencia de piloto válida y una identificación con fotografía."
   },
   "MeCoursesPage": {
-    "title": "Cursos",
-    "body": "Esta página mostrará más adelante tus cursos matriculados y tu progreso de formación. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Cursos"
+  },
+  "Courses": {
+    "title": "Progreso del curso",
+    "overall": "Progreso general",
+    "hoursTableCaption": "Desglose de horas del curso",
+    "vfr": "VFR",
+    "ifr": "IFR",
+    "mcc": "MCC",
+    "aircraftType": "Tipo de aeronave",
+    "dual": "Doble",
+    "pic": "PIC",
+    "spic": "SPIC",
+    "picus": "PICUS",
+    "night": "Noche",
+    "xc": "Nav.",
+    "pf": "PF",
+    "pm": "PM",
+    "se": "SE",
+    "me": "ME",
+    "ab": "A/B",
+    "fstd": "FSTD",
+    "groups": {
+      "currentLesson": "Lección actual",
+      "fullCourse": "Curso completo"
+    },
+    "rows": {
+      "syllabus": "Programa",
+      "actual": "Real",
+      "remaining": "Restante"
+    },
+    "phase": "Fase {number}",
+    "aheadOfTarget": "por delante del objetivo",
+    "behindOfTarget": "por detrás del objetivo"
   },
   "MeSignaturesPage": {
     "title": "Firmas",
     "body": "Esta página mostrará más adelante tus firmas de formación y las validaciones del instructor. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "MeLogbookPage": {
+    "title": "Diario de vuelo"
+  },
+  "Logbook": {
     "title": "Diario de vuelo",
-    "body": "Esta página mostrará más adelante los registros de tu diario de vuelo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "download": "Descargar",
+    "refresh": "Actualizar",
+    "reverseOrder": "Invertir orden",
+    "summaryCaption": "Totales del diario de vuelo",
+    "totalFlightTime": "Tiempo total de vuelo",
+    "singlePilotTime": "Tiempo de piloto único",
+    "crossCountry": "Nav.",
+    "operationalCondition": "Condición operacional",
+    "pilotFunction": "Función del piloto",
+    "fstd": "FSTD",
+    "landings": "Aterrizajes",
+    "se": "SE",
+    "me": "ME",
+    "pic": "PIC",
+    "spic": "SPIC",
+    "dual": "Doble",
+    "night": "Noche",
+    "ift": "IFT",
+    "ifr": "IFR",
+    "instructor": "Instr.",
+    "day": "Día",
+    "date": "Fecha",
+    "departure": "Salida",
+    "arrival": "Llegada",
+    "aircraft": "Aeronave",
+    "place": "Lugar",
+    "time": "Hora",
+    "makeModel": "Modelo",
+    "registration": "Matríc.",
+    "namePic": "Nombre PIC",
+    "remarks": "Observaciones",
+    "page": "Página {number}",
+    "pageCaption": "Registro de vuelos de la página {number}",
+    "flightCount": "{count, plural, one {# vuelo} other {# vuelos}}",
+    "blockTotal": "Total de bloque",
+    "flightTime": "Tiempo de vuelo",
+    "noFlights": "Todavía no hay vuelos registrados."
   },
   "MeFlightDutyTimesPage": {
     "title": "Horas de vuelo / servicio",

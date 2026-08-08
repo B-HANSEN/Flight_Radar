@@ -14,9 +14,32 @@
     "localTime": "Ortszeit",
     "zuluTime": "Zulu-Zeit"
   },
-  "HomePage": {
-    "title": "Willkommen bei Flight Radar",
-    "body": "Verfolgen Sie Flüge in Echtzeit. Dies ist Platzhaltertext für die Startseite, während das eigentliche Design und die Daten eingerichtet werden."
+  "Homepage": {
+    "greeting": "Willkommen, {name}",
+    "weather": {
+      "label": "Wetterbriefing",
+      "empty": "Keine Wetterberichte verfügbar."
+    },
+    "bookings": {
+      "title": "Meine Buchungen",
+      "empty": "Keine bevorstehenden Buchungen."
+    },
+    "signatures": {
+      "title": "Fehlende Unterschriften",
+      "empty": "Keine fehlenden Unterschriften.",
+      "editLabel": "Unterschrift für {label} bearbeiten"
+    },
+    "news": {
+      "title": "Neueste Updates",
+      "viewAll": "Alle Neuigkeiten ansehen",
+      "readMore": "Weiterlesen",
+      "readMoreLabel": "Weiterlesen: {title}",
+      "tags": {
+        "operations": "Betrieb",
+        "fuel": "Treibstoff",
+        "atc": "ATC"
+      }
+    }
   },
   "AboutPage": {
     "title": "Über dieses Projekt",
@@ -138,16 +161,87 @@
     "regulatoryNote": "Ausgestellt gemäß den geltenden EASA- und nationalen Lizenzierungsanforderungen. Zusammen mit einer gültigen Pilotenlizenz und einem Lichtbildausweis mitzuführen."
   },
   "MeCoursesPage": {
-    "title": "Kurse",
-    "body": "Diese Seite wird später Ihre belegten Kurse und Ihren Ausbildungsfortschritt anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "Kurse"
+  },
+  "Courses": {
+    "title": "Kursfortschritt",
+    "overall": "Gesamtfortschritt",
+    "hoursTableCaption": "Stundenübersicht des Kurses",
+    "vfr": "VFR",
+    "ifr": "IFR",
+    "mcc": "MCC",
+    "aircraftType": "Luftfahrzeugmuster",
+    "dual": "Dual",
+    "pic": "PIC",
+    "spic": "SPIC",
+    "picus": "PICUS",
+    "night": "Nacht",
+    "xc": "Überland",
+    "pf": "PF",
+    "pm": "PM",
+    "se": "SE",
+    "me": "ME",
+    "ab": "A/B",
+    "fstd": "FSTD",
+    "groups": {
+      "currentLesson": "Aktuelle Lektion",
+      "fullCourse": "Gesamter Kurs"
+    },
+    "rows": {
+      "syllabus": "Lehrplan",
+      "actual": "Ist",
+      "remaining": "Verbleibend"
+    },
+    "phase": "Phase {number}",
+    "aheadOfTarget": "über Plan",
+    "behindOfTarget": "unter Plan"
   },
   "MeSignaturesPage": {
     "title": "Unterschriften",
     "body": "Diese Seite wird später Ihre Ausbildungsunterschriften und Fluglehrerbestätigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "MeLogbookPage": {
+    "title": "Flugbuch"
+  },
+  "Logbook": {
     "title": "Flugbuch",
-    "body": "Diese Seite wird später Ihre Flugbucheinträge anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "download": "Herunterladen",
+    "refresh": "Aktualisieren",
+    "reverseOrder": "Reihenfolge umkehren",
+    "summaryCaption": "Flugbuch-Gesamtsummen",
+    "totalFlightTime": "Gesamtflugzeit",
+    "singlePilotTime": "Einzelpilotenzeit",
+    "crossCountry": "Überland",
+    "operationalCondition": "Betriebsbedingungen",
+    "pilotFunction": "Pilotenfunktion",
+    "fstd": "FSTD",
+    "landings": "Landungen",
+    "se": "SE",
+    "me": "ME",
+    "pic": "PIC",
+    "spic": "SPIC",
+    "dual": "Dual",
+    "night": "Nacht",
+    "ift": "IFT",
+    "ifr": "IFR",
+    "instructor": "Lehrer",
+    "day": "Tag",
+    "date": "Datum",
+    "departure": "Abflug",
+    "arrival": "Ankunft",
+    "aircraft": "Luftfahrzeug",
+    "place": "Ort",
+    "time": "Zeit",
+    "makeModel": "Muster/Typ",
+    "registration": "Kennz.",
+    "namePic": "Name PIC",
+    "remarks": "Bemerkungen",
+    "page": "Seite {number}",
+    "pageCaption": "Flugprotokoll Seite {number}",
+    "flightCount": "{count, plural, one {# Flug} other {# Flüge}}",
+    "blockTotal": "Blocksumme",
+    "flightTime": "Flugzeit",
+    "noFlights": "Noch keine Flüge erfasst."
   },
   "MeFlightDutyTimesPage": {
     "title": "Flug-/Dienstzeiten",

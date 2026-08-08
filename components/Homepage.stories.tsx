@@ -1,0 +1,35 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import Homepage from './Homepage'
+import {
+  DUMMY_BOOKINGS,
+  DUMMY_NEWS,
+  DUMMY_SIGNATURES,
+  DUMMY_WEATHER,
+} from './Homepage.data'
+
+const meta: Meta<typeof Homepage> = {
+  component: Homepage,
+  title: 'Components/Homepage',
+  argTypes: {
+    name: { control: 'text' },
+  },
+  args: {
+    name: 'John Doe',
+    weather: DUMMY_WEATHER,
+    bookings: DUMMY_BOOKINGS,
+    signatures: DUMMY_SIGNATURES,
+    news: DUMMY_NEWS,
+  },
+}
+export default meta
+
+export const Default: StoryObj<typeof Homepage> = {}
+
+export const Empty: StoryObj<typeof Homepage> = {
+  args: {
+    weather: [],
+    bookings: [],
+    signatures: [],
+    news: [],
+  },
+}

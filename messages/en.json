@@ -14,9 +14,32 @@
     "localTime": "Local Time",
     "zuluTime": "Zulu Time"
   },
-  "HomePage": {
-    "title": "Welcome to Flight Radar",
-    "body": "Track flights in real time. This is placeholder text for the home page while the real design and data are wired up."
+  "Homepage": {
+    "greeting": "Welcome, {name}",
+    "weather": {
+      "label": "Weather briefing",
+      "empty": "No weather reports available."
+    },
+    "bookings": {
+      "title": "My bookings",
+      "empty": "No upcoming bookings."
+    },
+    "signatures": {
+      "title": "Missing signatures",
+      "empty": "No missing signatures.",
+      "editLabel": "Edit signature for {label}"
+    },
+    "news": {
+      "title": "Latest updates",
+      "viewAll": "View all news",
+      "readMore": "Read more",
+      "readMoreLabel": "Read more about {title}",
+      "tags": {
+        "operations": "Operations",
+        "fuel": "Fuel",
+        "atc": "ATC"
+      }
+    }
   },
   "AboutPage": {
     "title": "About this project",
@@ -138,16 +161,87 @@
     "regulatoryNote": "Issued under the applicable EASA and national licensing requirements. Carry together with a valid pilot licence and photographic identification."
   },
   "MeCoursesPage": {
-    "title": "Courses",
-    "body": "This page will eventually show your enrolled courses and training progress. For now it's placeholder text used to verify routing and localization."
+    "title": "Courses"
+  },
+  "Courses": {
+    "title": "Course progress",
+    "overall": "Overall progress",
+    "hoursTableCaption": "Course hours breakdown",
+    "vfr": "VFR",
+    "ifr": "IFR",
+    "mcc": "MCC",
+    "aircraftType": "Aircraft type",
+    "dual": "Dual",
+    "pic": "PIC",
+    "spic": "SPIC",
+    "picus": "PICUS",
+    "night": "Night",
+    "xc": "X.C.",
+    "pf": "PF",
+    "pm": "PM",
+    "se": "SE",
+    "me": "ME",
+    "ab": "A/B",
+    "fstd": "FSTD",
+    "groups": {
+      "currentLesson": "Current lesson",
+      "fullCourse": "Full course"
+    },
+    "rows": {
+      "syllabus": "Syllabus",
+      "actual": "Actual",
+      "remaining": "Remaining"
+    },
+    "phase": "Phase {number}",
+    "aheadOfTarget": "ahead of target",
+    "behindOfTarget": "behind target"
   },
   "MeSignaturesPage": {
     "title": "Signatures",
     "body": "This page will eventually show your training signatures and instructor sign-offs. For now it's placeholder text used to verify routing and localization."
   },
   "MeLogbookPage": {
+    "title": "Logbook"
+  },
+  "Logbook": {
     "title": "Logbook",
-    "body": "This page will eventually show your flight logbook entries. For now it's placeholder text used to verify routing and localization."
+    "download": "Download",
+    "refresh": "Refresh",
+    "reverseOrder": "Reverse order",
+    "summaryCaption": "Logbook totals",
+    "totalFlightTime": "Total Flight Time",
+    "singlePilotTime": "Single Pilot Time",
+    "crossCountry": "X.C.",
+    "operationalCondition": "Operational Condition",
+    "pilotFunction": "Pilot Function",
+    "fstd": "FSTD",
+    "landings": "Landings",
+    "se": "SE",
+    "me": "ME",
+    "pic": "PIC",
+    "spic": "SPIC",
+    "dual": "Dual",
+    "night": "Night",
+    "ift": "IFT",
+    "ifr": "IFR",
+    "instructor": "Instr.",
+    "day": "Day",
+    "date": "Date",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "aircraft": "Aircraft",
+    "place": "Place",
+    "time": "Time",
+    "makeModel": "Make/Model",
+    "registration": "Reg.",
+    "namePic": "Name PIC",
+    "remarks": "Remarks",
+    "page": "Page {number}",
+    "pageCaption": "Page {number} flight log",
+    "flightCount": "{count, plural, one {# flight} other {# flights}}",
+    "blockTotal": "Block total",
+    "flightTime": "Flight time",
+    "noFlights": "No flights recorded yet."
   },
   "MeFlightDutyTimesPage": {
     "title": "Flight / Duty times",
