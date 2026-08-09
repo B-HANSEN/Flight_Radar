@@ -1,0 +1,336 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import Image from 'next/image'
+import { useLocale, useTranslations } from 'next-intl'
+import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
+import { focusRing } from '@/lib/styles'
+import { useDragScroll } from '@/lib/useDragScroll'
+import Toast from './Toast'
+import type {
+  ScheduleAircraft,
+  ScheduleBlock,
+  ScheduleRow,
+} from './ScheduleBoard.types'
+
+type Props = {
+  aircraft?: ScheduleAircraft[]
+  dayRows?: ScheduleRow[]
+  weekRows?: ScheduleRow[]
+  initialDate?: Date
+  onRefresh?: () => void
+}
+
+type ScheduleView = 'day' | 'week'
+
+const DAY_START = 9
+const DAY_END = 21
+const HOUR_LABELS = Array.from(
+  { length: DAY_END - DAY_START + 1 },
+  (_, index) => `${String(DAY_START + index).padStart(2, '0')}:00`,
+)
+const FALLBACK_PHOTO_SRC = '/aircraft/aircraft-placeholder.webp'
+
+const KIND_STYLES: Record<ScheduleBlock['kind'], string> = {
+  reserved: 'bg-black-100 text-black-300',
+  maintenance: 'bg-green-100 text-green-300',
+  hold: 'bg-yellow-100 text-yellow-300',
+  unavailable: 'bg-black-100/70 text-black-300',
+}
+
+function startOfWeek(date: Date): Date {
+  const offset = (date.getDay() + 6) % 7
+  const start = new Date(date)
+  start.setDate(date.getDate() - offset)
+  start.setHours(0, 0, 0, 0)
+  return start
+}
+
+function addDays(date: Date, delta: number): Date {
+  const next = new Date(date)
+  next.setDate(date.getDate() + delta)
+  return next
+}
+
+function dayPct(hour: number) {
+  return ((hour - DAY_START) / HOUR_LABELS.length) * 100
+}
+
+function weekPct(dayIndex: number) {
+  return (dayIndex / 7) * 100
+}
+
+function blockStyle(block: ScheduleBlock, pct: (value: number) => number) {
+  const left = pct(block.start)
+  const width = pct(block.end) - pct(block.start)
+  return { left: `${left}%`, width: `${width}%` }
+}
+
+function ScheduleGrid({
+  aircraft,
+  rows,
+  labels,
+  gridColsClassName,
+  minWidthClassName,
+  labelClassName,
+  blockTextClassName,
+  pct,
+}: {
+  aircraft: ScheduleAircraft[]
+  rows: ScheduleRow[]
+  labels: string[]
+  gridColsClassName: string
+  minWidthClassName: string
+  labelClassName: string
+  blockTextClassName: string
+  pct: (value: number) => number
+}) {
+  return (
+    <div className={minWidthClassName}>
+      <div
+        className={`grid h-9.5 border-b border-black-100 ${gridColsClassName}`}
+      >
+        {labels.map((label) => (
+          <div key={label} className={labelClassName}>
+            {label}
+          </div>
+        ))}
+      </div>
+      {aircraft.map((ac) => {
+        const row = rows.find((r) => r.aircraftId === ac.id)
+        return (
+          <div
+            key={ac.id}
+            className={`relative grid h-18 border-b border-black-100 last:border-b-0 ${gridColsClassName}`}
+          >
+            {labels.map((label) => (
+              <div key={label} className='border-l border-black-100/30' />
+            ))}
+            {(row?.blocks ?? []).map((block) => (
+              <div
+                key={block.id}
+                style={blockStyle(block, pct)}
+                className={`absolute top-2.5 bottom-2.5 flex items-center justify-center overflow-hidden rounded-lg px-1.5 text-center font-secondary font-semibold ${blockTextClassName} ${KIND_STYLES[block.kind]}`}
+              >
+                {block.label}
+              </div>
+            ))}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+export default function ScheduleBoard({
+  aircraft = [],
+  dayRows = [],
+  weekRows = [],
+  initialDate,
+  onRefresh,
+}: Props) {
+  const t = useTranslations('ScheduleBoard')
+  const locale = useLocale()
+  const [view, setView] = useState<ScheduleView>('day')
+  const [referenceDate, setReferenceDate] = useState<Date>(
+    () => initialDate ?? new Date(),
+  )
+  const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const weekStart = useMemo(() => startOfWeek(referenceDate), [referenceDate])
+  const weekEnd = useMemo(() => addDays(weekStart, 6), [weekStart])
+
+  const dayLabel = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }).format(referenceDate),
+    [locale, referenceDate],
+  )
+
+  const weekLabel = useMemo(() => {
+    const startMonth = new Intl.DateTimeFormat(locale, {
+      month: 'short',
+    }).format(weekStart)
+    const endMonth = new Intl.DateTimeFormat(locale, {
+      month: 'short',
+    }).format(weekEnd)
+    const startDay = String(weekStart.getDate()).padStart(2, '0')
+    const endDay = String(weekEnd.getDate()).padStart(2, '0')
+    const year = weekEnd.getFullYear()
+    return startMonth === endMonth
+      ? `${startDay} – ${endDay} ${endMonth} ${year}`
+      : `${startDay} ${startMonth} – ${endDay} ${endMonth} ${year}`
+  }, [locale, weekStart, weekEnd])
+
+  const dayLabels = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, index) => {
+        const date = addDays(weekStart, index)
+        const weekday = new Intl.DateTimeFormat(locale, {
+          weekday: 'short',
+        }).format(date)
+        return `${weekday} ${String(date.getDate()).padStart(2, '0')}`
+      }),
+    [locale, weekStart],
+  )
+
+  function handleStep(delta: number) {
+    setReferenceDate((current) =>
+      addDays(current, view === 'day' ? delta : delta * 7),
+    )
+  }
+
+  function handleRefresh() {
+    setIsRefreshing(true)
+    onRefresh?.()
+  }
+
+  return (
+    <>
+      <section
+        aria-label={t('title')}
+        className='overflow-hidden rounded-xl border border-black-100 bg-white'
+      >
+        <div className='flex flex-wrap items-center gap-4 border-b border-black-100 px-5 py-3.5'>
+          <button
+            type='button'
+            onClick={() => handleStep(-1)}
+            aria-label={t('previousRangeLabel')}
+            className={`rounded-sm p-1 text-black-300 ${focusRing}`}
+          >
+            <ChevronLeft size={18} aria-hidden='true' />
+          </button>
+          <div
+            aria-live='polite'
+            className='min-w-42 font-primary text-sm font-bold whitespace-nowrap text-black-300'
+          >
+            {view === 'day' ? dayLabel : weekLabel}
+          </div>
+          <button
+            type='button'
+            onClick={() => handleStep(1)}
+            aria-label={t('nextRangeLabel')}
+            className={`rounded-sm p-1 text-black-300 ${focusRing}`}
+          >
+            <ChevronRight size={18} aria-hidden='true' />
+          </button>
+
+          <div className='ml-3 flex gap-1 rounded-lg bg-black-100/50 p-0.75'>
+            <button
+              type='button'
+              onClick={() => setView('day')}
+              aria-pressed={view === 'day'}
+              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'day' ? 'bg-white text-blue-300' : 'text-black-200'}`}
+            >
+              {t('dayView')}
+            </button>
+            <button
+              type='button'
+              onClick={() => setView('week')}
+              aria-pressed={view === 'week'}
+              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'week' ? 'bg-white text-blue-300' : 'text-black-200'}`}
+            >
+              {t('weekView')}
+            </button>
+          </div>
+
+          <button
+            type='button'
+            onClick={handleRefresh}
+            aria-label={t('refreshLabel')}
+            className={`ml-auto rounded-sm p-1 text-black-200 ${focusRing}`}
+          >
+            <RefreshCw size={16} aria-hidden='true' />
+          </button>
+        </div>
+
+        {aircraft.length === 0 ? (
+          <p className='px-5 py-12 text-center font-secondary text-sm text-black-200'>
+            {t('noAircraft')}
+          </p>
+        ) : (
+          <div className='grid grid-cols-[220px_1fr]'>
+            <div className='border-r border-black-100'>
+              <div className='flex h-9.5 items-center border-b border-black-100 px-4 font-primary text-xs font-bold tracking-wide text-black-200 uppercase'>
+                {t('singleEngineGroup')}
+              </div>
+              {aircraft.map((ac) => (
+                <div
+                  key={ac.id}
+                  className='flex h-18 items-center gap-2.5 border-b border-black-100 px-4 last:border-b-0'
+                >
+                  <div className='relative size-11 flex-none overflow-hidden rounded-lg bg-black-100/40'>
+                    <Image
+                      src={ac.photoSrc ?? FALLBACK_PHOTO_SRC}
+                      alt={
+                        ac.photoSrc
+                          ? t('photoAlt', { type: ac.type, arcid: ac.arcid })
+                          : ''
+                      }
+                      fill
+                      sizes='44px'
+                      className={
+                        ac.photoSrc ? 'object-cover' : 'object-contain p-1.5'
+                      }
+                    />
+                  </div>
+                  <div>
+                    <div className='font-primary text-sm font-bold text-black-300'>
+                      {ac.arcid}
+                    </div>
+                    <div className='font-secondary text-[11px] text-black-200'>
+                      {ac.type}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div
+              role='group'
+              aria-label={t('gridLabel')}
+              tabIndex={0}
+              className={`overflow-x-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+              {...dragHandlers}
+            >
+              {view === 'day' ? (
+                <ScheduleGrid
+                  aircraft={aircraft}
+                  rows={dayRows}
+                  labels={HOUR_LABELS}
+                  gridColsClassName='grid-cols-[repeat(13,1fr)]'
+                  minWidthClassName='min-w-225'
+                  labelClassName='border-l border-black-100/60 pl-1 font-secondary text-[11px] font-semibold text-black-200'
+                  blockTextClassName='text-xs'
+                  pct={dayPct}
+                />
+              ) : (
+                <ScheduleGrid
+                  aircraft={aircraft}
+                  rows={weekRows}
+                  labels={dayLabels}
+                  gridColsClassName='grid-cols-[repeat(7,1fr)]'
+                  minWidthClassName='min-w-300'
+                  labelClassName='border-l border-black-100/60 text-center font-primary text-xs font-bold text-black-200'
+                  blockTextClassName='text-[11px]'
+                  pct={weekPct}
+                />
+              )}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <Toast
+        message={t('fetching')}
+        open={isRefreshing}
+        onClose={() => setIsRefreshing(false)}
+      />
+    </>
+  )
+}

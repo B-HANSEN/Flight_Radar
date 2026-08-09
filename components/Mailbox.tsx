@@ -106,7 +106,7 @@ export default function Mailbox({
                 type='checkbox'
                 checked={hideAutomatic}
                 onChange={(event) => setHideAutomatic(event.target.checked)}
-                className='size-3.5 accent-blue-200'
+                className='size-3.5 cursor-pointer accent-blue-200'
               />
               {t('hideAutomatic')}
             </label>

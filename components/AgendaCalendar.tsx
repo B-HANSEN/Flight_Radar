@@ -169,12 +169,12 @@ export default function AgendaCalendar({
           <FileText size={16} aria-hidden='true' />
         </button>
 
-        <label className='flex items-center gap-2 py-1 font-secondary text-sm text-black-300'>
+        <label className='flex cursor-pointer items-center gap-2 py-1 font-secondary text-sm text-black-300'>
           <input
             type='checkbox'
             checked={showCancelations}
             onChange={(event) => setShowCancelations(event.target.checked)}
-            className='size-3.5 accent-blue-300'
+            className='size-3.5 cursor-pointer accent-blue-300'
           />
           {t('viewCancelations')}
         </label>

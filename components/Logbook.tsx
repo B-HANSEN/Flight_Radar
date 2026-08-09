@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { ChevronDown, ChevronRight, Download, RefreshCw } from 'lucide-react'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
+import Toast from './Toast'
 import type { LogbookEntry } from './Logbook.types'
 
 type Props = {
@@ -387,6 +388,7 @@ export default function Logbook({
   const t = useTranslations('Logbook')
   const [reverseOrder, setReverseOrder] = useState(false)
   const [closedPages, setClosedPages] = useState<Set<number>>(new Set())
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   const orderedEntries = useMemo(
     () => (reverseOrder ? [...entries].reverse() : entries),
@@ -411,59 +413,72 @@ export default function Logbook({
     })
   }
 
+  function handleRefresh() {
+    setIsRefreshing(true)
+    onRefresh?.()
+  }
+
   return (
-    <section
-      aria-label={t('title')}
-      className='rounded-xl border border-black-100 bg-white p-5'
-    >
-      <div className='mb-6 flex flex-wrap items-center gap-5'>
-        <button
-          type='button'
-          onClick={onDownload}
-          className={`flex items-center gap-1.5 rounded-lg border border-black-100 px-3.5 py-2 font-secondary text-sm font-semibold text-black-300 ${focusRing}`}
-        >
-          <Download size={15} aria-hidden='true' />
-          {t('download')}
-        </button>
-        <button
-          type='button'
-          onClick={onRefresh}
-          className={`flex items-center gap-1.5 rounded-lg border border-black-100 px-3.5 py-2 font-secondary text-sm font-semibold text-black-300 ${focusRing}`}
-        >
-          <RefreshCw size={15} aria-hidden='true' />
-          {t('refresh')}
-        </button>
-        <label className='flex items-center gap-2 font-secondary text-sm text-black-300'>
-          <input
-            type='checkbox'
-            checked={reverseOrder}
-            onChange={(event) => setReverseOrder(event.target.checked)}
-            className='size-3.5 accent-blue-300'
-          />
-          {t('reverseOrder')}
-        </label>
-      </div>
-
-      <LogbookSummary entries={entries} />
-
-      {pages.length === 0 ? (
-        <p className='rounded-lg border border-dashed border-black-100 px-6 py-6 text-center font-secondary text-sm text-black-200'>
-          {t('noFlights')}
-        </p>
-      ) : (
-        pages.map((pageEntries, index) => {
-          const pageNumber = index + 1
-          return (
-            <LogbookPage
-              key={pageNumber}
-              pageNumber={pageNumber}
-              entries={pageEntries}
-              open={!closedPages.has(pageNumber)}
-              onToggle={() => togglePage(pageNumber)}
+    <>
+      <section
+        aria-label={t('title')}
+        className='rounded-xl border border-black-100 bg-white p-5'
+      >
+        <div className='mb-6 flex flex-wrap items-center gap-5'>
+          <button
+            type='button'
+            onClick={onDownload}
+            className={`flex items-center gap-1.5 rounded-lg border border-black-100 px-3.5 py-2 font-secondary text-sm font-semibold text-black-300 ${focusRing}`}
+          >
+            <Download size={15} aria-hidden='true' />
+            {t('download')}
+          </button>
+          <button
+            type='button'
+            onClick={handleRefresh}
+            className={`flex items-center gap-1.5 rounded-lg border border-black-100 px-3.5 py-2 font-secondary text-sm font-semibold text-black-300 ${focusRing}`}
+          >
+            <RefreshCw size={15} aria-hidden='true' />
+            {t('refresh')}
+          </button>
+          <label className='flex cursor-pointer items-center gap-2 font-secondary text-sm text-black-300'>
+            <input
+              type='checkbox'
+              checked={reverseOrder}
+              onChange={(event) => setReverseOrder(event.target.checked)}
+              className='size-3.5 cursor-pointer accent-blue-300'
             />
-          )
-        })
-      )}
-    </section>
+            {t('reverseOrder')}
+          </label>
+        </div>
+
+        <LogbookSummary entries={entries} />
+
+        {pages.length === 0 ? (
+          <p className='rounded-lg border border-dashed border-black-100 px-6 py-6 text-center font-secondary text-sm text-black-200'>
+            {t('noFlights')}
+          </p>
+        ) : (
+          pages.map((pageEntries, index) => {
+            const pageNumber = index + 1
+            return (
+              <LogbookPage
+                key={pageNumber}
+                pageNumber={pageNumber}
+                entries={pageEntries}
+                open={!closedPages.has(pageNumber)}
+                onToggle={() => togglePage(pageNumber)}
+              />
+            )
+          })
+        )}
+      </section>
+
+      <Toast
+        message={t('fetching')}
+        open={isRefreshing}
+        onClose={() => setIsRefreshing(false)}
+      />
+    </>
   )
 }

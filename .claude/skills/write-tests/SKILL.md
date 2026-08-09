@@ -22,5 +22,6 @@ Hit the per-file 80% lines/branches/functions/statements threshold defined in `v
 ## After writing
 
 Run `npm run test:coverage` and check the specific file's row. If it's below 80% on any metric, look at the "Uncovered Line #s" column:
+
 - If the gap is a real untested scenario, add a test for it.
 - If the gap is trivial or effectively unreachable, don't write a fake test just to chase the number — tell the user what's uncovered and why you left it, so they can decide.
