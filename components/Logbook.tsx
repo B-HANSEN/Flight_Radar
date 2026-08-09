@@ -222,7 +222,7 @@ function LogbookPage({
         <span className='font-primary text-sm font-bold text-black-300'>
           {t('page', { number: pageNumber })}
         </span>
-        <span className='font-secondary text-sm text-black-200'>
+        <span className='font-secondary text-sm text-black-300'>
           &middot; {t('flightCount', { count: entries.length })}
         </span>
       </button>

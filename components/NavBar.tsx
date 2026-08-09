@@ -93,7 +93,9 @@ export default function NavBar({
         className={`list-none flex-1 items-center gap-1 ${collapsed ? 'hidden' : 'hidden md:flex'}`}
       >
         {items.map(({ key, href, icon: Icon }) => {
-          const isActive = currentPath === href
+          const isActive =
+            currentPath === href ||
+            (href !== '/' && currentPath.startsWith(`${href}/`))
           return (
             <li key={key}>
               <Link

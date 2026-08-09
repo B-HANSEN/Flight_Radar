@@ -88,6 +88,18 @@ describe('NavBar', () => {
     )
   })
 
+  it('marks Me as active for nested /me sub-paths', () => {
+    mockUsePathname.mockReturnValue('/me/documents')
+    renderNavBar()
+    expect(screen.getByRole('link', { name: 'Me' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    expect(screen.getByRole('link', { name: 'Home' })).not.toHaveAttribute(
+      'aria-current',
+    )
+  })
+
   it('lets activePath override the current pathname for the active state', () => {
     renderNavBar({ activePath: '/news' })
     expect(screen.getByRole('link', { name: 'News' })).toHaveAttribute(
