@@ -78,8 +78,20 @@
     "body": "Safety bulletins, maintenance reminders, and operational updates for pilots and ground crew."
   },
   "SchedulePage": {
-    "title": "Schedule",
-    "body": "This page will eventually show live departure and arrival schedules. For now it's placeholder text used to verify routing and localization."
+    "title": "Schedule"
+  },
+  "ScheduleBoard": {
+    "title": "Aircraft schedule",
+    "dayView": "Day",
+    "weekView": "Week",
+    "previousRangeLabel": "Previous",
+    "nextRangeLabel": "Next",
+    "refreshLabel": "Refresh",
+    "singleEngineGroup": "Single Engine",
+    "noAircraft": "No aircraft to show.",
+    "gridLabel": "Schedule grid, scrollable",
+    "photoAlt": "{type} ({arcid})",
+    "fetching": "Fetching…"
   },
   "AircraftPage": {
     "title": "Aircraft"
@@ -241,15 +253,24 @@
     "flightCount": "{count, plural, one {# flight} other {# flights}}",
     "blockTotal": "Block total",
     "flightTime": "Flight time",
-    "noFlights": "No flights recorded yet."
+    "noFlights": "No flights recorded yet.",
+    "fetching": "Fetching…"
   },
   "MeFlightDutyTimesPage": {
     "title": "Flight / Duty times",
     "body": "This page will eventually show your flight and duty time records. For now it's placeholder text used to verify routing and localization."
   },
   "MeDocumentsPage": {
+    "title": "Documents"
+  },
+  "DocumentsBrowser": {
     "title": "Documents",
-    "body": "This page will eventually show the documents attached to your record. For now it's placeholder text used to verify routing and localization."
+    "breadcrumbLabel": "Breadcrumb",
+    "root": "Root",
+    "aircraft": "Aircraft",
+    "fileCount": "{count, plural, one {# file} other {# files}}",
+    "noFolders": "No folders available.",
+    "noFiles": "No files in this folder."
   },
   "MeSoloPage": {
     "title": "Solo",
@@ -260,8 +281,21 @@
     "body": "This page will eventually show your availability for bookings and rosters. For now it's placeholder text used to verify routing and localization."
   },
   "MeEmailsPage": {
-    "title": "Emails",
-    "body": "This page will eventually show emails and notifications related to your record. For now it's placeholder text used to verify routing and localization."
+    "title": "Emails"
+  },
+  "Mailbox": {
+    "title": "Mailbox",
+    "emailCount": "{count, plural, one {# email} other {# emails}}",
+    "unreadCount": "{count, plural, one {# unread} other {# unread}}",
+    "hideAutomatic": "Hide automatic notifications",
+    "refreshLabel": "Refresh",
+    "fetching": "Fetching…",
+    "to": "to {name}",
+    "noEmails": "No emails to show.",
+    "noVisibleEmails": "No emails match the current filter."
+  },
+  "Toast": {
+    "dismiss": "Dismiss"
   },
   "BookingDetailModal": {
     "title": "Booking details",

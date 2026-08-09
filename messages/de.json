@@ -78,8 +78,20 @@
     "body": "Sicherheitsbulletins, Wartungserinnerungen und Betriebsupdates für Piloten und Bodenpersonal."
   },
   "SchedulePage": {
-    "title": "Flugplan",
-    "body": "Diese Seite wird später aktuelle Abflug- und Ankunftszeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "Flugplan"
+  },
+  "ScheduleBoard": {
+    "title": "Flugzeugbelegung",
+    "dayView": "Tag",
+    "weekView": "Woche",
+    "previousRangeLabel": "Zurück",
+    "nextRangeLabel": "Weiter",
+    "refreshLabel": "Aktualisieren",
+    "singleEngineGroup": "Einmotorig",
+    "noAircraft": "Keine Flugzeuge vorhanden.",
+    "gridLabel": "Belegungsraster, scrollbar",
+    "photoAlt": "{type} ({arcid})",
+    "fetching": "Wird geladen …"
   },
   "AircraftPage": {
     "title": "Flugzeuge"
@@ -241,15 +253,24 @@
     "flightCount": "{count, plural, one {# Flug} other {# Flüge}}",
     "blockTotal": "Blocksumme",
     "flightTime": "Flugzeit",
-    "noFlights": "Noch keine Flüge erfasst."
+    "noFlights": "Noch keine Flüge erfasst.",
+    "fetching": "Wird geladen …"
   },
   "MeFlightDutyTimesPage": {
     "title": "Flug-/Dienstzeiten",
     "body": "Diese Seite wird später Ihre Flug- und Dienstzeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "MeDocumentsPage": {
+    "title": "Dokumente"
+  },
+  "DocumentsBrowser": {
     "title": "Dokumente",
-    "body": "Diese Seite wird später die Dokumente zu Ihrer Akte anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "breadcrumbLabel": "Brotkrümel-Navigation",
+    "root": "Stammverzeichnis",
+    "aircraft": "Flugzeuge",
+    "fileCount": "{count, plural, one {# Datei} other {# Dateien}}",
+    "noFolders": "Keine Ordner verfügbar.",
+    "noFiles": "Keine Dateien in diesem Ordner."
   },
   "MeSoloPage": {
     "title": "Alleinflug",
@@ -260,8 +281,21 @@
     "body": "Diese Seite wird später Ihre Verfügbarkeit für Buchungen und Dienstpläne anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "MeEmailsPage": {
-    "title": "E-Mails",
-    "body": "Diese Seite wird später E-Mails und Benachrichtigungen zu Ihrer Akte anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "E-Mails"
+  },
+  "Mailbox": {
+    "title": "Postfach",
+    "emailCount": "{count, plural, one {# E-Mail} other {# E-Mails}}",
+    "unreadCount": "{count, plural, one {# ungelesen} other {# ungelesen}}",
+    "hideAutomatic": "Automatische Benachrichtigungen ausblenden",
+    "refreshLabel": "Aktualisieren",
+    "fetching": "Wird geladen …",
+    "to": "an {name}",
+    "noEmails": "Keine E-Mails vorhanden.",
+    "noVisibleEmails": "Keine E-Mails entsprechen dem aktuellen Filter."
+  },
+  "Toast": {
+    "dismiss": "Schließen"
   },
   "BookingDetailModal": {
     "title": "Buchungsdetails",

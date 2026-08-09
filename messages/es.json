@@ -78,8 +78,20 @@
     "body": "Boletines de seguridad, recordatorios de mantenimiento y actualizaciones operativas para pilotos y personal de tierra."
   },
   "SchedulePage": {
-    "title": "Horario",
-    "body": "Esta página mostrará más adelante los horarios de salida y llegada en vivo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Horario"
+  },
+  "ScheduleBoard": {
+    "title": "Programación de aeronaves",
+    "dayView": "Día",
+    "weekView": "Semana",
+    "previousRangeLabel": "Anterior",
+    "nextRangeLabel": "Siguiente",
+    "refreshLabel": "Actualizar",
+    "singleEngineGroup": "Motor único",
+    "noAircraft": "No hay aeronaves que mostrar.",
+    "gridLabel": "Cuadrícula de programación, desplazable",
+    "photoAlt": "{type} ({arcid})",
+    "fetching": "Cargando…"
   },
   "AircraftPage": {
     "title": "Aeronaves"
@@ -241,15 +253,24 @@
     "flightCount": "{count, plural, one {# vuelo} other {# vuelos}}",
     "blockTotal": "Total de bloque",
     "flightTime": "Tiempo de vuelo",
-    "noFlights": "Todavía no hay vuelos registrados."
+    "noFlights": "Todavía no hay vuelos registrados.",
+    "fetching": "Cargando…"
   },
   "MeFlightDutyTimesPage": {
     "title": "Horas de vuelo / servicio",
     "body": "Esta página mostrará más adelante tus registros de horas de vuelo y de servicio. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "MeDocumentsPage": {
+    "title": "Documentos"
+  },
+  "DocumentsBrowser": {
     "title": "Documentos",
-    "body": "Esta página mostrará más adelante los documentos asociados a tu expediente. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "breadcrumbLabel": "Ruta de navegación",
+    "root": "Raíz",
+    "aircraft": "Aeronaves",
+    "fileCount": "{count, plural, one {# archivo} other {# archivos}}",
+    "noFolders": "No hay carpetas disponibles.",
+    "noFiles": "No hay archivos en esta carpeta."
   },
   "MeSoloPage": {
     "title": "Solo",
@@ -260,8 +281,21 @@
     "body": "Esta página mostrará más adelante tu disponibilidad para reservas y turnos. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "MeEmailsPage": {
-    "title": "Correos",
-    "body": "Esta página mostrará más adelante los correos y notificaciones de tu expediente. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Correos"
+  },
+  "Mailbox": {
+    "title": "Buzón",
+    "emailCount": "{count, plural, one {# correo} other {# correos}}",
+    "unreadCount": "{count, plural, one {# sin leer} other {# sin leer}}",
+    "hideAutomatic": "Ocultar notificaciones automáticas",
+    "refreshLabel": "Actualizar",
+    "fetching": "Cargando…",
+    "to": "para {name}",
+    "noEmails": "No hay correos que mostrar.",
+    "noVisibleEmails": "Ningún correo coincide con el filtro actual."
+  },
+  "Toast": {
+    "dismiss": "Cerrar"
   },
   "BookingDetailModal": {
     "title": "Detalles de la reserva",

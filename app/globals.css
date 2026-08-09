@@ -25,6 +25,8 @@ body {
   font-family: var(--font-primary);
 }
 
-button:not(:disabled) {
-  cursor: pointer;
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+  }
 }

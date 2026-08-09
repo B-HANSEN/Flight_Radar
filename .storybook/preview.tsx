@@ -6,7 +6,7 @@ import '../app/globals.css'
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <NextIntlClientProvider locale="en" messages={enMessages}>
+      <NextIntlClientProvider locale='en' messages={enMessages}>
         <Story />
       </NextIntlClientProvider>
     ),
