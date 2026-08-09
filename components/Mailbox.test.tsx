@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import Mailbox from './Mailbox'
 import type { MailboxEmail } from './Mailbox.types'
@@ -92,6 +92,24 @@ describe('Mailbox', () => {
       screen.getByRole('heading', { name: 'We value your feedback' }),
     ).toBeInTheDocument()
     expect(screen.getByText('Please complete our survey.')).toBeInTheDocument()
+  })
+
+  it('shows a self-dismissing fetching toast and calls onRefresh when refresh is clicked', () => {
+    vi.useFakeTimers()
+    const onRefresh = vi.fn()
+    renderMailbox({ onRefresh })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh' }))
+
+    expect(onRefresh).toHaveBeenCalledOnce()
+    expect(screen.getByRole('status')).toHaveTextContent('Fetching…')
+
+    act(() => {
+      vi.advanceTimersByTime(3000)
+    })
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+
+    vi.useRealTimers()
   })
 
   it('shows an empty-filter message when every email is hidden by the filter', () => {
