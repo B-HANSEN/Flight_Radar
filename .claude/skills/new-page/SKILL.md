@@ -1,4 +1,5 @@
 ---
+name: new-page
 description: Add a new locale-routed page under app/[locale]/ in this Next.js app-router repo. Use when the user asks to add a page, add a route, or create a new section of the site. Ensures generateStaticParams, setRequestLocale, and matching message keys land in all three locale files in one pass, since a missing key in one locale fails silently only when that locale is visited.
 ---
 

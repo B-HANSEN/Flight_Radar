@@ -1,4 +1,5 @@
 ---
+name: write-stories
 description: Write or add a Storybook CSF3 story for a component in this repo (*.stories.tsx). Use when the user asks to write a story, add Storybook coverage, or document a component in Storybook. Defaults to one control-driven story per component instead of several near-duplicate hardcoded variants.
 ---
 

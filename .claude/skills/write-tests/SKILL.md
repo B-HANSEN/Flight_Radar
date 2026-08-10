@@ -1,4 +1,5 @@
 ---
+name: write-tests
 description: Write or add Vitest/Testing Library tests for a component in this repo (*.test.tsx). Use when the user asks to write tests, add test coverage, or when a component is missing a test file needed to hit the 80% per-file coverage threshold. Aims for the fewest tests that meaningfully cover real behavior — no padding, no snapshot tests, no fluff.
 ---
 
