@@ -50,7 +50,7 @@ function renderLanguageSwitcher() {
 
 describe('LanguageSwitcher', () => {
   beforeEach(() => {
-    mockUsePathname.mockReturnValue('/flights')
+    mockUsePathname.mockReturnValue('/schedule')
   })
 
   it('shows the active locale as the button label and keeps the menu closed by default', () => {
@@ -73,7 +73,7 @@ describe('LanguageSwitcher', () => {
       ['Español', 'es'],
     ].forEach(([name, locale]) => {
       const link = screen.getByRole('link', { name: new RegExp(name) })
-      expect(link).toHaveAttribute('href', '/flights')
+      expect(link).toHaveAttribute('href', '/schedule')
       expect(link).toHaveAttribute('data-locale', locale)
       expect(screen.getByText(name)).toHaveAttribute('lang', locale)
     })

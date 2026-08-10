@@ -6,7 +6,6 @@
     "me": "Me",
     "news": "News",
     "schedule": "Schedule",
-    "flights": "Flights",
     "aircraft": "Aircraft",
     "mailing": "Mailing",
     "documents": "Documents",
@@ -44,10 +43,6 @@
   "AboutPage": {
     "title": "About this project",
     "body": "Flight Radar is a light-weight flight tracking project, built with Next.js, TypeScript and Tailwind CSS."
-  },
-  "FlightsPage": {
-    "title": "Flights",
-    "body": "This page will eventually show a live flight tracking dashboard. For now it's placeholder text used to verify routing and localization."
   },
   "MePage": {
     "profileCard": {

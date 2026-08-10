@@ -66,7 +66,6 @@ describe('NavBar', () => {
       ['Me', '/me'],
       ['News', '/news'],
       ['Schedule', '/schedule'],
-      ['Flights', '/flights'],
       ['Aircraft', '/aircraft'],
       ['Mailing', '/mailing'],
       ['Documents', '/documents'],
@@ -77,9 +76,9 @@ describe('NavBar', () => {
   })
 
   it('marks only the nav item matching the current path as active', () => {
-    mockUsePathname.mockReturnValue('/flights')
+    mockUsePathname.mockReturnValue('/aircraft')
     renderNavBar()
-    expect(screen.getByRole('link', { name: 'Flights' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Aircraft' })).toHaveAttribute(
       'aria-current',
       'page',
     )
@@ -129,8 +128,8 @@ describe('NavBar', () => {
   it('calls onItemClick with the href of the clicked nav item', () => {
     const onItemClick = vi.fn()
     renderNavBar({ onItemClick })
-    fireEvent.click(screen.getByRole('link', { name: 'Flights' }))
-    expect(onItemClick).toHaveBeenCalledWith('/flights')
+    fireEvent.click(screen.getByRole('link', { name: 'Aircraft' }))
+    expect(onItemClick).toHaveBeenCalledWith('/aircraft')
   })
 
   it('renders the language switcher', () => {

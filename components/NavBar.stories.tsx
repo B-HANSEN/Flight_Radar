@@ -14,7 +14,6 @@ const meta: Meta<typeof NavBar> = {
         '/me',
         '/news',
         '/schedule',
-        '/flights',
         '/aircraft',
         '/mailing',
         '/documents',

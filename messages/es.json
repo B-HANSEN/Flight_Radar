@@ -6,7 +6,6 @@
     "me": "Yo",
     "news": "Noticias",
     "schedule": "Horario",
-    "flights": "Vuelos",
     "aircraft": "Aeronaves",
     "mailing": "Correspondencia",
     "documents": "Documentos",
@@ -44,10 +43,6 @@
   "AboutPage": {
     "title": "Acerca de este proyecto",
     "body": "Flight Radar es un proyecto ligero de seguimiento de vuelos, creado con Next.js, TypeScript y Tailwind CSS."
-  },
-  "FlightsPage": {
-    "title": "Vuelos",
-    "body": "Esta página mostrará más adelante un panel de seguimiento de vuelos en tiempo real. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "MePage": {
     "profileCard": {

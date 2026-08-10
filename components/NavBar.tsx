@@ -5,7 +5,6 @@ import {
   UserCircle,
   Newspaper,
   CalendarDays,
-  Plane,
   PlaneTakeoff,
   Mail,
   FileText,
@@ -19,14 +18,7 @@ import LanguageSwitcher from './LanguageSwitcher'
 import NavClock from './NavClock'
 
 type NavItemKey =
-  | 'home'
-  | 'me'
-  | 'news'
-  | 'schedule'
-  | 'flights'
-  | 'aircraft'
-  | 'mailing'
-  | 'documents'
+  'home' | 'me' | 'news' | 'schedule' | 'aircraft' | 'mailing' | 'documents'
 
 type NavItem = {
   key: NavItemKey
@@ -46,7 +38,6 @@ const items: NavItem[] = [
   { key: 'me', href: '/me', icon: UserCircle },
   { key: 'news', href: '/news', icon: Newspaper },
   { key: 'schedule', href: '/schedule', icon: CalendarDays },
-  { key: 'flights', href: '/flights', icon: Plane },
   { key: 'aircraft', href: '/aircraft', icon: PlaneTakeoff },
   { key: 'mailing', href: '/mailing', icon: Mail },
   { key: 'documents', href: '/documents', icon: FileText },
