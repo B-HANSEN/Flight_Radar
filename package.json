@@ -2,6 +2,9 @@
   "name": "flight-radar",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "server"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,7 +16,9 @@
     "test:watch": "vitest --config config/vitest.config.ts",
     "test:coverage": "vitest run --coverage --config config/vitest.config.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "server:dev": "npm run start:dev --workspace server",
+    "server:build": "npm run build --workspace server"
   },
   "dependencies": {
     "lucide-react": "^1.28.0",

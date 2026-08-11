@@ -2,9 +2,11 @@
 
 # dependencies
 /node_modules
+server/node_modules
 
 # testing
 /coverage
+server/coverage
 
 # next.js
 /.next/
@@ -12,6 +14,7 @@
 
 # production
 /build
+server/dist
 
 # misc
 .DS_Store
@@ -32,6 +35,7 @@ next-env.d.ts
 
 # Local scratch files (not part of the app)
 TODO.md
+TODO-BE-setup.md
 .claude/settings.local.json
 /designs
 
