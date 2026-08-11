@@ -1,39 +1,76 @@
 # Flight Radar
 
-A light-weight flight tracking web app, built with Next.js.
+A light-weight flight tracking web app: a Next.js frontend backed by a NestJS +
+MongoDB API, in one repo as an npm workspace.
 
 ## Tech stack
+
+**Frontend** (repo root)
 
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
 - [next-intl](https://next-intl.dev) — English (default), German, Spanish
 - [Tailwind CSS](https://tailwindcss.com)
 - [Storybook](https://storybook.js.org) for component documentation
 - [Vitest](https://vitest.dev) + [React Testing Library](https://testing-library.com/react) for testing
+
+**Backend** (`server/`, npm workspace)
+
+- [NestJS](https://nestjs.com) + TypeScript
+- [MongoDB](https://www.mongodb.com) via [Mongoose](https://mongoosejs.com) (Atlas in production)
+- `class-validator`/`class-transformer` for env and request validation
+- `helmet` + scoped CORS
+- [Jest](https://jestjs.io) for testing
+
+**Shared**
+
 - [Prettier](https://prettier.io) + ESLint for formatting/linting
 
 ## Getting started
 
 ```bash
-npm install
-npm run dev
+npm install          # installs both the frontend and server/ workspace
+npm run dev:all       # frontend + backend together (needs server/.env, see below)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — it redirects to `/en` by default.
+Or run them separately:
+
+```bash
+npm run dev           # frontend dev server
+npm run server:dev    # backend dev server (needs server/.env, see below)
+```
+
+Open [http://localhost:3000](http://localhost:3000) for the frontend — it
+redirects to `/en` by default. The backend listens on
+[http://localhost:4000](http://localhost:4000); check it's up via
+`curl http://localhost:4000/health`.
+
+The backend needs a `server/.env` (gitignored) — copy `server/.env.example`
+and fill in `MONGODB_URI` (Atlas connection string) and `CORS_ORIGIN`.
 
 ## Scripts
 
-| Script                    | Description                       |
-| ------------------------- | --------------------------------- |
-| `npm run dev`             | Start the dev server              |
-| `npm run build`           | Production build                  |
-| `npm run start`           | Run the production build          |
-| `npm run lint`            | Lint the codebase                 |
-| `npm run format`          | Format the codebase with Prettier |
-| `npm run format:check`    | Check formatting without writing  |
-| `npm run test`            | Run unit tests                    |
-| `npm run test:watch`      | Run unit tests in watch mode      |
-| `npm run storybook`       | Start Storybook locally           |
-| `npm run build-storybook` | Build a static Storybook site     |
+Run from the repo root — npm workspaces resolves both projects from one
+`node_modules`.
+
+| Script                    | Description                               |
+| ------------------------- | ----------------------------------------- |
+| `npm run dev`             | Start the frontend dev server             |
+| `npm run dev:all`         | Start the frontend and backend together   |
+| `npm run build`           | Frontend production build                 |
+| `npm run start`           | Run the frontend production build         |
+| `npm run lint`            | Lint the frontend codebase                |
+| `npm run format`          | Format the whole repo with Prettier       |
+| `npm run format:check`    | Check formatting without writing          |
+| `npm run test`            | Run frontend unit tests                   |
+| `npm run test:watch`      | Run frontend unit tests in watch mode     |
+| `npm run test:coverage`   | Frontend unit tests with coverage         |
+| `npm run storybook`       | Start Storybook locally                   |
+| `npm run build-storybook` | Build a static Storybook site             |
+| `npm run server:dev`      | Start the backend dev server (watch mode) |
+| `npm run server:build`    | Backend production build                  |
+
+Backend-specific scripts (`lint`, `test`, `test:cov`, `test:e2e`, ...) live in
+`server/package.json` — run them via `npm run <script> --workspace server`.
 
 ## Project structure
 
@@ -42,4 +79,9 @@ app/[locale]/    Pages (App Router, one segment per locale)
 components/      React components, documented with Storybook
 i18n/            next-intl routing/navigation/request config
 messages/        Translation files (en, de, es)
+server/          NestJS backend (npm workspace)
+  src/
+    config/        Env validation
+    health/        GET /health — reports API + Mongo connection status
+    app.module.ts   Wires ConfigModule, MongooseModule, feature modules
 ```
