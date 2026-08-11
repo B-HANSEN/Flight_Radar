@@ -1,7 +1,11 @@
 # Flight Radar
 
-A light-weight flight tracking web app: a Next.js frontend backed by a NestJS +
+A flight school management platform: a Next.js frontend backed by a NestJS +
 MongoDB API, in one repo as an npm workspace.
+
+Public pages (home, about, news, aircraft directory, schedule overview) are
+visible to anyone; a `/me` area lets students track their own progress.
+Instructor tooling is planned for later.
 
 ## Tech stack
 
