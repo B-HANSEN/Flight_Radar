@@ -10,7 +10,6 @@ const meta: Meta<typeof AgendaCalendar> = {
     events: DUMMY_AGENDA_EVENTS,
     initialMonth: { year: 2026, month: 7 },
     onRefresh: fn(),
-    onViewDocuments: fn(),
   },
 }
 export default meta

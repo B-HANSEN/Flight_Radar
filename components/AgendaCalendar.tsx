@@ -2,40 +2,32 @@
 
 import { useId, useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
-import { ChevronLeft, ChevronRight, FileText, RefreshCw } from 'lucide-react'
+import {
+  CalendarCheck,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
+} from 'lucide-react'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
+import {
+  addMonths,
+  clampMonth,
+  getMonthGridDates,
+  toMonthIndex,
+  type MonthKey,
+} from '@/lib/monthGrid'
 import BookingDetailModal from './BookingDetailModal'
 import type { BookingEvent, CalendarEvent } from './AgendaCalendar.types'
-
-type MonthKey = { year: number; month: number }
 
 type Props = {
   events?: CalendarEvent[]
   initialMonth?: MonthKey
   onRefresh?: () => void
-  onViewDocuments?: () => void
 }
 
-const MIN_MONTH: MonthKey = { year: 2026, month: 0 }
 const MAX_MONTHS_AHEAD = 3
-
-function toMonthIndex(month: MonthKey): number {
-  return month.year * 12 + month.month
-}
-
-function addMonths(month: MonthKey, delta: number): MonthKey {
-  const total = toMonthIndex(month) + delta
-  return { year: Math.floor(total / 12), month: ((total % 12) + 12) % 12 }
-}
-
-function clampMonth(month: MonthKey, min: MonthKey, max: MonthKey): MonthKey {
-  const clamped = Math.min(
-    Math.max(toMonthIndex(month), toMonthIndex(min)),
-    toMonthIndex(max),
-  )
-  return { year: Math.floor(clamped / 12), month: clamped % 12 }
-}
+const MAX_MONTHS_BEHIND = 3
 
 function toISODate(date: Date): string {
   const year = date.getFullYear()
@@ -44,51 +36,28 @@ function toISODate(date: Date): string {
   return `${year}-${monthStr}-${dayStr}`
 }
 
-function getMonthGridDates(month: MonthKey): Date[] {
-  const firstOfMonth = new Date(month.year, month.month, 1)
-  const leadingDays = (firstOfMonth.getDay() + 6) % 7
-  const gridStart = new Date(month.year, month.month, 1 - leadingDays)
-
-  const lastOfMonth = new Date(month.year, month.month + 1, 0)
-  const trailingDays = 6 - ((lastOfMonth.getDay() + 6) % 7)
-  const gridEnd = new Date(
-    month.year,
-    month.month,
-    lastOfMonth.getDate() + trailingDays,
-  )
-
-  const dates: Date[] = []
-  for (
-    const cursor = new Date(gridStart);
-    cursor <= gridEnd;
-    cursor.setDate(cursor.getDate() + 1)
-  ) {
-    dates.push(new Date(cursor))
-  }
-  return dates
-}
-
 export default function AgendaCalendar({
   events = [],
   initialMonth,
   onRefresh,
-  onViewDocuments,
 }: Props) {
   const t = useTranslations('AgendaCalendar')
   const locale = useLocale()
   const monthLabelId = useId()
   const today = useMemo(() => new Date(), [])
   const currentMonth = { year: today.getFullYear(), month: today.getMonth() }
+  const minMonth = addMonths(currentMonth, -MAX_MONTHS_BEHIND)
   const maxMonth = addMonths(currentMonth, MAX_MONTHS_AHEAD)
   const [month, setMonth] = useState<MonthKey>(() =>
-    clampMonth(initialMonth ?? currentMonth, MIN_MONTH, maxMonth),
+    clampMonth(initialMonth ?? currentMonth, minMonth, maxMonth),
   )
   const [showCancelations, setShowCancelations] = useState(false)
   const [activeEvent, setActiveEvent] = useState<BookingEvent | null>(null)
   const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
 
-  const isAtMin = toMonthIndex(month) === toMonthIndex(MIN_MONTH)
+  const isAtMin = toMonthIndex(month) === toMonthIndex(minMonth)
   const isAtMax = toMonthIndex(month) === toMonthIndex(maxMonth)
+  const isAtCurrentMonth = toMonthIndex(month) === toMonthIndex(currentMonth)
 
   const monthLabel = useMemo(
     () =>
@@ -162,11 +131,12 @@ export default function AgendaCalendar({
 
         <button
           type='button'
-          onClick={onViewDocuments}
-          aria-label={t('viewDocuments')}
-          className={`rounded-sm p-1 text-black-200 ${focusRing}`}
+          onClick={() => setMonth(currentMonth)}
+          disabled={isAtCurrentMonth}
+          aria-label={t('today')}
+          className={`rounded-sm p-1 text-black-200 disabled:opacity-30 ${focusRing}`}
         >
-          <FileText size={16} aria-hidden='true' />
+          <CalendarCheck size={16} aria-hidden='true' />
         </button>
 
         <label className='flex cursor-pointer items-center gap-2 py-1 font-secondary text-sm text-black-300'>
