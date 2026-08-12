@@ -47,21 +47,36 @@ export default function Mailbox({
     emails[0]?.id ?? null,
   )
   const [hideAutomatic, setHideAutomatic] = useState(true)
+  const [hideRead, setHideRead] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [locallyReadIds, setLocallyReadIds] = useState<ReadonlySet<string>>(
+    new Set(),
+  )
 
   function handleRefresh() {
     setIsRefreshing(true)
+    setLocallyReadIds(new Set())
     onRefresh?.()
   }
 
-  const visibleEmails = hideAutomatic
-    ? emails.filter((email) => !email.automatic)
-    : emails
+  function isRead(email: MailboxEmail) {
+    return email.read !== false || locallyReadIds.has(email.id)
+  }
+
+  function markAsRead(email: MailboxEmail) {
+    if (email.read === false && !locallyReadIds.has(email.id)) {
+      setLocallyReadIds((previous) => new Set(previous).add(email.id))
+    }
+  }
+
+  const visibleEmails = emails
+    .filter((email) => !hideAutomatic || !email.automatic)
+    .filter((email) => !hideRead || !isRead(email))
   const selected =
     visibleEmails.find((email) => email.id === selectedId) ??
     visibleEmails[0] ??
     null
-  const unreadCount = emails.filter((email) => email.read === false).length
+  const unreadCount = emails.filter((email) => !isRead(email)).length
 
   if (emails.length === 0) {
     return (
@@ -96,7 +111,11 @@ export default function Mailbox({
               </button>
             </div>
             <div className='flex items-center gap-3 font-secondary text-xs text-black-200'>
-              <span className='inline-flex items-center gap-1.5'>
+              <span
+                className='inline-flex items-center gap-1.5'
+                aria-live='polite'
+                aria-atomic='true'
+              >
                 <span className='size-1.75 rounded-full bg-blue-200' />
                 {t('unreadCount', { count: unreadCount })}
               </span>
@@ -109,6 +128,15 @@ export default function Mailbox({
                 className='size-3.5 cursor-pointer accent-blue-200'
               />
               {t('hideAutomatic')}
+            </label>
+            <label className='flex cursor-pointer items-center gap-2 font-secondary text-xs text-black-200'>
+              <input
+                type='checkbox'
+                checked={hideRead}
+                onChange={(event) => setHideRead(event.target.checked)}
+                className='size-3.5 cursor-pointer accent-blue-200'
+              />
+              {t('hideRead')}
             </label>
           </div>
 
@@ -124,10 +152,16 @@ export default function Mailbox({
                   <li key={email.id}>
                     <button
                       type='button'
-                      onClick={() => setSelectedId(email.id)}
+                      onClick={() => {
+                        setSelectedId(email.id)
+                        markAsRead(email)
+                      }}
                       aria-current={isSelected ? 'true' : undefined}
                       className={`flex w-full items-start gap-3 border-b border-black-100 px-4.5 py-3.5 text-left ${focusRing} ${isSelected ? 'bg-blue-100/40' : 'hover:bg-black-100/20'}`}
                     >
+                      {!isRead(email) && (
+                        <span className='sr-only'>{t('unreadLabel')}</span>
+                      )}
                       <span
                         className={`flex size-9 flex-none items-center justify-center rounded-full font-primary text-xs font-bold text-white ${avatarColor(email.id)}`}
                       >
@@ -144,7 +178,9 @@ export default function Mailbox({
                             {email.date}
                           </span>
                         </span>
-                        <span className='mt-0.5 block truncate font-secondary text-sm font-semibold text-black-300'>
+                        <span
+                          className={`mt-0.5 block truncate font-secondary text-sm text-black-300 ${isRead(email) ? 'font-normal' : 'font-bold'}`}
+                        >
                           {email.subject}
                         </span>
                         <span

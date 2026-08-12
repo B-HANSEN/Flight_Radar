@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import Mailbox from './Mailbox'
 import type { MailboxEmail } from './Mailbox.types'
@@ -78,6 +78,65 @@ describe('Mailbox', () => {
     expect(
       screen.getByRole('button', { name: /Training Office/ }),
     ).toBeInTheDocument()
+  })
+
+  it('hides read emails when the hide-read filter checkbox is checked', () => {
+    renderMailbox()
+
+    fireEvent.click(
+      screen.getByRole('checkbox', { name: 'Hide automatic notifications' }),
+    )
+    expect(
+      screen.getByRole('button', { name: /Training Office/ }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Hide read emails' }))
+
+    expect(
+      screen.queryByRole('button', { name: /Training Office/ }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /Operations Desk/ }),
+    ).toBeInTheDocument()
+  })
+
+  it('marks an email as read when opened, updating the unread count and clearing the bold subject style, without notifying the backend', () => {
+    renderMailbox()
+
+    const opsButton = screen.getByRole('button', { name: /Operations Desk/ })
+    const subject = within(opsButton).getByText('Runway closure')
+    expect(subject).toHaveClass('font-bold')
+    expect(screen.getByText('1 unread')).toBeInTheDocument()
+
+    fireEvent.click(opsButton)
+
+    expect(subject).toHaveClass('font-normal')
+    expect(subject).not.toHaveClass('font-bold')
+    expect(screen.getByText('0 unread')).toBeInTheDocument()
+  })
+
+  it('exposes an "Unread" label to assistive tech only while an email is unread', () => {
+    renderMailbox()
+
+    const opsButton = screen.getByRole('button', { name: /Operations Desk/ })
+    expect(within(opsButton).getByText('Unread:')).toBeInTheDocument()
+
+    fireEvent.click(opsButton)
+
+    expect(within(opsButton).queryByText('Unread:')).not.toBeInTheDocument()
+  })
+
+  it('resets locally read emails back to their backend read state on refresh', () => {
+    const onRefresh = vi.fn()
+    renderMailbox({ onRefresh })
+
+    fireEvent.click(screen.getByRole('button', { name: /Operations Desk/ }))
+    expect(screen.getByText('0 unread')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh' }))
+
+    expect(onRefresh).toHaveBeenCalledOnce()
+    expect(screen.getByText('1 unread')).toBeInTheDocument()
   })
 
   it('switches the reading pane when a different email is selected', () => {
