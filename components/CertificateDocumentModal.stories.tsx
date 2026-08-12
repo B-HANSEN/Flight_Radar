@@ -17,7 +17,7 @@ const SAMPLE_CERTIFICATE: Certificate = {
 
 const meta: Meta<typeof CertificateDocumentModal> = {
   component: CertificateDocumentModal,
-  title: 'Components/CertificateDocumentModal',
+  title: 'Components/Modals/CertificateDocumentModal',
   args: {
     certificate: SAMPLE_CERTIFICATE,
   },

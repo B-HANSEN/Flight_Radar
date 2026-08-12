@@ -18,7 +18,7 @@ const SAMPLE_EVENT: BookingEvent = {
 
 const meta: Meta<typeof BookingDetailModal> = {
   component: BookingDetailModal,
-  title: 'Components/BookingDetailModal',
+  title: 'Components/Modals/BookingDetailModal',
   args: {
     event: SAMPLE_EVENT,
   },

@@ -274,15 +274,9 @@
     "title": "Verfügbarkeit"
   },
   "Availability": {
-    "defaultLegend": "Standardverfügbarkeit",
-    "availableByDefault": "Standardmäßig verfügbar",
-    "unavailableByDefault": "Standardmäßig nicht verfügbar",
-    "statusHeading": "Status",
     "datesHeading": "Daten",
     "timesHeading": "Zeiten",
     "recurrenceHeading": "Wiederholung",
-    "availableLabel": "Verfügbar",
-    "unavailableLabel": "Nicht verfügbar",
     "addLabel": "Verfügbarkeit hinzufügen",
     "noEntries": "Noch keine Verfügbarkeitseinträge.",
     "dateAllTime": "Immer",
@@ -293,12 +287,9 @@
     "oneTime": "Einmalig"
   },
   "AvailabilityFormModal": {
-    "title": "Verfügbarkeit des Nutzers",
+    "title": "Verfügbarkeit des Schülers",
     "close": "Schließen",
     "save": "Speichern",
-    "availabilityLegend": "Verfügbarkeit",
-    "available": "Verfügbar",
-    "unavailable": "Nicht verfügbar",
     "datesLegend": "Daten",
     "allTheTime": "Immer",
     "on": "Am",
@@ -308,12 +299,14 @@
     "fromDateLabel": "Startdatum",
     "toDateLabel": "Enddatum",
     "openCalendarLabel": "Kalender öffnen für {field}",
+    "invalidDateError": "Geben Sie ein gültiges Datum (TT/MM/JJJJ) innerhalb der nächsten 6 Monate ein.",
     "timesLegend": "Zeiten",
     "allDay": "Ganztägig",
     "between": "Zwischen",
     "and": "und",
     "startTimeLabel": "Startzeit",
-    "endTimeLabel": "Endzeit"
+    "endTimeLabel": "Endzeit",
+    "invalidTimeRangeError": "Die Endzeit muss nach der Startzeit liegen."
   },
   "TimePickerModal": {
     "title": "Uhrzeit auswählen",

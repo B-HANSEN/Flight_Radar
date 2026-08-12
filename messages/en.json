@@ -274,15 +274,9 @@
     "title": "Availability"
   },
   "Availability": {
-    "defaultLegend": "Default availability",
-    "availableByDefault": "Available by default",
-    "unavailableByDefault": "Unavailable by default",
-    "statusHeading": "Status",
     "datesHeading": "Dates",
     "timesHeading": "Times",
     "recurrenceHeading": "Recurrence",
-    "availableLabel": "Available",
-    "unavailableLabel": "Unavailable",
     "addLabel": "Add availability",
     "noEntries": "No availability entries yet.",
     "dateAllTime": "All the time",
@@ -293,12 +287,9 @@
     "oneTime": "One time"
   },
   "AvailabilityFormModal": {
-    "title": "User Availability",
+    "title": "Student Availability",
     "close": "Close",
     "save": "Save",
-    "availabilityLegend": "Availability",
-    "available": "Available",
-    "unavailable": "Unavailable",
     "datesLegend": "Dates",
     "allTheTime": "All the time",
     "on": "On",
@@ -308,12 +299,14 @@
     "fromDateLabel": "From date",
     "toDateLabel": "To date",
     "openCalendarLabel": "Open calendar for {field}",
+    "invalidDateError": "Enter a valid date (dd/mm/yyyy) within the next 6 months.",
     "timesLegend": "Times",
     "allDay": "All day",
     "between": "Between",
     "and": "and",
     "startTimeLabel": "Start time",
-    "endTimeLabel": "End time"
+    "endTimeLabel": "End time",
+    "invalidTimeRangeError": "End time must be after the start time."
   },
   "TimePickerModal": {
     "title": "Select time",

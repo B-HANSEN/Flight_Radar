@@ -4,7 +4,7 @@ import Modal from './Modal'
 
 const meta: Meta<typeof Modal> = {
   component: Modal,
-  title: 'Components/Modal',
+  title: 'Components/Modals/Modal',
   argTypes: {
     isOpen: { control: 'boolean' },
     title: { control: 'text' },

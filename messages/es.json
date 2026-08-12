@@ -274,15 +274,9 @@
     "title": "Disponibilidad"
   },
   "Availability": {
-    "defaultLegend": "Disponibilidad predeterminada",
-    "availableByDefault": "Disponible por defecto",
-    "unavailableByDefault": "No disponible por defecto",
-    "statusHeading": "Estado",
     "datesHeading": "Fechas",
     "timesHeading": "Horas",
     "recurrenceHeading": "Recurrencia",
-    "availableLabel": "Disponible",
-    "unavailableLabel": "No disponible",
     "addLabel": "Añadir disponibilidad",
     "noEntries": "Todavía no hay entradas de disponibilidad.",
     "dateAllTime": "Todo el tiempo",
@@ -293,12 +287,9 @@
     "oneTime": "Una vez"
   },
   "AvailabilityFormModal": {
-    "title": "Disponibilidad del usuario",
+    "title": "Disponibilidad del alumno",
     "close": "Cerrar",
     "save": "Guardar",
-    "availabilityLegend": "Disponibilidad",
-    "available": "Disponible",
-    "unavailable": "No disponible",
     "datesLegend": "Fechas",
     "allTheTime": "Todo el tiempo",
     "on": "El",
@@ -308,12 +299,14 @@
     "fromDateLabel": "Fecha de inicio",
     "toDateLabel": "Fecha de fin",
     "openCalendarLabel": "Abrir calendario para {field}",
+    "invalidDateError": "Introduce una fecha válida (dd/mm/aaaa) dentro de los próximos 6 meses.",
     "timesLegend": "Horas",
     "allDay": "Todo el día",
     "between": "Entre las",
     "and": "y las",
     "startTimeLabel": "Hora de inicio",
-    "endTimeLabel": "Hora de fin"
+    "endTimeLabel": "Hora de fin",
+    "invalidTimeRangeError": "La hora de fin debe ser posterior a la hora de inicio."
   },
   "TimePickerModal": {
     "title": "Seleccionar hora",

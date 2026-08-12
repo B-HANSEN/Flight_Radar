@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useId, useRef } from 'react'
+import { useId, useRef } from 'react'
 import { X } from 'lucide-react'
 import { focusRing } from '@/lib/styles'
+import { useFocusTrap } from '@/lib/useFocusTrap'
 
 type Props = {
   isOpen: boolean
@@ -10,10 +11,9 @@ type Props = {
   title: string
   closeLabel: string
   children: React.ReactNode
+  /** Set to false to yield Escape/Tab handling to a nested overlay (e.g. a picker) rendered inside this modal. */
+  active?: boolean
 }
-
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 export default function Modal({
   isOpen,
@@ -21,47 +21,12 @@ export default function Modal({
   title,
   closeLabel,
   children,
+  active = true,
 }: Props) {
   const titleId = useId()
   const dialogRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!isOpen) return
-
-    const previouslyFocused = document.activeElement as HTMLElement | null
-    dialogRef.current?.focus()
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        onClose()
-        return
-      }
-
-      if (event.key !== 'Tab' || !dialogRef.current) return
-
-      const focusable = Array.from(
-        dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      )
-      if (focusable.length === 0) return
-
-      const first = focusable[0]
-      const last = focusable[focusable.length - 1]
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault()
-        first.focus()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      previouslyFocused?.focus()
-    }
-  }, [isOpen, onClose])
+  useFocusTrap(dialogRef, isOpen, onClose, active)
 
   if (!isOpen) return null
 
