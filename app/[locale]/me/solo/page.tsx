@@ -6,14 +6,14 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function MeSoloPage({
+export default async function SoloPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const t = await getTranslations('MeSoloPage')
+  const t = await getTranslations('SoloPage')
 
   return <PageHeading title={t('title')} description={t('body')} />
 }

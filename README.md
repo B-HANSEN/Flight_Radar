@@ -51,6 +51,11 @@ redirects to `/en` by default. The backend listens on
 The backend needs a `server/.env` (gitignored) — copy `server/.env.example`
 and fill in `MONGODB_URI` (Atlas connection string) and `CORS_ORIGIN`.
 
+The frontend needs a root `.env.local` (gitignored) — copy `.env.example` and
+set `NEXT_PUBLIC_API_URL` to the backend's URL (`http://localhost:4000` for
+local dev). Seed the database with `npm run seed --workspace server` before
+starting the frontend, so pages that fetch from the API have data to show.
+
 ## Scripts
 
 Run from the repo root — npm workspaces resolves both projects from one
@@ -82,10 +87,14 @@ Backend-specific scripts (`lint`, `test`, `test:cov`, `test:e2e`, ...) live in
 app/[locale]/    Pages (App Router, one segment per locale)
 components/      React components, documented with Storybook
 i18n/            next-intl routing/navigation/request config
+lib/api.ts       fetchApi() — fetches from NEXT_PUBLIC_API_URL, no-store
 messages/        Translation files (en, de, es)
 server/          NestJS backend (npm workspace)
   src/
+    certificates/  GET /certificates
     config/        Env validation
     health/        GET /health — reports API + Mongo connection status
+    mailbox/       GET /mailbox
+    seed/          npm run seed — reseeds collections from fixture data
     app.module.ts   Wires ConfigModule, MongooseModule, feature modules
 ```

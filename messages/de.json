@@ -141,10 +141,10 @@
     "allDay": "Ganztägig",
     "notAvailable": "Nicht verfügbar"
   },
-  "MeAgendaPage": {
+  "AgendaPage": {
     "title": "Agenda"
   },
-  "MeCertificatesPage": {
+  "CertificatesPage": {
     "title": "Zertifikate"
   },
   "CertificateList": {
@@ -167,7 +167,7 @@
     "expiration": "Ablauf",
     "regulatoryNote": "Ausgestellt gemäß den geltenden EASA- und nationalen Lizenzierungsanforderungen. Zusammen mit einer gültigen Pilotenlizenz und einem Lichtbildausweis mitzuführen."
   },
-  "MeCoursesPage": {
+  "CoursesPage": {
     "title": "Kurse"
   },
   "Courses": {
@@ -203,11 +203,11 @@
     "aheadOfTarget": "über Plan",
     "behindOfTarget": "unter Plan"
   },
-  "MeSignaturesPage": {
+  "SignaturesPage": {
     "title": "Unterschriften",
     "body": "Diese Seite wird später Ihre Ausbildungsunterschriften und Fluglehrerbestätigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
-  "MeLogbookPage": {
+  "LogbookPage": {
     "title": "Flugbuch"
   },
   "Logbook": {
@@ -251,11 +251,11 @@
     "noFlights": "Noch keine Flüge erfasst.",
     "fetching": "Wird geladen …"
   },
-  "MeFlightDutyTimesPage": {
+  "FlightDutyTimesPage": {
     "title": "Flug-/Dienstzeiten",
     "body": "Diese Seite wird später Ihre Flug- und Dienstzeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
-  "MeDocumentsPage": {
+  "MyDocumentsPage": {
     "title": "Dokumente"
   },
   "DocumentsBrowser": {
@@ -267,15 +267,73 @@
     "noFolders": "Keine Ordner verfügbar.",
     "noFiles": "Keine Dateien in diesem Ordner."
   },
-  "MeSoloPage": {
+  "SoloPage": {
     "title": "Alleinflug",
     "body": "Diese Seite wird später Ihre Alleinflugberechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
-  "MeAvailabilityPage": {
-    "title": "Verfügbarkeit",
-    "body": "Diese Seite wird später Ihre Verfügbarkeit für Buchungen und Dienstpläne anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+  "AvailabilityPage": {
+    "title": "Verfügbarkeit"
   },
-  "MeEmailsPage": {
+  "Availability": {
+    "defaultLegend": "Standardverfügbarkeit",
+    "availableByDefault": "Standardmäßig verfügbar",
+    "unavailableByDefault": "Standardmäßig nicht verfügbar",
+    "statusHeading": "Status",
+    "datesHeading": "Daten",
+    "timesHeading": "Zeiten",
+    "recurrenceHeading": "Wiederholung",
+    "availableLabel": "Verfügbar",
+    "unavailableLabel": "Nicht verfügbar",
+    "addLabel": "Verfügbarkeit hinzufügen",
+    "noEntries": "Noch keine Verfügbarkeitseinträge.",
+    "dateAllTime": "Immer",
+    "dateOn": "Am {date}",
+    "dateRange": "Von {from} bis {to}",
+    "timeAllDay": "Ganztägig",
+    "timeBetween": "Zwischen {start} und {end}",
+    "oneTime": "Einmalig"
+  },
+  "AvailabilityFormModal": {
+    "title": "Verfügbarkeit des Nutzers",
+    "close": "Schließen",
+    "save": "Speichern",
+    "availabilityLegend": "Verfügbarkeit",
+    "available": "Verfügbar",
+    "unavailable": "Nicht verfügbar",
+    "datesLegend": "Daten",
+    "allTheTime": "Immer",
+    "on": "Am",
+    "onDateLabel": "Datum",
+    "from": "Von",
+    "to": "Bis",
+    "fromDateLabel": "Startdatum",
+    "toDateLabel": "Enddatum",
+    "openCalendarLabel": "Kalender öffnen für {field}",
+    "timesLegend": "Zeiten",
+    "allDay": "Ganztägig",
+    "between": "Zwischen",
+    "and": "und",
+    "startTimeLabel": "Startzeit",
+    "endTimeLabel": "Endzeit"
+  },
+  "TimePickerModal": {
+    "title": "Uhrzeit auswählen",
+    "cancel": "Abbrechen",
+    "ok": "OK",
+    "hourGroupLabel": "Stunde",
+    "minuteGroupLabel": "Minute",
+    "hourLabel": "{hour} Uhr",
+    "minuteLabel": "{minute} Minuten"
+  },
+  "DatePickerModal": {
+    "title": "Datum auswählen",
+    "cancel": "Abbrechen",
+    "ok": "OK",
+    "previousMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat",
+    "weekdaysShort": ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+  },
+  "EmailsPage": {
     "title": "E-Mails"
   },
   "Mailbox": {

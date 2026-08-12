@@ -1,5 +1,9 @@
 import { fileURLToPath } from 'node:url'
-import { defineConfig, coverageConfigDefaults } from 'vitest/config'
+import {
+  configDefaults,
+  coverageConfigDefaults,
+  defineConfig,
+} from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
@@ -11,6 +15,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: [fileURLToPath(new URL('./vitest.setup.ts', import.meta.url))],
     globals: true,
+    // server/ is its own workspace with its own Jest setup — run its tests
+    // via `npm test --workspace server`, not the root Vitest config.
+    exclude: [...configDefaults.exclude, 'server/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],

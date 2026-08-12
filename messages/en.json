@@ -141,10 +141,10 @@
     "allDay": "All day",
     "notAvailable": "Not available"
   },
-  "MeAgendaPage": {
+  "AgendaPage": {
     "title": "Agenda"
   },
-  "MeCertificatesPage": {
+  "CertificatesPage": {
     "title": "Certificates"
   },
   "CertificateList": {
@@ -167,7 +167,7 @@
     "expiration": "Expiration",
     "regulatoryNote": "Issued under the applicable EASA and national licensing requirements. Carry together with a valid pilot licence and photographic identification."
   },
-  "MeCoursesPage": {
+  "CoursesPage": {
     "title": "Courses"
   },
   "Courses": {
@@ -203,11 +203,11 @@
     "aheadOfTarget": "ahead of target",
     "behindOfTarget": "behind target"
   },
-  "MeSignaturesPage": {
+  "SignaturesPage": {
     "title": "Signatures",
     "body": "This page will eventually show your training signatures and instructor sign-offs. For now it's placeholder text used to verify routing and localization."
   },
-  "MeLogbookPage": {
+  "LogbookPage": {
     "title": "Logbook"
   },
   "Logbook": {
@@ -251,11 +251,11 @@
     "noFlights": "No flights recorded yet.",
     "fetching": "Fetching…"
   },
-  "MeFlightDutyTimesPage": {
+  "FlightDutyTimesPage": {
     "title": "Flight / Duty times",
     "body": "This page will eventually show your flight and duty time records. For now it's placeholder text used to verify routing and localization."
   },
-  "MeDocumentsPage": {
+  "MyDocumentsPage": {
     "title": "Documents"
   },
   "DocumentsBrowser": {
@@ -267,15 +267,73 @@
     "noFolders": "No folders available.",
     "noFiles": "No files in this folder."
   },
-  "MeSoloPage": {
+  "SoloPage": {
     "title": "Solo",
     "body": "This page will eventually show your solo flight authorizations and endorsements. For now it's placeholder text used to verify routing and localization."
   },
-  "MeAvailabilityPage": {
-    "title": "Availability",
-    "body": "This page will eventually show your availability for bookings and rosters. For now it's placeholder text used to verify routing and localization."
+  "AvailabilityPage": {
+    "title": "Availability"
   },
-  "MeEmailsPage": {
+  "Availability": {
+    "defaultLegend": "Default availability",
+    "availableByDefault": "Available by default",
+    "unavailableByDefault": "Unavailable by default",
+    "statusHeading": "Status",
+    "datesHeading": "Dates",
+    "timesHeading": "Times",
+    "recurrenceHeading": "Recurrence",
+    "availableLabel": "Available",
+    "unavailableLabel": "Unavailable",
+    "addLabel": "Add availability",
+    "noEntries": "No availability entries yet.",
+    "dateAllTime": "All the time",
+    "dateOn": "On {date}",
+    "dateRange": "From {from} to {to}",
+    "timeAllDay": "All day",
+    "timeBetween": "Between {start} and {end}",
+    "oneTime": "One time"
+  },
+  "AvailabilityFormModal": {
+    "title": "User Availability",
+    "close": "Close",
+    "save": "Save",
+    "availabilityLegend": "Availability",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "datesLegend": "Dates",
+    "allTheTime": "All the time",
+    "on": "On",
+    "onDateLabel": "Date",
+    "from": "From",
+    "to": "To",
+    "fromDateLabel": "From date",
+    "toDateLabel": "To date",
+    "openCalendarLabel": "Open calendar for {field}",
+    "timesLegend": "Times",
+    "allDay": "All day",
+    "between": "Between",
+    "and": "and",
+    "startTimeLabel": "Start time",
+    "endTimeLabel": "End time"
+  },
+  "TimePickerModal": {
+    "title": "Select time",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "hourGroupLabel": "Hour",
+    "minuteGroupLabel": "Minute",
+    "hourLabel": "{hour} o'clock",
+    "minuteLabel": "{minute} minutes"
+  },
+  "DatePickerModal": {
+    "title": "Select date",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  },
+  "EmailsPage": {
     "title": "Emails"
   },
   "Mailbox": {

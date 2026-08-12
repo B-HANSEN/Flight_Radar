@@ -7,14 +7,14 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function MeAgendaPage({
+export default async function AgendaPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const t = await getTranslations('MeAgendaPage')
+  const t = await getTranslations('AgendaPage')
 
   return (
     <>

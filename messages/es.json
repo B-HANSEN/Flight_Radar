@@ -141,10 +141,10 @@
     "allDay": "Todo el día",
     "notAvailable": "No disponible"
   },
-  "MeAgendaPage": {
+  "AgendaPage": {
     "title": "Agenda"
   },
-  "MeCertificatesPage": {
+  "CertificatesPage": {
     "title": "Certificados"
   },
   "CertificateList": {
@@ -167,7 +167,7 @@
     "expiration": "Vencimiento",
     "regulatoryNote": "Emitido conforme a los requisitos de licencia de EASA y nacionales aplicables. Debe llevarse junto con una licencia de piloto válida y una identificación con fotografía."
   },
-  "MeCoursesPage": {
+  "CoursesPage": {
     "title": "Cursos"
   },
   "Courses": {
@@ -203,11 +203,11 @@
     "aheadOfTarget": "por delante del objetivo",
     "behindOfTarget": "por detrás del objetivo"
   },
-  "MeSignaturesPage": {
+  "SignaturesPage": {
     "title": "Firmas",
     "body": "Esta página mostrará más adelante tus firmas de formación y las validaciones del instructor. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
-  "MeLogbookPage": {
+  "LogbookPage": {
     "title": "Diario de vuelo"
   },
   "Logbook": {
@@ -251,11 +251,11 @@
     "noFlights": "Todavía no hay vuelos registrados.",
     "fetching": "Cargando…"
   },
-  "MeFlightDutyTimesPage": {
+  "FlightDutyTimesPage": {
     "title": "Horas de vuelo / servicio",
     "body": "Esta página mostrará más adelante tus registros de horas de vuelo y de servicio. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
-  "MeDocumentsPage": {
+  "MyDocumentsPage": {
     "title": "Documentos"
   },
   "DocumentsBrowser": {
@@ -267,15 +267,73 @@
     "noFolders": "No hay carpetas disponibles.",
     "noFiles": "No hay archivos en esta carpeta."
   },
-  "MeSoloPage": {
+  "SoloPage": {
     "title": "Solo",
     "body": "Esta página mostrará más adelante tus autorizaciones de vuelo solo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
-  "MeAvailabilityPage": {
-    "title": "Disponibilidad",
-    "body": "Esta página mostrará más adelante tu disponibilidad para reservas y turnos. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+  "AvailabilityPage": {
+    "title": "Disponibilidad"
   },
-  "MeEmailsPage": {
+  "Availability": {
+    "defaultLegend": "Disponibilidad predeterminada",
+    "availableByDefault": "Disponible por defecto",
+    "unavailableByDefault": "No disponible por defecto",
+    "statusHeading": "Estado",
+    "datesHeading": "Fechas",
+    "timesHeading": "Horas",
+    "recurrenceHeading": "Recurrencia",
+    "availableLabel": "Disponible",
+    "unavailableLabel": "No disponible",
+    "addLabel": "Añadir disponibilidad",
+    "noEntries": "Todavía no hay entradas de disponibilidad.",
+    "dateAllTime": "Todo el tiempo",
+    "dateOn": "El {date}",
+    "dateRange": "Del {from} al {to}",
+    "timeAllDay": "Todo el día",
+    "timeBetween": "Entre las {start} y las {end}",
+    "oneTime": "Una vez"
+  },
+  "AvailabilityFormModal": {
+    "title": "Disponibilidad del usuario",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "availabilityLegend": "Disponibilidad",
+    "available": "Disponible",
+    "unavailable": "No disponible",
+    "datesLegend": "Fechas",
+    "allTheTime": "Todo el tiempo",
+    "on": "El",
+    "onDateLabel": "Fecha",
+    "from": "Del",
+    "to": "Al",
+    "fromDateLabel": "Fecha de inicio",
+    "toDateLabel": "Fecha de fin",
+    "openCalendarLabel": "Abrir calendario para {field}",
+    "timesLegend": "Horas",
+    "allDay": "Todo el día",
+    "between": "Entre las",
+    "and": "y las",
+    "startTimeLabel": "Hora de inicio",
+    "endTimeLabel": "Hora de fin"
+  },
+  "TimePickerModal": {
+    "title": "Seleccionar hora",
+    "cancel": "Cancelar",
+    "ok": "Aceptar",
+    "hourGroupLabel": "Hora",
+    "minuteGroupLabel": "Minuto",
+    "hourLabel": "{hour} en punto",
+    "minuteLabel": "{minute} minutos"
+  },
+  "DatePickerModal": {
+    "title": "Seleccionar fecha",
+    "cancel": "Cancelar",
+    "ok": "Aceptar",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "weekdaysShort": ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
+  },
+  "EmailsPage": {
     "title": "Correos"
   },
   "Mailbox": {

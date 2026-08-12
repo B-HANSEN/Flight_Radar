@@ -17,6 +17,9 @@ const eslintConfig = defineConfig([
     'build/**',
     'next-env.d.ts',
     'coverage/**',
+    // server/ is its own workspace with its own eslint config — lint it via
+    // `npm run lint --workspace server`, not the root Next.js config.
+    'server/**',
   ]),
   ...storybook.configs['flat/recommended'],
   prettier,

@@ -7,14 +7,14 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function MeLogbookPage({
+export default async function LogbookPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const t = await getTranslations('MeLogbookPage')
+  const t = await getTranslations('LogbookPage')
 
   return (
     <>
