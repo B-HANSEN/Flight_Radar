@@ -23,7 +23,7 @@ vi.mock('@/i18n/navigation', () => ({
 }))
 
 const weather = [
-  { code: 'LEDA', line1: '081630Z 24017KT CAVOK', line2: '081400Z TEMPO' },
+  { code: 'LEDA', metar: '081630Z 24017KT CAVOK', taf: '081400Z TEMPO' },
 ]
 
 const bookings = [

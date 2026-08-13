@@ -1,7 +1,7 @@
-export type WeatherStation = {
+export type WeatherReport = {
   code: string
-  line1: string
-  line2: string
+  metar: string
+  taf: string
 }
 
 export type Booking = {

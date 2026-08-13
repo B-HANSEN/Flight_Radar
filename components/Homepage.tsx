@@ -9,12 +9,12 @@ import type {
   Booking,
   MissingSignature,
   NewsItem,
-  WeatherStation,
+  WeatherReport,
 } from './Homepage.types'
 
 type Props = {
   name: string
-  weather?: WeatherStation[]
+  weather?: WeatherReport[]
   bookings?: Booking[]
   signatures?: MissingSignature[]
   news?: NewsItem[]
@@ -30,7 +30,7 @@ const NEWS_TAG_STYLES: Record<
   atc: { accent: 'bg-yellow-200', text: 'text-yellow-300' },
 }
 
-function WeatherBriefing({ stations }: { stations: WeatherStation[] }) {
+function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
   const t = useTranslations('Homepage')
   const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
 
@@ -53,10 +53,10 @@ function WeatherBriefing({ stations }: { stations: WeatherStation[] }) {
               <li key={station.code} className='whitespace-nowrap'>
                 <p className='font-mono text-sm font-semibold text-black-300'>
                   <span className='font-bold'>{station.code}</span>{' '}
-                  {station.line1}
+                  {station.metar}
                 </p>
                 <p className='pl-11 font-mono text-sm text-black-200'>
-                  {station.line2}
+                  {station.taf}
                 </p>
               </li>
             ))}
