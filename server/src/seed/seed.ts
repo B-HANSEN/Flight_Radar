@@ -2,9 +2,19 @@ import { NestFactory } from '@nestjs/core'
 import { getModelToken } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { AppModule } from '../app.module'
+import { CalendarEvent } from '../agenda/schemas/calendar-event.schema'
 import { Aircraft } from '../aircraft/schemas/aircraft.schema'
+import { AvailabilityEntry } from '../availability/schemas/availability-entry.schema'
+import { Booking } from '../bookings/schemas/booking.schema'
 import { Certificate } from '../certificates/schemas/certificate.schema'
+import { CourseProgress } from '../courses/schemas/course-progress.schema'
+import { DocumentFolder } from '../documents/schemas/document-folder.schema'
+import { LogbookEntry } from '../logbook/schemas/logbook-entry.schema'
 import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
+import { MissingSignature } from '../missing-signatures/schemas/missing-signature.schema'
+import { NewsItem } from '../news/schemas/news-item.schema'
+import { ScheduleBlock } from '../schedule/schemas/schedule-block.schema'
+import { WeatherReport } from '../weather/schemas/weather-report.schema'
 
 // Single demo student — no Users module / auth yet, see TODO-BE-setup.md.
 const studentId = 'student-1'
@@ -438,27 +448,793 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
   },
 ]
 
+const availabilityEntries: Omit<AvailabilityEntry, '_id'>[] = [
+  {
+    dateLabel: 'From 27/08/2026 to 30/08/2026',
+    timeLabel: 'Between 18:00 and 21:00',
+    recurrence: 'Everyday',
+    studentId,
+  },
+  {
+    dateLabel: 'From 17/08/2026 to 19/08/2026',
+    timeLabel: 'All day',
+    recurrence: 'On Monday, Tuesday, Wednesday',
+    studentId,
+  },
+  {
+    dateLabel: 'From 10/08/2026 to 16/08/2026',
+    timeLabel: 'Between 12:00 and 15:00',
+    recurrence: 'Everyday',
+    studentId,
+  },
+  {
+    dateLabel: 'From 03/08/2026 to 09/08/2026',
+    timeLabel: 'Between 08:00 and 21:00',
+    recurrence: 'Everyday',
+    studentId,
+  },
+  {
+    dateLabel: 'From 31/07/2026 to 02/08/2026',
+    timeLabel: 'All day',
+    recurrence: 'Everyday',
+    studentId,
+  },
+]
+
+const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
+  {
+    date: '19/07/2025',
+    depPlace: 'LELL',
+    depTime: '15:34',
+    arrPlace: 'LELL',
+    arrTime: '16:44',
+    model: 'Cessna 152',
+    reg: 'EC-ERV',
+    se: '1:10',
+    total: '1:10',
+    pic: 'J. Whitfield',
+    landingsDay: 3,
+    remarks: 'Circuit and landing practice',
+    studentId,
+  },
+  {
+    date: '20/07/2025',
+    depPlace: 'LELL',
+    depTime: '18:05',
+    arrPlace: 'LELL',
+    arrTime: '19:27',
+    model: 'Cessna 152',
+    reg: 'EC-EXL',
+    se: '1:22',
+    total: '1:22',
+    pic: 'J. Whitfield',
+    landingsDay: 4,
+    remarks: 'Steep turns and stalls',
+    studentId,
+  },
+  {
+    date: '06/09/2025',
+    depPlace: 'LELL',
+    depTime: '12:16',
+    arrPlace: 'LELL',
+    arrTime: '13:28',
+    model: 'Cessna 152',
+    reg: 'EC-DMC',
+    se: '1:12',
+    total: '1:12',
+    pic: 'J. Whitfield',
+    landingsDay: 3,
+    remarks: 'Emergency procedures',
+    studentId,
+  },
+  {
+    date: '07/09/2025',
+    depPlace: 'LELL',
+    depTime: '14:56',
+    arrPlace: 'LEVD',
+    arrTime: '16:56',
+    model: 'Cessna 152',
+    reg: 'EC-FED',
+    se: '2:00',
+    xcDual: '2:00',
+    total: '2:00',
+    pic: 'J. Whitfield',
+    landingsDay: 2,
+    remarks: 'First cross-country navigation exercise',
+    studentId,
+  },
+  {
+    date: '05/04/2026',
+    depPlace: 'LELL',
+    depTime: '11:47',
+    arrPlace: 'LELL',
+    arrTime: '12:57',
+    model: 'Cessna 152',
+    reg: 'EC-ERV',
+    se: '1:10',
+    total: '1:10',
+    pic: 'R. Sinclair',
+    landingsDay: 5,
+    remarks: 'Circuit consolidation',
+    studentId,
+  },
+  {
+    date: '08/04/2026',
+    depTime: '18:59',
+    depPlace: 'LELL',
+    arrPlace: 'LELL',
+    arrTime: '20:03',
+    model: 'Cessna 152',
+    reg: 'EC-EXL',
+    se: '1:04',
+    total: '1:04',
+    pic: 'K. Ashford',
+    landingsDay: 2,
+    night: true,
+    remarks: 'Introduction to night flying',
+    studentId,
+  },
+  {
+    date: '09/04/2026',
+    depPlace: 'LELL',
+    depTime: '17:02',
+    arrPlace: 'LELL',
+    arrTime: '18:21',
+    model: 'Cessna 152',
+    reg: 'EC-ERV',
+    se: '1:19',
+    total: '1:19',
+    pic: 'R. Sinclair',
+    landingsDay: 4,
+    remarks: 'Crosswind landings',
+    studentId,
+  },
+  {
+    date: '19/05/2026',
+    depPlace: 'LELL',
+    depTime: '16:03',
+    arrPlace: 'LELL',
+    arrTime: '17:13',
+    model: 'Cessna 152',
+    reg: 'EC-ERV',
+    se: '1:10',
+    total: '1:10',
+    pic: 'R. Sinclair',
+    landingsDay: 3,
+    remarks: 'Precision approaches',
+    studentId,
+  },
+  {
+    date: '23/05/2026',
+    depPlace: 'LELL',
+    depTime: '11:19',
+    arrPlace: 'LELL',
+    arrTime: '12:15',
+    model: 'Cessna 152',
+    reg: 'EC-ERV',
+    se: '0:56',
+    total: '0:56',
+    pic: 'R. Sinclair',
+    landingsDay: 6,
+    remarks: 'Short field landings',
+    studentId,
+  },
+  {
+    date: '24/05/2026',
+    depPlace: 'LELL',
+    depTime: '15:02',
+    arrPlace: 'LELL',
+    arrTime: '16:00',
+    model: 'Cessna 152',
+    reg: 'EC-ERV',
+    se: '0:58',
+    total: '0:58',
+    pic: 'R. Sinclair',
+    landingsDay: 5,
+    remarks: 'Go-around practice',
+    studentId,
+  },
+  {
+    date: '30/06/2026',
+    depPlace: 'LELL',
+    depTime: '09:15',
+    arrPlace: 'LELL',
+    arrTime: '10:21',
+    model: 'Cessna 152',
+    reg: 'EC-FED',
+    se: '1:06',
+    total: '1:06',
+    pic: 'R. Sinclair',
+    landingsDay: 5,
+    remarks: 'Solo consolidation prep',
+    studentId,
+  },
+  {
+    date: '03/07/2026',
+    depPlace: 'LELL',
+    depTime: '12:57',
+    arrPlace: 'LEVD',
+    arrTime: '14:21',
+    model: 'Cessna 152',
+    reg: 'EC-FED',
+    se: '1:24',
+    xcDual: '1:24',
+    total: '1:24',
+    pic: 'M. Whitcombe',
+    landingsDay: 4,
+    remarks: 'Cross-country to LEVD',
+    studentId,
+  },
+  {
+    date: '07/07/2026',
+    depPlace: 'LELL',
+    depTime: '11:52',
+    arrPlace: 'LELL',
+    arrTime: '12:58',
+    model: 'Cessna 152',
+    reg: 'EC-EXL',
+    se: '1:06',
+    total: '1:06',
+    pic: 'R. Sinclair',
+    landingsDay: 4,
+    remarks: 'Circuit revision',
+    studentId,
+  },
+  {
+    date: '10/07/2026',
+    depPlace: 'LELL',
+    depTime: '15:10',
+    arrPlace: 'LELL',
+    arrTime: '16:04',
+    model: 'Cessna 152',
+    reg: 'EC-FED',
+    se: '0:54',
+    total: '0:54',
+    pic: 'R. Sinclair',
+    landingsDay: 3,
+    remarks: 'Flapless landings',
+    studentId,
+  },
+  {
+    date: '13/07/2026',
+    depPlace: 'LELL',
+    depTime: '09:46',
+    arrPlace: 'LELL',
+    arrTime: '10:52',
+    model: 'Cessna 152',
+    reg: 'EC-FED',
+    se: '1:06',
+    total: '1:06',
+    pic: 'R. Sinclair',
+    landingsDay: 5,
+    remarks: 'Steep turns revision',
+    studentId,
+  },
+  {
+    date: '18/07/2026',
+    depPlace: 'LELL',
+    depTime: '19:13',
+    arrPlace: 'LELL',
+    arrTime: '20:24',
+    model: 'Cessna 152',
+    reg: 'EC-EXL',
+    se: '1:11',
+    total: '1:11',
+    pic: 'K. Ashford',
+    landingsDay: 2,
+    night: true,
+    remarks: 'Night circuits',
+    studentId,
+  },
+]
+
+const weatherReports: Omit<WeatherReport, '_id'>[] = [
+  {
+    code: 'LEDA',
+    metar: '081630Z 24017KT 210V270 9999 TS VCSH SCT050 SCT070CB 27/14 Q1017',
+    taf: '081400Z 0815/0915 10006KT 9999 FEW060 TX39/0914Z TN22/0905Z TEMPO 0815/0819 VRB18G35KT 2500 TSRAGR SCT060CB',
+  },
+  {
+    code: 'LEGE',
+    metar: '081630Z 18010KT CAVOK 29/14 Q1015 NOSIG',
+    taf: '081100Z 0812/0912 VRB03KT CAVOK TX38/0813Z TN22/0906Z BECMG 0812/0813 18010KT BECMG 0818/0821 VRB03KT',
+  },
+  {
+    code: 'LELL',
+    metar: '081630Z 11008KT 060V150 CAVOK 31/23 Q1015',
+    taf: '081400Z 0815/0915 14008KT CAVOK TX38/0913Z TN21/0905Z TEMPO 0816/0820 20008KT BECMG 0818/0820 VRB03KT',
+  },
+  {
+    code: 'LERS',
+    metar: '081630Z 16005KT 130V230 9999 FEW025 31/23 Q1016',
+    taf: '081400Z 0815/0915 16008KT 9999 FEW020 TX34/0912Z TN25/0905Z TEMPO 0816/0823 TS FEW030CB',
+  },
+]
+
+const bookings: Omit<Booking, '_id'>[] = [
+  {
+    type: 'Instruction',
+    date: '15/08/2026',
+    tail: 'EC-ERV',
+    person: 'J. Whitfield',
+    time: '10:00 - 11:30',
+    studentId,
+  },
+  {
+    type: 'Instruction',
+    date: '16/08/2026',
+    tail: 'EC-ERV',
+    person: 'K. Ashford',
+    time: '15:00 - 17:00',
+    studentId,
+  },
+]
+
+const missingSignatures: Omit<MissingSignature, '_id'>[] = [
+  { date: '07/08/2026', label: 'Instruction #4041369', studentId },
+]
+
+const newsItems: Omit<NewsItem, '_id'>[] = [
+  {
+    tag: 'operations',
+    date: '02/08/2026',
+    title: 'Sabadell tower frequency change effective now',
+    summary:
+      'The 8.33 kHz channel spacing update is live at LELL: TWR now runs on 120.805 MHz and GND on 121.605 MHz.',
+  },
+  {
+    tag: 'fuel',
+    date: '28/07/2026',
+    title: 'New BP supply agreement airports',
+    summary:
+      'AVGAS 100LL is now available under the BP / Aeroclub agreement at A Coruña, Algeciras and Alicante-Elche.',
+  },
+  {
+    tag: 'atc',
+    date: '19/07/2026',
+    title: 'ATIS-SIMA now live at Reus',
+    summary:
+      'Pilots can hear updated operational and weather information for LERS on 120.250 MHz, easing radio load on approach.',
+  },
+]
+
+const documentFolders: Omit<DocumentFolder, '_id'>[] = [
+  {
+    name: 'EC-ERV',
+    files: [
+      { name: '11_CARGA Y CENTRADO C152 EC-ERV v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado C152 EC-ERV v1.0.xlsx', ext: 'XLSX' },
+      { name: '12_WEIGHT AND BALANCE C152 EC-ERV v.2.pdf', ext: 'PDF' },
+      { name: '12_Weight and balance C152 EC-ERV v1.0.xlsx', ext: 'XLSX' },
+      { name: '21_CHECKLIST C152 v1.6 ESP EC-ERV A5.pdf', ext: 'PDF' },
+      {
+        name: '22_CHECKLIST EMERGENCIA C152 E v1.4 ESP EC-ERV A5.pdf',
+        ext: 'PDF',
+      },
+      { name: '23_CHECKLIST C152 v1.6 ENG EC-ERV A5.pdf', ext: 'PDF' },
+    ],
+  },
+  {
+    name: 'EC-EXL',
+    files: [
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado v1.0.xlsx', ext: 'XLSX' },
+      { name: '21_CHECKLIST v1.6 ESP A5.pdf', ext: 'PDF' },
+    ],
+  },
+  {
+    name: 'EC-FED',
+    files: [
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado v1.0.xlsx', ext: 'XLSX' },
+      { name: '21_CHECKLIST v1.6 ESP A5.pdf', ext: 'PDF' },
+    ],
+  },
+  {
+    name: 'EC-DNX',
+    files: [
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado v1.0.xlsx', ext: 'XLSX' },
+    ],
+  },
+  {
+    name: 'EC-FGI',
+    files: [
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '21_CHECKLIST v1.6 ESP A5.pdf', ext: 'PDF' },
+      { name: '22_CHECKLIST EMERGENCIA v1.4 ESP A5.pdf', ext: 'PDF' },
+    ],
+  },
+]
+
+const courseProgress: Omit<CourseProgress, '_id'> = {
+  overallActualHours: '26:02',
+  overallTargetHours: '45:00',
+  overallPct: 58,
+  vfrTotalHours: '26:02',
+  ifrTotalHours: '0:00',
+  mccTotalHours: '0:00',
+  groups: [
+    {
+      key: 'currentLesson',
+      rows: [
+        {
+          key: 'syllabus',
+          values: {
+            vfrDual: '21:30',
+            vfrPic: '1:00',
+            vfrXc: '1:00',
+            acSe: '22:30',
+          },
+        },
+        {
+          key: 'actual',
+          tone: 'positive',
+          values: { vfrDual: '26:02', vfrXc: '1:28', acSe: '26:02' },
+        },
+        {
+          key: 'remaining',
+          values: {
+            vfrDual: '0:00',
+            vfrPic: '1:00',
+            vfrXc: '0:00',
+            acSe: '0:00',
+          },
+        },
+      ],
+    },
+    {
+      key: 'fullCourse',
+      rows: [
+        {
+          key: 'syllabus',
+          values: {
+            vfrDual: '35:00',
+            vfrPic: '10:00',
+            vfrXc: '15:00',
+            acSe: '45:00',
+          },
+        },
+        {
+          key: 'actual',
+          tone: 'negative',
+          values: { vfrDual: '26:02', vfrXc: '1:28', acSe: '26:02' },
+        },
+        {
+          key: 'remaining',
+          values: {
+            vfrDual: '8:58',
+            vfrPic: '10:00',
+            vfrXc: '13:32',
+            acSe: '18:58',
+          },
+        },
+      ],
+    },
+  ],
+  phases: [
+    {
+      number: 1,
+      actualHours: '2:32',
+      targetHours: '2:30',
+      pct: 100,
+      detail:
+        'Basic handling, effects of controls, straight and level, climbing and descending.',
+    },
+    {
+      number: 2,
+      actualHours: '18:45',
+      targetHours: '13:00',
+      pct: 100,
+      detail:
+        'Circuit training, take-off and landing, stalling, spin awareness.',
+    },
+    {
+      number: 3,
+      actualHours: '4:45',
+      targetHours: '9:00',
+      pct: 53,
+      detail: 'Navigation exercises, diversions, radio navigation aids.',
+    },
+    {
+      number: 4,
+      actualHours: '0:00',
+      targetHours: '19:30',
+      pct: 0,
+      detail: 'Advanced navigation, night rating, cross-country qualifier.',
+    },
+    {
+      number: 5,
+      actualHours: '0:00',
+      targetHours: '1:00',
+      pct: 0,
+      detail: 'Skills test preparation and final progress check.',
+    },
+  ],
+  studentId,
+}
+
+const calendarEvents: Omit<CalendarEvent, '_id'>[] = [
+  {
+    type: 'unavailability',
+    date: '2026-07-28',
+    allDay: true,
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-07-29',
+    allDay: true,
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-07-30',
+    allDay: true,
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-07-31',
+    allDay: true,
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-08-01',
+    allDay: true,
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-08-02',
+    allDay: true,
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-08-03',
+    allDay: false,
+    timeRange: '08:00 - 14:00',
+    studentId,
+  },
+  {
+    type: 'booking',
+    date: '2026-08-04',
+    time: '18:10 - 20:20',
+    tailNumber: 'EC-EXL',
+    pilotInCommand: 'Mike Murdoch [PIC]',
+    flightLines: [
+      'VTD01 - Precautionary landing. Reading maps of local area',
+      'VTD02 - DM cross country flight',
+    ],
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-08-05',
+    allDay: false,
+    timeRange: '09:00 - 13:00',
+    studentId,
+  },
+  {
+    type: 'booking',
+    date: '2026-08-07',
+    time: '13:10 - 15:20',
+    tailNumber: 'EC-ERV',
+    pilotInCommand: 'Jane Smith [PIC]',
+    flightLines: ['VBD15 - Final check before solo flight'],
+    studentId,
+  },
+  {
+    type: 'booking',
+    date: '2026-08-12',
+    time: '09:00 - 12:30',
+    tailNumber: 'EC-KLM',
+    pilotInCommand: 'SAMPLE PLACEHOLDER [PIC]',
+    flightLines: [
+      'VTD04 - Navigation exercise over the coastline with diversion practice',
+      'VTD05 - Steep turns and stall recovery review',
+      'VTD06 - Radio navigation using VOR and ADF, followed by a full instrument approach briefing',
+      'VTD07 - Circuit practice, short and soft field landings',
+    ],
+    cancelled: true,
+    studentId,
+  },
+  {
+    type: 'unavailability',
+    date: '2026-08-19',
+    allDay: false,
+    timeRange: '07:00 - 10:00',
+    studentId,
+  },
+  {
+    type: 'booking',
+    date: '2026-09-02',
+    time: '10:00 - 11:15',
+    tailNumber: 'EC-FED',
+    pilotInCommand: 'Jane Smith [PIC]',
+    flightLines: ['VBD03 - Circuit consolidation'],
+    studentId,
+  },
+]
+
+// Week-view blocks are derived from the same per-aircraft day template so
+// picking any weekday in the week view always matches the day view. start/end
+// for 'day' blocks are hours-of-day (9-21.5); 'week' blocks are day-index +
+// hour fraction (0 = Monday 00:00, 7 = next Monday).
+const HOURS_PER_DAY = 24
+const WEEKDAYS = [0, 1, 2, 3, 4, 5, 6]
+
+type DayBlockTemplate = Pick<ScheduleBlock, 'label' | 'kind' | 'start' | 'end'>
+
+function buildAircraftScheduleBlocks(
+  aircraftId: string,
+  dayBlocks: DayBlockTemplate[],
+): Omit<ScheduleBlock, '_id'>[] {
+  const day = dayBlocks.map((block) => ({
+    ...block,
+    aircraftId,
+    period: 'day' as const,
+  }))
+
+  const week = WEEKDAYS.flatMap((dayIndex) =>
+    dayBlocks.map((block) => ({
+      ...block,
+      aircraftId,
+      period: 'week' as const,
+      start: dayIndex + block.start / HOURS_PER_DAY,
+      end: dayIndex + block.end / HOURS_PER_DAY,
+    })),
+  )
+
+  return [...day, ...week]
+}
+
+function buildScheduleBlocks(
+  aircraftIdByArcid: Record<string, string>,
+): Omit<ScheduleBlock, '_id'>[] {
+  const erv = aircraftIdByArcid['EC-ERV']
+  const exl = aircraftIdByArcid['EC-EXL']
+  const fed = aircraftIdByArcid['EC-FED']
+
+  return [
+    ...buildAircraftScheduleBlocks(erv, [
+      { label: 'Reserved 09:00–12:00', kind: 'reserved', start: 9, end: 12 },
+      {
+        label: 'Reserved 13:30–16:00',
+        kind: 'reserved',
+        start: 13.5,
+        end: 16,
+      },
+      {
+        label: 'Reserved 16:30–19:00',
+        kind: 'reserved',
+        start: 16.5,
+        end: 19,
+      },
+    ]),
+    ...buildAircraftScheduleBlocks(exl, [
+      { label: 'Reserved 09:00–12:00', kind: 'reserved', start: 9, end: 12 },
+      { label: 'Reserved', kind: 'reserved', start: 14.5, end: 16 },
+      {
+        label: 'Reserved 16:00–21:30',
+        kind: 'reserved',
+        start: 16,
+        end: 21.5,
+      },
+    ]),
+    ...buildAircraftScheduleBlocks(fed, [
+      { label: 'Not available', kind: 'unavailable', start: 9, end: 14.5 },
+      { label: 'Reserved', kind: 'reserved', start: 14.5, end: 16 },
+      { label: 'Reserved', kind: 'reserved', start: 16.5, end: 18 },
+      {
+        label: 'Reserved 18:00–20:30',
+        kind: 'reserved',
+        start: 18,
+        end: 20.5,
+      },
+    ]),
+  ]
+}
+
 async function seed() {
+  const onlyIfEmpty = process.argv.includes('--if-empty')
+  if (onlyIfEmpty && process.env.NODE_ENV === 'production') {
+    console.log('Skipping auto-seed in production')
+    return
+  }
+
   const app = await NestFactory.createApplicationContext(AppModule)
+
+  async function seedMany<T>(
+    model: Model<T>,
+    data: T[],
+    label: string,
+  ): Promise<void> {
+    if (onlyIfEmpty && (await model.countDocuments()) > 0) {
+      console.log(`Skipped ${label} (already has data)`)
+      return
+    }
+    await model.deleteMany({})
+    await model.insertMany(data)
+    console.log(`Seeded ${data.length} ${label}`)
+  }
+
+  const calendarEventModel = app.get<Model<CalendarEvent>>(
+    getModelToken(CalendarEvent.name),
+  )
   const aircraftModel = app.get<Model<Aircraft>>(getModelToken(Aircraft.name))
+  const availabilityEntryModel = app.get<Model<AvailabilityEntry>>(
+    getModelToken(AvailabilityEntry.name),
+  )
+  const bookingModel = app.get<Model<Booking>>(getModelToken(Booking.name))
   const certificateModel = app.get<Model<Certificate>>(
     getModelToken(Certificate.name),
+  )
+  const courseProgressModel = app.get<Model<CourseProgress>>(
+    getModelToken(CourseProgress.name),
+  )
+  const documentFolderModel = app.get<Model<DocumentFolder>>(
+    getModelToken(DocumentFolder.name),
+  )
+  const logbookEntryModel = app.get<Model<LogbookEntry>>(
+    getModelToken(LogbookEntry.name),
   )
   const mailboxEmailModel = app.get<Model<MailboxEmail>>(
     getModelToken(MailboxEmail.name),
   )
+  const missingSignatureModel = app.get<Model<MissingSignature>>(
+    getModelToken(MissingSignature.name),
+  )
+  const newsItemModel = app.get<Model<NewsItem>>(getModelToken(NewsItem.name))
+  const scheduleBlockModel = app.get<Model<ScheduleBlock>>(
+    getModelToken(ScheduleBlock.name),
+  )
+  const weatherReportModel = app.get<Model<WeatherReport>>(
+    getModelToken(WeatherReport.name),
+  )
 
-  await aircraftModel.deleteMany({})
-  await aircraftModel.insertMany(aircraft)
-  console.log(`Seeded ${aircraft.length} aircraft`)
+  await seedMany(calendarEventModel, calendarEvents, 'calendar events')
 
-  await certificateModel.deleteMany({})
-  await certificateModel.insertMany(certificates)
-  console.log(`Seeded ${certificates.length} certificates`)
+  let aircraftDocs
+  if (onlyIfEmpty && (await aircraftModel.countDocuments()) > 0) {
+    console.log('Skipped aircraft (already has data)')
+    aircraftDocs = await aircraftModel.find()
+  } else {
+    await aircraftModel.deleteMany({})
+    aircraftDocs = await aircraftModel.insertMany(aircraft)
+    console.log(`Seeded ${aircraft.length} aircraft`)
+  }
 
-  await mailboxEmailModel.deleteMany({})
-  await mailboxEmailModel.insertMany(mailboxEmails)
-  console.log(`Seeded ${mailboxEmails.length} mailbox emails`)
+  const aircraftIdByArcid = Object.fromEntries(
+    aircraftDocs.map((doc) => [doc.arcid, doc._id.toString()]),
+  )
+  const scheduleBlocks = buildScheduleBlocks(aircraftIdByArcid)
+  await seedMany(scheduleBlockModel, scheduleBlocks, 'schedule blocks')
+
+  await seedMany(
+    availabilityEntryModel,
+    availabilityEntries,
+    'availability entries',
+  )
+  await seedMany(certificateModel, certificates, 'certificates')
+
+  if (onlyIfEmpty && (await courseProgressModel.countDocuments()) > 0) {
+    console.log('Skipped course progress (already has data)')
+  } else {
+    await courseProgressModel.deleteMany({})
+    await courseProgressModel.insertOne(courseProgress)
+    console.log('Seeded course progress')
+  }
+
+  await seedMany(documentFolderModel, documentFolders, 'document folders')
+  await seedMany(logbookEntryModel, logbookEntries, 'logbook entries')
+  await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
+  await seedMany(bookingModel, bookings, 'bookings')
+  await seedMany(missingSignatureModel, missingSignatures, 'missing signatures')
+  await seedMany(newsItemModel, newsItems, 'news items')
+  await seedMany(weatherReportModel, weatherReports, 'weather reports')
 
   await app.close()
 }
