@@ -112,8 +112,7 @@
     "body": "Esta página mostrará más adelante tus notificaciones y preferencias de correspondencia. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "DocumentsPage": {
-    "title": "Documentos",
-    "body": "Esta página mostrará más adelante tus documentos y reportes guardados. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Documentos"
   },
   "NotFoundPage": {
     "title": "Parece que esta página desapareció del radar.",
@@ -128,7 +127,6 @@
     "signatures": "Firmas",
     "logbook": "Diario de vuelo",
     "flightDutyTimes": "Horas de vuelo / servicio",
-    "documents": "Documentos",
     "solo": "Solo",
     "availability": "Disponibilidad",
     "emails": "Correos"
@@ -257,9 +255,6 @@
   "FlightDutyTimesPage": {
     "title": "Horas de vuelo / servicio",
     "body": "Esta página mostrará más adelante tus registros de horas de vuelo y de servicio. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
-  },
-  "MyDocumentsPage": {
-    "title": "Documentos"
   },
   "DocumentsBrowser": {
     "title": "Documentos",

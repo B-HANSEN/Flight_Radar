@@ -112,8 +112,7 @@
     "body": "This page will eventually show your notifications and mailing preferences. For now it's placeholder text used to verify routing and localization."
   },
   "DocumentsPage": {
-    "title": "Documents",
-    "body": "This page will eventually show your saved documents and reports. For now it's placeholder text used to verify routing and localization."
+    "title": "Documents"
   },
   "NotFoundPage": {
     "title": "Looks like this page went off the radar.",
@@ -128,7 +127,6 @@
     "signatures": "Signatures",
     "logbook": "Logbook",
     "flightDutyTimes": "Flight / Duty times",
-    "documents": "Documents",
     "solo": "Solo",
     "availability": "Availability",
     "emails": "Emails"
@@ -257,9 +255,6 @@
   "FlightDutyTimesPage": {
     "title": "Flight / Duty times",
     "body": "This page will eventually show your flight and duty time records. For now it's placeholder text used to verify routing and localization."
-  },
-  "MyDocumentsPage": {
-    "title": "Documents"
   },
   "DocumentsBrowser": {
     "title": "Documents",

@@ -88,7 +88,7 @@ describe('NavBar', () => {
   })
 
   it('marks Me as active for nested /me sub-paths', () => {
-    mockUsePathname.mockReturnValue('/me/documents')
+    mockUsePathname.mockReturnValue('/me/logbook')
     renderNavBar()
     expect(screen.getByRole('link', { name: 'Me' })).toHaveAttribute(
       'aria-current',

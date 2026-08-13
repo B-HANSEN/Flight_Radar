@@ -112,8 +112,7 @@
     "body": "Diese Seite wird später Ihre Benachrichtigungen und Mitteilungseinstellungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "DocumentsPage": {
-    "title": "Dokumente",
-    "body": "Diese Seite wird später Ihre gespeicherten Dokumente und Berichte anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "Dokumente"
   },
   "NotFoundPage": {
     "title": "Sieht so aus, als wäre diese Seite vom Radar verschwunden.",
@@ -128,7 +127,6 @@
     "signatures": "Unterschriften",
     "logbook": "Flugbuch",
     "flightDutyTimes": "Flug-/Dienstzeiten",
-    "documents": "Dokumente",
     "solo": "Alleinflug",
     "availability": "Verfügbarkeit",
     "emails": "E-Mails"
@@ -257,9 +255,6 @@
   "FlightDutyTimesPage": {
     "title": "Flug-/Dienstzeiten",
     "body": "Diese Seite wird später Ihre Flug- und Dienstzeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
-  },
-  "MyDocumentsPage": {
-    "title": "Dokumente"
   },
   "DocumentsBrowser": {
     "title": "Dokumente",
