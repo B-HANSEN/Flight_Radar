@@ -6,10 +6,12 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
+import ScheduleBlockDetailModal from './ScheduleBlockDetailModal'
 import Toast from './Toast'
 import type {
   ScheduleAircraft,
   ScheduleBlock,
+  ScheduleBlockDetail,
   ScheduleRow,
 } from './ScheduleBoard.types'
 
@@ -66,6 +68,13 @@ function blockStyle(block: ScheduleBlock, pct: (value: number) => number) {
   return { left: `${left}%`, width: `${width}%` }
 }
 
+function formatHour(hour: number): string {
+  const totalMinutes = Math.round(hour * 60)
+  const h = Math.floor(totalMinutes / 60)
+  const m = totalMinutes % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+}
+
 function ScheduleGrid({
   aircraft,
   rows,
@@ -74,7 +83,9 @@ function ScheduleGrid({
   minWidthClassName,
   labelClassName,
   blockTextClassName,
+  blockAlignClassName,
   pct,
+  onBlockClick,
 }: {
   aircraft: ScheduleAircraft[]
   rows: ScheduleRow[]
@@ -83,7 +94,9 @@ function ScheduleGrid({
   minWidthClassName: string
   labelClassName: string
   blockTextClassName: string
+  blockAlignClassName: string
   pct: (value: number) => number
+  onBlockClick: (aircraft: ScheduleAircraft, block: ScheduleBlock) => void
 }) {
   return (
     <div className={minWidthClassName}>
@@ -107,13 +120,15 @@ function ScheduleGrid({
               <div key={label} className='border-l border-black-100/30' />
             ))}
             {(row?.blocks ?? []).map((block) => (
-              <div
+              <button
                 key={block.id}
+                type='button'
+                onClick={() => onBlockClick(ac, block)}
                 style={blockStyle(block, pct)}
-                className={`absolute top-2.5 bottom-2.5 flex items-center justify-center overflow-hidden rounded-lg px-1.5 text-center font-secondary font-semibold ${blockTextClassName} ${KIND_STYLES[block.kind]}`}
+                className={`absolute top-2.5 bottom-2.5 flex cursor-pointer items-center overflow-hidden rounded-lg px-1.5 font-secondary font-semibold transition hover:brightness-95 ${focusRing} ${blockTextClassName} ${blockAlignClassName} ${KIND_STYLES[block.kind]}`}
               >
                 {block.label}
-              </div>
+              </button>
             ))}
           </div>
         )
@@ -137,6 +152,8 @@ export default function ScheduleBoard({
   )
   const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [selectedBlock, setSelectedBlock] =
+    useState<ScheduleBlockDetail | null>(null)
 
   const weekStart = useMemo(() => startOfWeek(referenceDate), [referenceDate])
   const weekEnd = useMemo(() => addDays(weekStart, 6), [weekStart])
@@ -188,6 +205,25 @@ export default function ScheduleBoard({
   function handleRefresh() {
     setIsRefreshing(true)
     onRefresh?.()
+  }
+
+  function handleBlockClick(ac: ScheduleAircraft, block: ScheduleBlock) {
+    const timeLabel =
+      view === 'day'
+        ? `${dayLabel} · ${formatHour(block.start)} – ${formatHour(block.end)}`
+        : (() => {
+            const dayIndex = Math.floor(block.start)
+            const date = addDays(weekStart, dayIndex)
+            const weekdayLabel = new Intl.DateTimeFormat(locale, {
+              weekday: 'long',
+              month: 'short',
+              day: 'numeric',
+            }).format(date)
+            const startHour = (block.start - dayIndex) * 24
+            const endHour = (block.end - dayIndex) * 24
+            return `${weekdayLabel} · ${formatHour(startHour)} – ${formatHour(endHour)}`
+          })()
+    setSelectedBlock({ aircraft: ac, block, timeLabel })
   }
 
   return (
@@ -307,7 +343,9 @@ export default function ScheduleBoard({
                   minWidthClassName='min-w-225'
                   labelClassName='border-l border-black-100/60 pl-1 font-secondary text-[11px] font-semibold text-black-200'
                   blockTextClassName='text-xs'
+                  blockAlignClassName='justify-center text-center'
                   pct={dayPct}
+                  onBlockClick={handleBlockClick}
                 />
               ) : (
                 <ScheduleGrid
@@ -318,7 +356,9 @@ export default function ScheduleBoard({
                   minWidthClassName='min-w-300'
                   labelClassName='border-l border-black-100/60 text-center font-primary text-xs font-bold text-black-200'
                   blockTextClassName='text-[11px]'
+                  blockAlignClassName='justify-start text-left'
                   pct={weekPct}
+                  onBlockClick={handleBlockClick}
                 />
               )}
             </div>
@@ -330,6 +370,11 @@ export default function ScheduleBoard({
         message={t('fetching')}
         open={isRefreshing}
         onClose={() => setIsRefreshing(false)}
+      />
+
+      <ScheduleBlockDetailModal
+        detail={selectedBlock}
+        onClose={() => setSelectedBlock(null)}
       />
     </>
   )

@@ -88,6 +88,10 @@
     "photoAlt": "{type} ({arcid})",
     "fetching": "Cargando…"
   },
+  "ScheduleBlockDetailModal": {
+    "title": "Detalles de la programación",
+    "close": "Cerrar"
+  },
   "AircraftPage": {
     "title": "Aeronaves"
   },

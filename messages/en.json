@@ -88,6 +88,10 @@
     "photoAlt": "{type} ({arcid})",
     "fetching": "Fetching…"
   },
+  "ScheduleBlockDetailModal": {
+    "title": "Schedule details",
+    "close": "Close"
+  },
   "AircraftPage": {
     "title": "Aircraft"
   },

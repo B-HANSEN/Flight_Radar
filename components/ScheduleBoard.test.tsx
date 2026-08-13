@@ -37,8 +37,8 @@ const WEEK_ROWS: ScheduleRow[] = [
         id: 'w1',
         label: 'Scheduled maintenance',
         kind: 'maintenance',
-        start: 0,
-        end: 1.5,
+        start: 9 / 24,
+        end: 10.5 / 24,
       },
     ],
   },
@@ -116,5 +116,32 @@ describe('ScheduleBoard', () => {
     expect(images.some((img) => img.src.includes('aircraft-placeholder'))).toBe(
       true,
     )
+  })
+
+  it('opens a detail modal with the time, aircraft and label when a day-view block is clicked', () => {
+    renderBoard()
+
+    fireEvent.click(screen.getByText('Reserved 09:00–12:00'))
+
+    expect(screen.getByText('Schedule details')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Sunday, Aug 9, 2026 · 09:00 – 12:00 · EC-ERV · Cessna 152',
+      ),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByText('Schedule details')).not.toBeInTheDocument()
+  })
+
+  it('opens a detail modal with the weekday and time when a week-view block is clicked', () => {
+    renderBoard()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Week' }))
+    fireEvent.click(screen.getByText('Scheduled maintenance'))
+
+    expect(
+      screen.getByText('Monday, Aug 3 · 09:00 – 10:30 · EC-ERV · Cessna 152'),
+    ).toBeInTheDocument()
   })
 })

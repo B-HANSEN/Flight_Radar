@@ -20,3 +20,9 @@ export type ScheduleRow = {
   aircraftId: string
   blocks: ScheduleBlock[]
 }
+
+export type ScheduleBlockDetail = {
+  aircraft: ScheduleAircraft
+  block: ScheduleBlock
+  timeLabel: string
+}
