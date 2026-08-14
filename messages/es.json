@@ -7,7 +7,6 @@
     "news": "Noticias",
     "schedule": "Horario",
     "aircraft": "Aeronaves",
-    "mailing": "Correspondencia",
     "documents": "Documentos",
     "language": "Cambiar idioma",
     "localTime": "Hora Local",
@@ -107,10 +106,6 @@
     "page": "Página {number}",
     "paginationLabel": "Paginación",
     "photoAlt": "{type} ({arcid})"
-  },
-  "MailingPage": {
-    "title": "Correspondencia",
-    "body": "Esta página mostrará más adelante tus notificaciones y preferencias de correspondencia. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "DocumentsPage": {
     "title": "Documentos"

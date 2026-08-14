@@ -67,7 +67,6 @@ describe('NavBar', () => {
       ['News', '/news'],
       ['Schedule', '/schedule'],
       ['Aircraft', '/aircraft'],
-      ['Mailing', '/mailing'],
       ['Documents', '/documents'],
     ]
     expected.forEach(([name, href]) => {

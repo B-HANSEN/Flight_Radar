@@ -7,7 +7,6 @@
     "news": "News",
     "schedule": "Schedule",
     "aircraft": "Aircraft",
-    "mailing": "Mailing",
     "documents": "Documents",
     "language": "Change language",
     "localTime": "Local Time",
@@ -107,10 +106,6 @@
     "page": "Page {number}",
     "paginationLabel": "Pagination",
     "photoAlt": "{type} ({arcid})"
-  },
-  "MailingPage": {
-    "title": "Mailing",
-    "body": "This page will eventually show your notifications and mailing preferences. For now it's placeholder text used to verify routing and localization."
   },
   "DocumentsPage": {
     "title": "Documents"

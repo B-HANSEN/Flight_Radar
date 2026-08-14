@@ -9,15 +9,7 @@ const meta: Meta<typeof NavBar> = {
   argTypes: {
     activePath: {
       control: 'select',
-      options: [
-        '/',
-        '/me',
-        '/news',
-        '/schedule',
-        '/aircraft',
-        '/mailing',
-        '/documents',
-      ],
+      options: ['/', '/me', '/news', '/schedule', '/aircraft', '/documents'],
     },
     collapsed: {
       control: 'boolean',

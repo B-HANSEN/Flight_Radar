@@ -7,7 +7,6 @@
     "news": "Neuigkeiten",
     "schedule": "Flugplan",
     "aircraft": "Flugzeuge",
-    "mailing": "Mitteilungen",
     "documents": "Dokumente",
     "language": "Sprache ändern",
     "localTime": "Ortszeit",
@@ -107,10 +106,6 @@
     "page": "Seite {number}",
     "paginationLabel": "Seitennavigation",
     "photoAlt": "{type} ({arcid})"
-  },
-  "MailingPage": {
-    "title": "Mitteilungen",
-    "body": "Diese Seite wird später Ihre Benachrichtigungen und Mitteilungseinstellungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "DocumentsPage": {
     "title": "Dokumente"

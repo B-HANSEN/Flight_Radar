@@ -6,7 +6,6 @@ import {
   Newspaper,
   CalendarDays,
   PlaneTakeoff,
-  Mail,
   FileText,
   Radar,
   type LucideIcon,
@@ -17,8 +16,7 @@ import { focusRing } from '@/lib/styles'
 import LanguageSwitcher from './LanguageSwitcher'
 import NavClock from './NavClock'
 
-type NavItemKey =
-  'home' | 'me' | 'news' | 'schedule' | 'aircraft' | 'mailing' | 'documents'
+type NavItemKey = 'home' | 'me' | 'news' | 'schedule' | 'aircraft' | 'documents'
 
 type NavItem = {
   key: NavItemKey
@@ -39,7 +37,6 @@ const items: NavItem[] = [
   { key: 'news', href: '/news', icon: Newspaper },
   { key: 'schedule', href: '/schedule', icon: CalendarDays },
   { key: 'aircraft', href: '/aircraft', icon: PlaneTakeoff },
-  { key: 'mailing', href: '/mailing', icon: Mail },
   { key: 'documents', href: '/documents', icon: FileText },
 ]
 
