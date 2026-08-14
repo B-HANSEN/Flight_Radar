@@ -26,7 +26,8 @@
     "signatures": {
       "title": "Fehlende Unterschriften",
       "empty": "Keine fehlenden Unterschriften.",
-      "editLabel": "Unterschrift für {label} bearbeiten"
+      "flightLabel": "Flug Nr. {id}",
+      "signLabel": "{label} unterschreiben"
     },
     "news": {
       "title": "Neueste Updates",
@@ -125,9 +126,9 @@
     "certificates": "Zertifikate",
     "courses": "Kurse",
     "signatures": "Unterschriften",
-    "logbook": "Flugbuch",
+    "logbook": "Logbook",
     "flightDutyTimes": "Flug-/Dienstzeiten",
-    "solo": "Alleinflug",
+    "solo": "Solo Flight",
     "availability": "Verfügbarkeit",
     "emails": "E-Mails"
   },
@@ -205,18 +206,56 @@
     "behindOfTarget": "unter Plan"
   },
   "SignaturesPage": {
-    "title": "Unterschriften",
-    "body": "Diese Seite wird später Ihre Ausbildungsunterschriften und Fluglehrerbestätigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "Unterschriften"
+  },
+  "Signatures": {
+    "title": "Flüge",
+    "entries": "{count, plural, one {# Eintrag} other {# Einträge}}",
+    "signAll": "Alle unterschreiben",
+    "pendingHeading": "{count, plural, one {# fehlende Unterschrift} other {# fehlende Unterschriften}}",
+    "flight": "Flug",
+    "date": "Datum",
+    "type": "Art",
+    "pass": "Bestanden",
+    "signed": "Unterschrieben",
+    "openLabel": "Bewertung für Flug {id} öffnen",
+    "noFlights": "Keine Flüge vorhanden."
+  },
+  "FlightEvaluationModal": {
+    "title": "Bewertung Nr. {id}",
+    "close": "Schließen",
+    "date": "Datum",
+    "student": "Flugschüler",
+    "instructor": "Fluglehrer",
+    "aircraft": "Flugzeug",
+    "role": "Funktion",
+    "route": "Strecke",
+    "flightTime": "Flugzeit",
+    "dual": "Dual",
+    "solo": "Solo Flight",
+    "landings": "Landungen",
+    "maneuvers": "Manöver",
+    "observations": "Anmerkungen",
+    "evaluation": "Bewertung",
+    "scorePreparation": "Vorbereitung",
+    "scoreTechnique": "Flugtechnik",
+    "scoreInitiative": "Eigeninitiative",
+    "scoreInterest": "Interesse",
+    "scoreAssimilation": "Auffassungsgabe",
+    "signed": "Unterschrieben",
+    "sign": "Unterschreiben",
+    "passNote": "Zufriedenstellend, geht zur nächsten Phase über",
+    "failNote": "Nicht zufriedenstellend, geht nicht zur nächsten Phase über"
   },
   "LogbookPage": {
-    "title": "Flugbuch"
+    "title": "Logbook"
   },
   "Logbook": {
-    "title": "Flugbuch",
+    "title": "Logbook",
     "download": "Herunterladen",
     "refresh": "Aktualisieren",
     "reverseOrder": "Reihenfolge umkehren",
-    "summaryCaption": "Flugbuch-Gesamtsummen",
+    "summaryCaption": "Logbook-Gesamtsummen",
     "totalFlightTime": "Gesamtflugzeit",
     "singlePilotTime": "Einzelpilotenzeit",
     "crossCountry": "Überland",
@@ -266,8 +305,8 @@
     "noFiles": "Keine Dateien in diesem Ordner."
   },
   "SoloPage": {
-    "title": "Alleinflug",
-    "body": "Diese Seite wird später Ihre Alleinflugberechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
+    "title": "Solo Flight",
+    "body": "Diese Seite wird später Ihre Solo-Flight-Berechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "AvailabilityPage": {
     "title": "Verfügbarkeit"

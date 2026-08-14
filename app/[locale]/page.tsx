@@ -3,10 +3,10 @@ import { routing } from '@/i18n/routing'
 import Homepage from '@/components/Homepage'
 import type {
   Booking,
-  MissingSignature,
   NewsItem,
   WeatherReport,
 } from '@/components/Homepage.types'
+import type { FlightEvaluation } from '@/components/Signatures.types'
 import { fetchApi } from '@/lib/api'
 
 export function generateStaticParams() {
@@ -21,12 +21,13 @@ export default async function HomePage({
   const { locale } = await params
   setRequestLocale(locale)
 
-  const [weather, bookings, signatures, news] = await Promise.all([
+  const [weather, bookings, flightEvaluations, news] = await Promise.all([
     fetchApi<WeatherReport[]>('/weather'),
     fetchApi<Booking[]>('/bookings'),
-    fetchApi<MissingSignature[]>('/missing-signatures'),
+    fetchApi<FlightEvaluation[]>('/flight-evaluations'),
     fetchApi<NewsItem[]>('/news'),
   ])
+  const signatures = flightEvaluations.filter((flight) => !flight.signed)
 
   return (
     <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12'>

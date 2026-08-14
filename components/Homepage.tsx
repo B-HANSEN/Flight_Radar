@@ -1,24 +1,22 @@
 'use client'
 
-import { Pencil, Plane, User } from 'lucide-react'
+import { useState } from 'react'
+import { PenLine, Plane, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
+import { fetchApi } from '@/lib/api'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
-import type {
-  Booking,
-  MissingSignature,
-  NewsItem,
-  WeatherReport,
-} from './Homepage.types'
+import FlightEvaluationModal from './FlightEvaluationModal'
+import type { Booking, NewsItem, WeatherReport } from './Homepage.types'
+import type { FlightEvaluation } from './Signatures.types'
 
 type Props = {
   name: string
   weather?: WeatherReport[]
   bookings?: Booking[]
-  signatures?: MissingSignature[]
+  signatures?: FlightEvaluation[]
   news?: NewsItem[]
-  onEditSignature?: (signature: MissingSignature) => void
 }
 
 const NEWS_TAG_STYLES: Record<
@@ -137,10 +135,10 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
 
 function SignaturesCard({
   signatures,
-  onEditSignature,
+  onSelect,
 }: {
-  signatures: MissingSignature[]
-  onEditSignature?: (signature: MissingSignature) => void
+  signatures: FlightEvaluation[]
+  onSelect: (flight: FlightEvaluation) => void
 }) {
   const t = useTranslations('Homepage')
 
@@ -161,31 +159,34 @@ function SignaturesCard({
         </p>
       ) : (
         <ul className='flex list-none flex-col'>
-          {signatures.map((signature) => (
-            <li
-              key={signature.id}
-              className='flex items-center justify-between gap-4 border-b border-black-100 px-5 py-3.5 last:border-b-0'
-            >
-              <div className='flex items-center gap-4'>
-                <span className='font-secondary text-xs font-semibold text-black-200'>
-                  {signature.date}
-                </span>
-                <span className='font-secondary text-sm text-black-300'>
-                  {signature.label}
-                </span>
-              </div>
-              <button
-                type='button'
-                onClick={() => onEditSignature?.(signature)}
-                aria-label={t('signatures.editLabel', {
-                  label: signature.label,
-                })}
-                className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 ${focusRing}`}
+          {signatures.map((signature) => {
+            const label = t('signatures.flightLabel', {
+              id: signature.sessionId,
+            })
+            return (
+              <li
+                key={signature.id}
+                className='flex items-center justify-between gap-4 border-b border-black-100 px-5 py-3.5 last:border-b-0'
               >
-                <Pencil size={16} aria-hidden='true' />
-              </button>
-            </li>
-          ))}
+                <div className='flex items-center gap-4'>
+                  <span className='font-secondary text-xs font-semibold text-black-200'>
+                    {signature.date}
+                  </span>
+                  <span className='font-secondary text-sm text-black-300'>
+                    {label}
+                  </span>
+                </div>
+                <button
+                  type='button'
+                  onClick={() => onSelect(signature)}
+                  aria-label={t('signatures.signLabel', { label })}
+                  className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 ${focusRing}`}
+                >
+                  <PenLine size={16} aria-hidden='true' />
+                </button>
+              </li>
+            )
+          })}
         </ul>
       )}
     </section>
@@ -257,11 +258,23 @@ export default function Homepage({
   name,
   weather = [],
   bookings = [],
-  signatures = [],
+  signatures: initialSignatures = [],
   news = [],
-  onEditSignature,
 }: Props) {
   const t = useTranslations('Homepage')
+  const [signatures, setSignatures] = useState(initialSignatures)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const selectedFlight =
+    signatures.find((flight) => flight.id === selectedId) ?? null
+
+  async function handleSign(flight: FlightEvaluation) {
+    await fetchApi(`/flight-evaluations/${flight.id}/sign`, {
+      method: 'PATCH',
+      cache: 'no-store',
+    })
+    setSignatures((current) => current.filter((item) => item.id !== flight.id))
+    setSelectedId(null)
+  }
 
   return (
     <div className='flex flex-col gap-6 py-9'>
@@ -273,10 +286,16 @@ export default function Homepage({
         <BookingsCard bookings={bookings} />
         <SignaturesCard
           signatures={signatures}
-          onEditSignature={onEditSignature}
+          onSelect={(flight) => setSelectedId(flight.id)}
         />
       </div>
       <NewsGrid news={news} />
+
+      <FlightEvaluationModal
+        flight={selectedFlight}
+        onClose={() => setSelectedId(null)}
+        onSign={handleSign}
+      />
     </div>
   )
 }

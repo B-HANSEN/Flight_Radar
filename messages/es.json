@@ -26,7 +26,8 @@
     "signatures": {
       "title": "Firmas pendientes",
       "empty": "No hay firmas pendientes.",
-      "editLabel": "Editar firma de {label}"
+      "flightLabel": "Vuelo n.º {id}",
+      "signLabel": "Firmar {label}"
     },
     "news": {
       "title": "Últimas novedades",
@@ -125,9 +126,9 @@
     "certificates": "Certificados",
     "courses": "Cursos",
     "signatures": "Firmas",
-    "logbook": "Diario de vuelo",
+    "logbook": "Logbook",
     "flightDutyTimes": "Horas de vuelo / servicio",
-    "solo": "Solo",
+    "solo": "Solo Flight",
     "availability": "Disponibilidad",
     "emails": "Correos"
   },
@@ -179,7 +180,7 @@
     "ifr": "IFR",
     "mcc": "MCC",
     "aircraftType": "Tipo de aeronave",
-    "dual": "Doble",
+    "dual": "Dual",
     "pic": "PIC",
     "spic": "SPIC",
     "picus": "PICUS",
@@ -205,18 +206,56 @@
     "behindOfTarget": "por detrás del objetivo"
   },
   "SignaturesPage": {
-    "title": "Firmas",
-    "body": "Esta página mostrará más adelante tus firmas de formación y las validaciones del instructor. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Firmas"
+  },
+  "Signatures": {
+    "title": "Vuelos",
+    "entries": "{count, plural, one {# entrada} other {# entradas}}",
+    "signAll": "Firmar todo",
+    "pendingHeading": "{count, plural, one {# firma pendiente} other {# firmas pendientes}}",
+    "flight": "Vuelo",
+    "date": "Fecha",
+    "type": "Tipo",
+    "pass": "Apto",
+    "signed": "Firmado",
+    "openLabel": "Abrir evaluación del vuelo {id}",
+    "noFlights": "No hay vuelos que mostrar."
+  },
+  "FlightEvaluationModal": {
+    "title": "Evaluación n.º {id}",
+    "close": "Cerrar",
+    "date": "Fecha",
+    "student": "Alumno",
+    "instructor": "Instructor",
+    "aircraft": "Aeronave",
+    "role": "Función",
+    "route": "Ruta",
+    "flightTime": "Tiempo de vuelo",
+    "dual": "Dual",
+    "solo": "Solo Flight",
+    "landings": "Aterrizajes",
+    "maneuvers": "Maniobras",
+    "observations": "Observaciones",
+    "evaluation": "Evaluación",
+    "scorePreparation": "Preparación previa",
+    "scoreTechnique": "Técnica de vuelo",
+    "scoreInitiative": "Iniciativa",
+    "scoreInterest": "Interés",
+    "scoreAssimilation": "Asimilación",
+    "signed": "Firmado",
+    "sign": "Firmar",
+    "passNote": "APTO, pasa a la siguiente fase",
+    "failNote": "NO APTO, no pasa a la siguiente fase"
   },
   "LogbookPage": {
-    "title": "Diario de vuelo"
+    "title": "Logbook"
   },
   "Logbook": {
-    "title": "Diario de vuelo",
+    "title": "Logbook",
     "download": "Descargar",
     "refresh": "Actualizar",
     "reverseOrder": "Invertir orden",
-    "summaryCaption": "Totales del diario de vuelo",
+    "summaryCaption": "Totales del Logbook",
     "totalFlightTime": "Tiempo total de vuelo",
     "singlePilotTime": "Tiempo de piloto único",
     "crossCountry": "Nav.",
@@ -228,7 +267,7 @@
     "me": "ME",
     "pic": "PIC",
     "spic": "SPIC",
-    "dual": "Doble",
+    "dual": "Dual",
     "night": "Noche",
     "ift": "IFT",
     "ifr": "IFR",
@@ -266,8 +305,8 @@
     "noFiles": "No hay archivos en esta carpeta."
   },
   "SoloPage": {
-    "title": "Solo",
-    "body": "Esta página mostrará más adelante tus autorizaciones de vuelo solo. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
+    "title": "Solo Flight",
+    "body": "Esta página mostrará más adelante tus autorizaciones de Solo Flight. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "AvailabilityPage": {
     "title": "Disponibilidad"

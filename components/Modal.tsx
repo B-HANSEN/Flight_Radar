@@ -13,6 +13,8 @@ type Props = {
   children: React.ReactNode
   /** Set to false to yield Escape/Tab handling to a nested overlay (e.g. a picker) rendered inside this modal. */
   active?: boolean
+  /** Tailwind max-w-* class for the dialog. Defaults to 'max-w-md'; pass a wider one for document-style content. */
+  maxWidthClassName?: string
 }
 
 export default function Modal({
@@ -22,6 +24,7 @@ export default function Modal({
   closeLabel,
   children,
   active = true,
+  maxWidthClassName = 'max-w-md',
 }: Props) {
   const titleId = useId()
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -42,7 +45,7 @@ export default function Modal({
         aria-labelledby={titleId}
         tabIndex={-1}
         onClick={(event) => event.stopPropagation()}
-        className={`flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-xl bg-white shadow-xl ${focusRing}`}
+        className={`flex max-h-[85vh] w-full ${maxWidthClassName} flex-col overflow-hidden rounded-xl bg-white shadow-xl ${focusRing}`}
       >
         <div className='flex items-start justify-between gap-4 border-b border-black-100 px-6 py-4.5'>
           <h2

@@ -1,9 +1,5 @@
-import type {
-  Booking,
-  MissingSignature,
-  NewsItem,
-  WeatherReport,
-} from './Homepage.types'
+import { DUMMY_FLIGHT_EVALUATIONS } from './Signatures.data'
+import type { Booking, NewsItem, WeatherReport } from './Homepage.types'
 
 export const DUMMY_WEATHER: WeatherReport[] = [
   {
@@ -47,9 +43,9 @@ export const DUMMY_BOOKINGS: Booking[] = [
   },
 ]
 
-export const DUMMY_SIGNATURES: MissingSignature[] = [
-  { id: 'signature-1', date: '07/08/2026', label: 'Instruction #4041369' },
-]
+export const DUMMY_SIGNATURES = DUMMY_FLIGHT_EVALUATIONS.filter(
+  (flight) => !flight.signed,
+)
 
 export const DUMMY_NEWS: NewsItem[] = [
   {

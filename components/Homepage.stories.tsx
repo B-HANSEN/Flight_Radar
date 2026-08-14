@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { mockFlightEvaluationSign } from '@/lib/mockFlightEvaluationSign'
 import Homepage from './Homepage'
 import {
   DUMMY_BOOKINGS,
@@ -20,6 +21,7 @@ const meta: Meta<typeof Homepage> = {
     signatures: DUMMY_SIGNATURES,
     news: DUMMY_NEWS,
   },
+  beforeEach: () => mockFlightEvaluationSign(DUMMY_SIGNATURES),
 }
 export default meta
 

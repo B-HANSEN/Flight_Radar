@@ -13,12 +13,6 @@ export type Booking = {
   time: string
 }
 
-export type MissingSignature = {
-  id: string
-  date: string
-  label: string
-}
-
 export type NewsTag = 'operations' | 'fuel' | 'atc'
 
 export type NewsItem = {

@@ -2,7 +2,10 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ComponentProps, ReactNode } from 'react'
 import Homepage from './Homepage'
+import { fetchApi } from '@/lib/api'
 import enMessages from '@/messages/en.json'
+
+vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
 
 vi.mock('@/i18n/navigation', () => ({
   Link: ({
@@ -38,7 +41,33 @@ const bookings = [
 ]
 
 const signatures = [
-  { id: 'signature-1', date: '07/08/2026', label: 'Instruction #4041369' },
+  {
+    id: 'flight-15',
+    sessionId: '4041369',
+    date: '07/08/2026',
+    type: 'Instruction',
+    signed: false,
+    student: 'John Doe',
+    instructor: 'Jane Smith',
+    course: 'PPL Flight Phase (A_1_PPL(A)_v2_FLT)',
+    sessionTitle: 'Final check before solo flight',
+    aircraft: 'EC-ERV',
+    role: 'DUAL',
+    route: 'LELL - LELL',
+    flightTimeDual: '00:54',
+    flightTimeSolo: '00:00',
+    landingsDual: 4,
+    landingsSolo: 0,
+    maneuvers: [{ title: 'VBD15 - Final check before solo flight' }],
+    observations: 'Very good session.',
+    scorePreparation: 4,
+    scoreTechnique: 3,
+    scoreInitiative: 4,
+    scoreInterest: 4,
+    scoreAssimilation: 3,
+    finalScore: 3,
+    finalNote: 'APTO, pasa a la siguiente fase',
+  },
 ]
 
 const news = [
@@ -58,6 +87,10 @@ function renderHomepage(props: Partial<ComponentProps<typeof Homepage>> = {}) {
     </NextIntlClientProvider>,
   )
 }
+
+beforeEach(() => {
+  vi.mocked(fetchApi).mockReset().mockResolvedValue(undefined)
+})
 
 describe('Homepage', () => {
   it('greets the given name and renders weather, bookings, signatures, and news', () => {
@@ -83,7 +116,7 @@ describe('Homepage', () => {
       .getByRole('heading', { name: 'Missing signatures' })
       .closest('section') as HTMLElement
     expect(
-      within(signaturesSection).getByText('Instruction #4041369'),
+      within(signaturesSection).getByText('Flight #4041369'),
     ).toBeInTheDocument()
 
     expect(screen.getByRole('link', { name: 'View all news' })).toHaveAttribute(
@@ -111,16 +144,29 @@ describe('Homepage', () => {
     expect(screen.getByText('No missing signatures.')).toBeInTheDocument()
   })
 
-  it('calls onEditSignature with the clicked signature', () => {
-    const onEditSignature = vi.fn()
-    renderHomepage({ signatures, onEditSignature })
+  it('opens the evaluation modal and removes the signature from the list once signed', async () => {
+    renderHomepage({ signatures })
 
     fireEvent.click(
       screen.getByRole('button', {
-        name: 'Edit signature for Instruction #4041369',
+        name: 'Sign Flight #4041369',
       }),
     )
 
-    expect(onEditSignature).toHaveBeenCalledWith(signatures[0])
+    const dialog = screen.getByRole('dialog')
+    expect(
+      within(dialog).getByRole('heading', { name: 'Evaluation #4041369' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Sign' }))
+
+    expect(
+      await screen.findByText('No missing signatures.'),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(fetchApi).toHaveBeenCalledWith(
+      '/flight-evaluations/flight-15/sign',
+      { method: 'PATCH', cache: 'no-store' },
+    )
   })
 })

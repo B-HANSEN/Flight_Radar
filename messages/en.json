@@ -26,7 +26,8 @@
     "signatures": {
       "title": "Missing signatures",
       "empty": "No missing signatures.",
-      "editLabel": "Edit signature for {label}"
+      "flightLabel": "Flight #{id}",
+      "signLabel": "Sign {label}"
     },
     "news": {
       "title": "Latest updates",
@@ -205,8 +206,46 @@
     "behindOfTarget": "behind target"
   },
   "SignaturesPage": {
-    "title": "Signatures",
-    "body": "This page will eventually show your training signatures and instructor sign-offs. For now it's placeholder text used to verify routing and localization."
+    "title": "Signatures"
+  },
+  "Signatures": {
+    "title": "Flights",
+    "entries": "{count, plural, one {# entry} other {# entries}}",
+    "signAll": "Sign all",
+    "pendingHeading": "{count, plural, one {# missing signature} other {# missing signatures}}",
+    "flight": "Flight",
+    "date": "Date",
+    "type": "Type",
+    "pass": "Pass",
+    "signed": "Signed",
+    "openLabel": "Open evaluation for flight {id}",
+    "noFlights": "No flights to show."
+  },
+  "FlightEvaluationModal": {
+    "title": "Evaluation #{id}",
+    "close": "Close",
+    "date": "Date",
+    "student": "Student",
+    "instructor": "Instructor",
+    "aircraft": "Aircraft",
+    "role": "Role",
+    "route": "Route",
+    "flightTime": "Flight time",
+    "dual": "Dual",
+    "solo": "Solo",
+    "landings": "Landings",
+    "maneuvers": "Maneuvers",
+    "observations": "Observations",
+    "evaluation": "Evaluation",
+    "scorePreparation": "Preparation",
+    "scoreTechnique": "Flight technique",
+    "scoreInitiative": "Initiative",
+    "scoreInterest": "Interest",
+    "scoreAssimilation": "Assimilation",
+    "signed": "Signed",
+    "sign": "Sign",
+    "passNote": "Satisfactory, advances to the next phase",
+    "failNote": "Unsatisfactory, does not advance to the next phase"
   },
   "LogbookPage": {
     "title": "Logbook"
