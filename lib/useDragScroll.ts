@@ -3,12 +3,12 @@ import type { MouseEvent, PointerEvent } from 'react'
 
 const DRAG_CLICK_THRESHOLD = 5
 
-export function useDragScroll<T extends HTMLElement>() {
+export function useDragScroll<T extends HTMLElement>(axis: 'x' | 'y' = 'x') {
   const [isDragging, setIsDragging] = useState(false)
   const dragState = useRef({
     active: false,
-    startX: 0,
-    scrollLeft: 0,
+    start: 0,
+    scrollPos: 0,
     dragged: false,
   })
 
@@ -18,8 +18,11 @@ export function useDragScroll<T extends HTMLElement>() {
     event.currentTarget.setPointerCapture(event.pointerId)
     dragState.current = {
       active: true,
-      startX: event.clientX,
-      scrollLeft: event.currentTarget.scrollLeft,
+      start: axis === 'x' ? event.clientX : event.clientY,
+      scrollPos:
+        axis === 'x'
+          ? event.currentTarget.scrollLeft
+          : event.currentTarget.scrollTop,
       dragged: false,
     }
     setIsDragging(true)
@@ -27,9 +30,14 @@ export function useDragScroll<T extends HTMLElement>() {
 
   function onPointerMove(event: PointerEvent<T>) {
     if (!dragState.current.active) return
-    const delta = event.clientX - dragState.current.startX
+    const position = axis === 'x' ? event.clientX : event.clientY
+    const delta = position - dragState.current.start
     if (Math.abs(delta) > DRAG_CLICK_THRESHOLD) dragState.current.dragged = true
-    event.currentTarget.scrollLeft = dragState.current.scrollLeft - delta
+    if (axis === 'x') {
+      event.currentTarget.scrollLeft = dragState.current.scrollPos - delta
+    } else {
+      event.currentTarget.scrollTop = dragState.current.scrollPos - delta
+    }
   }
 
   function onPointerUp(event: PointerEvent<T>) {

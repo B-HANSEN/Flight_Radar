@@ -67,6 +67,7 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
 
 function BookingsCard({ bookings }: { bookings: Booking[] }) {
   const t = useTranslations('Homepage')
+  const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>('y')
 
   return (
     <section
@@ -84,50 +85,58 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
           {t('bookings.empty')}
         </p>
       ) : (
-        <ul className='flex list-none flex-col'>
-          {bookings.map((booking) => (
-            <li
-              key={booking.id}
-              className='flex flex-col gap-1.5 border-b border-black-100 px-5 py-4 last:border-b-0'
-            >
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <span
-                    aria-hidden='true'
-                    className='size-2 flex-none rounded-full bg-yellow-200'
-                  />
-                  <span className='font-primary text-sm font-bold text-black-300'>
-                    {booking.type}
+        <div
+          role='group'
+          aria-labelledby='homepage-bookings-heading'
+          tabIndex={0}
+          className={`max-h-44.25 overflow-y-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+          {...dragHandlers}
+        >
+          <ul className='flex list-none flex-col'>
+            {bookings.map((booking) => (
+              <li
+                key={booking.id}
+                className='flex flex-col gap-1.5 border-b border-black-100 px-5 py-4 last:border-b-0'
+              >
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-2'>
+                    <span
+                      aria-hidden='true'
+                      className='size-2 flex-none rounded-full bg-yellow-200'
+                    />
+                    <span className='font-primary text-sm font-bold text-black-300'>
+                      {booking.type}
+                    </span>
+                  </div>
+                  <span className='font-secondary text-xs font-semibold text-black-200'>
+                    {booking.date}
                   </span>
                 </div>
-                <span className='font-secondary text-xs font-semibold text-black-200'>
-                  {booking.date}
-                </span>
-              </div>
-              <div className='flex items-center gap-4 pl-4'>
-                <span className='flex items-center gap-1.5 font-secondary text-xs text-blue-300'>
-                  <Plane
-                    size={14}
-                    className='text-black-200'
-                    aria-hidden='true'
-                  />
-                  {booking.tail}
-                </span>
-                <span className='flex items-center gap-1.5 font-secondary text-xs text-blue-300'>
-                  <User
-                    size={14}
-                    className='text-black-200'
-                    aria-hidden='true'
-                  />
-                  {booking.person}
-                </span>
-                <span className='ml-auto font-secondary text-xs font-semibold text-black-300'>
-                  {booking.time}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <div className='flex items-center gap-4 pl-4'>
+                  <span className='flex items-center gap-1.5 font-secondary text-xs text-blue-300'>
+                    <Plane
+                      size={14}
+                      className='text-black-200'
+                      aria-hidden='true'
+                    />
+                    {booking.tail}
+                  </span>
+                  <span className='flex items-center gap-1.5 font-secondary text-xs text-blue-300'>
+                    <User
+                      size={14}
+                      className='text-black-200'
+                      aria-hidden='true'
+                    />
+                    {booking.person}
+                  </span>
+                  <span className='ml-auto font-secondary text-xs font-semibold text-black-300'>
+                    {booking.time}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </section>
   )
@@ -141,6 +150,7 @@ function SignaturesCard({
   onSelect: (flight: FlightEvaluation) => void
 }) {
   const t = useTranslations('Homepage')
+  const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>('y')
 
   return (
     <section
@@ -158,36 +168,44 @@ function SignaturesCard({
           {t('signatures.empty')}
         </p>
       ) : (
-        <ul className='flex list-none flex-col'>
-          {signatures.map((signature) => {
-            const label = t('signatures.flightLabel', {
-              id: signature.sessionId,
-            })
-            return (
-              <li
-                key={signature.id}
-                className='flex items-center justify-between gap-4 border-b border-black-100 px-5 py-3.5 last:border-b-0'
-              >
-                <div className='flex items-center gap-4'>
-                  <span className='font-secondary text-xs font-semibold text-black-200'>
-                    {signature.date}
-                  </span>
-                  <span className='font-secondary text-sm text-black-300'>
-                    {label}
-                  </span>
-                </div>
-                <button
-                  type='button'
-                  onClick={() => onSelect(signature)}
-                  aria-label={t('signatures.signLabel', { label })}
-                  className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 ${focusRing}`}
+        <div
+          role='group'
+          aria-labelledby='homepage-signatures-heading'
+          tabIndex={0}
+          className={`max-h-44.25 overflow-y-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+          {...dragHandlers}
+        >
+          <ul className='flex list-none flex-col'>
+            {signatures.map((signature) => {
+              const label = t('signatures.flightLabel', {
+                id: signature.sessionId,
+              })
+              return (
+                <li
+                  key={signature.id}
+                  className='flex items-center justify-between gap-4 border-b border-black-100 px-5 py-3.5 last:border-b-0'
                 >
-                  <PenLine size={16} aria-hidden='true' />
-                </button>
-              </li>
-            )
-          })}
-        </ul>
+                  <div className='flex items-center gap-4'>
+                    <span className='font-secondary text-xs font-semibold text-black-200'>
+                      {signature.date}
+                    </span>
+                    <span className='font-secondary text-sm text-black-300'>
+                      {label}
+                    </span>
+                  </div>
+                  <button
+                    type='button'
+                    onClick={() => onSelect(signature)}
+                    aria-label={t('signatures.signLabel', { label })}
+                    className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 ${focusRing}`}
+                  >
+                    <PenLine size={16} aria-hidden='true' />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       )}
     </section>
   )
