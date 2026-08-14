@@ -11,10 +11,10 @@ import { CertificatesModule } from './certificates/certificates.module'
 import { validate } from './config/env.validation'
 import { CoursesModule } from './courses/courses.module'
 import { DocumentsModule } from './documents/documents.module'
+import { FlightEvaluationsModule } from './flight-evaluations/flight-evaluations.module'
 import { HealthModule } from './health/health.module'
 import { LogbookModule } from './logbook/logbook.module'
 import { MailboxModule } from './mailbox/mailbox.module'
-import { MissingSignaturesModule } from './missing-signatures/missing-signatures.module'
 import { NewsModule } from './news/news.module'
 import { ScheduleModule } from './schedule/schedule.module'
 import { WeatherModule } from './weather/weather.module'
@@ -36,9 +36,9 @@ import { WeatherModule } from './weather/weather.module'
     CertificatesModule,
     CoursesModule,
     DocumentsModule,
+    FlightEvaluationsModule,
     LogbookModule,
     MailboxModule,
-    MissingSignaturesModule,
     NewsModule,
     ScheduleModule,
     WeatherModule,
