@@ -13,6 +13,10 @@
     "zuluTime": "Zulu-Zeit"
   },
   "Homepage": {
+    "meta": {
+      "title": "Startseite",
+      "description": "Dein Flugschul-Dashboard: Wetterbriefings, anstehende Buchungen, fehlende Unterschriften und aktuelle Neuigkeiten an einem Ort."
+    },
     "greeting": "Willkommen, {name}",
     "weather": {
       "label": "Wetterbriefing",

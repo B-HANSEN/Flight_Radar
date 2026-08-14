@@ -11,8 +11,15 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  title: 'Flight Radar',
-  description: 'A light-weight flight radar demo',
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  ),
+  title: {
+    template: '%s | Flight Radar',
+    default: 'Flight Radar',
+  },
+  description:
+    'A flight school management platform for tracking bookings, logbooks, certificates, and courses.',
 }
 
 export default async function LocaleLayout({

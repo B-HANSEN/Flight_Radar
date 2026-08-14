@@ -13,6 +13,10 @@
     "zuluTime": "Hora Zulú"
   },
   "Homepage": {
+    "meta": {
+      "title": "Inicio",
+      "description": "Tu panel de la escuela de vuelo: partes meteorológicos, próximas reservas, firmas pendientes y las últimas noticias en un solo lugar."
+    },
     "greeting": "Bienvenido, {name}",
     "weather": {
       "label": "Briefing meteorológico",

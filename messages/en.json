@@ -13,6 +13,10 @@
     "zuluTime": "Zulu Time"
   },
   "Homepage": {
+    "meta": {
+      "title": "Home",
+      "description": "Your flight school dashboard: weather briefings, upcoming bookings, missing signatures, and the latest news in one place."
+    },
     "greeting": "Welcome, {name}",
     "weather": {
       "label": "Weather briefing",
