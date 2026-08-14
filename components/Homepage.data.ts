@@ -41,6 +41,22 @@ export const DUMMY_BOOKINGS: Booking[] = [
     person: 'K. Ashford',
     time: '15:00 - 17:00',
   },
+  {
+    id: 'booking-3',
+    type: 'Instruction',
+    date: '17/08/2026',
+    tail: 'EC-ERV',
+    person: 'J. Whitfield',
+    time: '09:00 - 10:30',
+  },
+  {
+    id: 'booking-4',
+    type: 'Instruction',
+    date: '18/08/2026',
+    tail: 'EC-ERV',
+    person: 'J. Whitfield',
+    time: '13:00 - 14:30',
+  },
 ]
 
 export const DUMMY_SIGNATURES = DUMMY_FLIGHT_EVALUATIONS.filter(

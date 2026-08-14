@@ -768,6 +768,22 @@ const bookings: Omit<Booking, '_id'>[] = [
     time: '15:00 - 17:00',
     studentId,
   },
+  {
+    type: 'Instruction',
+    date: '17/08/2026',
+    tail: 'EC-ERV',
+    person: 'J. Whitfield',
+    time: '09:00 - 10:30',
+    studentId,
+  },
+  {
+    type: 'Instruction',
+    date: '18/08/2026',
+    tail: 'EC-ERV',
+    person: 'J. Whitfield',
+    time: '13:00 - 14:30',
+    studentId,
+  },
 ]
 
 // Flight evaluations double as the source of the "missing signatures"
