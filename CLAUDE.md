@@ -14,6 +14,7 @@ A flight school management platform: a Next.js (App Router) + TypeScript + next-
 npm run dev              # start dev server
 npm run build             # production build
 npm run lint               # eslint
+npm run type-check          # tsc --noEmit
 npm run format              # prettier --write .
 npm run format:check        # prettier --check .
 npm run test                # vitest run (single run)
@@ -46,6 +47,7 @@ Use Conventional Commits: `<type>(<scope>): <description>`.
 ## Conventions
 
 - No semicolons, single quotes (`.prettierrc.json`). `.vscode/settings.json` runs Prettier on save; `npm run format` is the manual/CI fallback.
+- TypeScript `strict` mode is on (`tsconfig.json`). `npm run lint` does not type-check (`eslint-config-next/typescript` runs without `parserOptions.project`, so it's syntactic only) — run `npm run type-check` after non-trivial TS changes rather than relying on `npm run build` to eventually catch a strict-mode violation.
 - Components must be WCAG-AA 2.2 compatible and SEO/AEO-compatible (per `TODO.md`); the Storybook a11y addon is wired up (`test: 'todo'` in `.storybook/preview.tsx`) — check its output when adding components.
 - Each component under `/components` needs a `*.test.tsx` covering it at ≥80% lines/branches/functions/statements (`npm run test:coverage`, configured per-file in `vitest.config.ts`). `*.stories.tsx` files are excluded from coverage.
 - A `/playwright` e2e folder is planned but not yet set up.
