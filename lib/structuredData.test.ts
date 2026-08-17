@@ -17,6 +17,17 @@ describe('buildOrganizationSchema', () => {
     expect(schema['@id']).toMatch(/#organization$/)
     expect(schema.name).toBe('Flight Radar')
   })
+
+  it('points logo at the square brand asset', () => {
+    const schema = buildOrganizationSchema()
+
+    expect(schema.logo).toEqual({
+      '@type': 'ImageObject',
+      url: expect.stringMatching(/\/logo\.webp$/),
+      width: '512',
+      height: '512',
+    })
+  })
 })
 
 describe('buildWebSiteSchema', () => {

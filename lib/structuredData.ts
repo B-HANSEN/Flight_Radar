@@ -22,6 +22,12 @@ export function buildOrganizationSchema() {
     '@id': ORGANIZATION_ID,
     name: SITE_NAME,
     url: SITE_URL,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}/logo.webp`,
+      width: '512',
+      height: '512',
+    },
   } satisfies WithContext<Organization>
 }
 

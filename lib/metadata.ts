@@ -41,6 +41,14 @@ export function buildPageMetadata({
       description,
       siteName: SITE_NAME,
       type: 'website',
+      images: [
+        {
+          url: '/og-image.webp',
+          width: 1200,
+          height: 630,
+          alt: SITE_NAME,
+        },
+      ],
     },
   }
 }

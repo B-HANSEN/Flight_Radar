@@ -70,7 +70,7 @@ export default function NavBar({
 
       <div className='flex flex-none items-center gap-2.5'>
         <div className='flex size-8.5 items-center justify-center rounded-lg bg-blue-300'>
-          <Radar size={20} className='text-yellow-200' aria-hidden='true' />
+          <Radar size={20} className='text-mint' aria-hidden='true' />
         </div>
         <span className='text-md font-bold tracking-[0.01em] text-black-300'>
           Flight Radar
