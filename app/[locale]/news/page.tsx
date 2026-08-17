@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import PageHeading from '@/components/PageHeading'
+import JsonLd from '@/components/JsonLd'
 import { buildPageMetadata } from '@/lib/metadata'
+import { buildWebPageSchema } from '@/lib/structuredData'
 import BulletinReminderCard from '@/components/BulletinReminderCard'
 import BulletinProcedureCard from '@/components/BulletinProcedureCard'
 import BulletinReferenceCard from '@/components/BulletinReferenceCard'
@@ -39,6 +41,14 @@ export default async function NewsPage({
 
   return (
     <>
+      <JsonLd
+        data={buildWebPageSchema({
+          locale,
+          href: '/news',
+          title: t('title'),
+          description: t('body'),
+        })}
+      />
       <PageHeading title={t('title')} description={t('body')} />
       <div className='flex flex-col gap-10'>
         <BulletinReminderCard />

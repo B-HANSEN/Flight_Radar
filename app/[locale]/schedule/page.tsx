@@ -2,8 +2,10 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import PageHeading from '@/components/PageHeading'
+import JsonLd from '@/components/JsonLd'
 import ScheduleBoard from '@/components/ScheduleBoard'
 import { buildPageMetadata } from '@/lib/metadata'
+import { buildWebPageSchema } from '@/lib/structuredData'
 import type {
   ScheduleAircraft,
   ScheduleBlock,
@@ -74,6 +76,14 @@ export default async function SchedulePage({
 
   return (
     <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12'>
+      <JsonLd
+        data={buildWebPageSchema({
+          locale,
+          href: '/schedule',
+          title: t('title'),
+          description: t('meta.description'),
+        })}
+      />
       <div className='mx-auto max-w-300'>
         <PageHeading title={t('title')} />
         <ScheduleBoard

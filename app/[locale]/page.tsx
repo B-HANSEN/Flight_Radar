@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import Homepage from '@/components/Homepage'
+import JsonLd from '@/components/JsonLd'
 import type {
   Booking,
   NewsItem,
@@ -10,6 +11,7 @@ import type {
 import type { FlightEvaluation } from '@/components/Signatures.types'
 import { fetchApi } from '@/lib/api'
 import { buildPageMetadata } from '@/lib/metadata'
+import { buildWebPageSchema } from '@/lib/structuredData'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -39,6 +41,7 @@ export default async function HomePage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'Homepage.meta' })
 
   const [weather, bookings, flightEvaluations, news] = await Promise.all([
     fetchApi<WeatherReport[]>('/weather'),
@@ -50,6 +53,14 @@ export default async function HomePage({
 
   return (
     <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12'>
+      <JsonLd
+        data={buildWebPageSchema({
+          locale,
+          href: '/',
+          title: t('title'),
+          description: t('description'),
+        })}
+      />
       <div className='mx-auto max-w-350'>
         <Homepage
           name='John Doe'

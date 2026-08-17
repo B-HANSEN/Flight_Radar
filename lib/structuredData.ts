@@ -1,4 +1,4 @@
-import type { Organization, WebSite, WithContext } from 'schema-dts'
+import type { Organization, WebPage, WebSite, WithContext } from 'schema-dts'
 import { getPathname } from '@/i18n/navigation'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
@@ -18,7 +18,7 @@ const WEBSITE_ID = `${SITE_URL}/#website`
 export function buildOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Organization',
+    '@type': 'EducationalOrganization',
     '@id': ORGANIZATION_ID,
     name: SITE_NAME,
     url: SITE_URL,
@@ -36,4 +36,31 @@ export function buildWebSiteSchema(locale: string) {
     inLanguage: locale,
     publisher: { '@id': ORGANIZATION_ID },
   } satisfies WithContext<WebSite>
+}
+
+type BuildWebPageSchemaInput = {
+  locale: string
+  href: string
+  title: string
+  description: string
+}
+
+export function buildWebPageSchema({
+  locale,
+  href,
+  title,
+  description,
+}: BuildWebPageSchemaInput) {
+  const url = `${SITE_URL}${getPathname({ href, locale })}`
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: title,
+    description,
+    inLanguage: locale,
+    isPartOf: { '@id': WEBSITE_ID },
+  } satisfies WithContext<WebPage>
 }
