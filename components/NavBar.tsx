@@ -68,14 +68,18 @@ export default function NavBar({
         </span>
       </button>
 
-      <div className='flex flex-none items-center gap-2.5'>
+      <Link
+        href='/'
+        onClick={() => onItemClick?.('/')}
+        className={`flex flex-none items-center gap-2.5 rounded-lg ${focusRing}`}
+      >
         <div className='relative size-10.5 flex-none overflow-hidden rounded-lg'>
           <Image src='/logo.webp' alt='' fill sizes='42px' priority />
         </div>
         <span className='text-md font-bold tracking-[0.01em] text-black-300'>
           Flight Radar
         </span>
-      </div>
+      </Link>
 
       <ul
         className={`list-none flex-1 items-center gap-1 ${collapsed ? 'hidden' : 'hidden md:flex'}`}
