@@ -46,7 +46,7 @@
   },
   "AboutPage": {
     "title": "About this project",
-    "body": "Flight Radar is a light-weight flight tracking project, built with Next.js, TypeScript and Tailwind CSS."
+    "body": "Flight Radar is a flight school management platform, built with Next.js, TypeScript and Tailwind CSS."
   },
   "MePage": {
     "profileCard": {

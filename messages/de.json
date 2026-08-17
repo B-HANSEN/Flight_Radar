@@ -46,7 +46,7 @@
   },
   "AboutPage": {
     "title": "Über dieses Projekt",
-    "body": "Flight Radar ist ein leichtgewichtiges Flugverfolgungsprojekt, entwickelt mit Next.js, TypeScript und Tailwind CSS."
+    "body": "Flight Radar ist eine Flugschul-Verwaltungsplattform, entwickelt mit Next.js, TypeScript und Tailwind CSS."
   },
   "MePage": {
     "profileCard": {

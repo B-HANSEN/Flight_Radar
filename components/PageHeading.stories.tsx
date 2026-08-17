@@ -14,5 +14,8 @@ export const Default: Story = {
 }
 
 export const WithDescription: Story = {
-  args: { title: 'Welcome', description: 'Track flights in real time.' },
+  args: {
+    title: 'Welcome',
+    description: 'Manage courses, aircraft and student progress.',
+  },
 }
