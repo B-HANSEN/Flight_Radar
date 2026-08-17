@@ -72,6 +72,25 @@
       }
     }
   },
+  "EmergencyContactModal": {
+    "title": "Notfallkontakt bearbeiten",
+    "close": "Schließen",
+    "nameLabel": "Name der Kontaktperson",
+    "relationLabel": "Beziehung",
+    "phoneLabel": "Telefon der Kontaktperson",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Notfallkontakt löschen"
+  },
+  "ChangePasswordModal": {
+    "title": "Passwort ändern",
+    "close": "Schließen",
+    "currentPasswordLabel": "Aktuelles Passwort",
+    "newPasswordLabel": "Neues Passwort",
+    "confirmPasswordLabel": "Neues Passwort bestätigen",
+    "underDevelopment": "Die Passwortänderung befindet sich noch in Entwicklung.",
+    "save": "Speichern"
+  },
   "NewsPage": {
     "title": "Neuigkeiten",
     "body": "Sicherheitsbulletins, Wartungserinnerungen und Betriebsupdates für Piloten und Bodenpersonal."
