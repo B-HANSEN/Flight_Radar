@@ -135,8 +135,6 @@
     "courses": "Courses",
     "signatures": "Signatures",
     "logbook": "Logbook",
-    "flightDutyTimes": "Flight / Duty times",
-    "solo": "Solo",
     "availability": "Availability",
     "emails": "Emails"
   },
@@ -299,10 +297,6 @@
     "noFlights": "No flights recorded yet.",
     "fetching": "Fetching…"
   },
-  "FlightDutyTimesPage": {
-    "title": "Flight / Duty times",
-    "body": "This page will eventually show your flight and duty time records. For now it's placeholder text used to verify routing and localization."
-  },
   "DocumentsBrowser": {
     "title": "Documents",
     "breadcrumbLabel": "Breadcrumb",
@@ -311,10 +305,6 @@
     "fileCount": "{count, plural, one {# file} other {# files}}",
     "noFolders": "No folders available.",
     "noFiles": "No files in this folder."
-  },
-  "SoloPage": {
-    "title": "Solo",
-    "body": "This page will eventually show your solo flight authorizations and endorsements. For now it's placeholder text used to verify routing and localization."
   },
   "AvailabilityPage": {
     "title": "Availability"

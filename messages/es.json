@@ -135,8 +135,6 @@
     "courses": "Cursos",
     "signatures": "Firmas",
     "logbook": "Logbook",
-    "flightDutyTimes": "Horas de vuelo / servicio",
-    "solo": "Solo Flight",
     "availability": "Disponibilidad",
     "emails": "Correos"
   },
@@ -299,10 +297,6 @@
     "noFlights": "Todavía no hay vuelos registrados.",
     "fetching": "Cargando…"
   },
-  "FlightDutyTimesPage": {
-    "title": "Horas de vuelo / servicio",
-    "body": "Esta página mostrará más adelante tus registros de horas de vuelo y de servicio. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
-  },
   "DocumentsBrowser": {
     "title": "Documentos",
     "breadcrumbLabel": "Ruta de navegación",
@@ -311,10 +305,6 @@
     "fileCount": "{count, plural, one {# archivo} other {# archivos}}",
     "noFolders": "No hay carpetas disponibles.",
     "noFiles": "No hay archivos en esta carpeta."
-  },
-  "SoloPage": {
-    "title": "Solo Flight",
-    "body": "Esta página mostrará más adelante tus autorizaciones de Solo Flight. Por ahora es texto de relleno para verificar el enrutamiento y la localización."
   },
   "AvailabilityPage": {
     "title": "Disponibilidad"

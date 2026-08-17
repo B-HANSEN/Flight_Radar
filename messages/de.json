@@ -135,8 +135,6 @@
     "courses": "Kurse",
     "signatures": "Unterschriften",
     "logbook": "Logbook",
-    "flightDutyTimes": "Flug-/Dienstzeiten",
-    "solo": "Solo Flight",
     "availability": "Verfügbarkeit",
     "emails": "E-Mails"
   },
@@ -299,10 +297,6 @@
     "noFlights": "Noch keine Flüge erfasst.",
     "fetching": "Wird geladen …"
   },
-  "FlightDutyTimesPage": {
-    "title": "Flug-/Dienstzeiten",
-    "body": "Diese Seite wird später Ihre Flug- und Dienstzeiten anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
-  },
   "DocumentsBrowser": {
     "title": "Dokumente",
     "breadcrumbLabel": "Brotkrümel-Navigation",
@@ -311,10 +305,6 @@
     "fileCount": "{count, plural, one {# Datei} other {# Dateien}}",
     "noFolders": "Keine Ordner verfügbar.",
     "noFiles": "Keine Dateien in diesem Ordner."
-  },
-  "SoloPage": {
-    "title": "Solo Flight",
-    "body": "Diese Seite wird später Ihre Solo-Flight-Berechtigungen anzeigen. Vorerst dient dieser Platzhaltertext dazu, Routing und Lokalisierung zu überprüfen."
   },
   "AvailabilityPage": {
     "title": "Verfügbarkeit"

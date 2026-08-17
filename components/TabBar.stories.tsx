@@ -16,8 +16,6 @@ const meta: Meta<typeof TabBar> = {
         '/me/courses',
         '/me/signatures',
         '/me/logbook',
-        '/me/flight-duty-times',
-        '/me/solo',
         '/me/availability',
         '/me/emails',
       ],
@@ -50,10 +48,6 @@ const DUMMY_PANEL_TEXT: Record<string, string> = {
     'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
   '/me/logbook':
     'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  '/me/flight-duty-times':
-    'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
-  '/me/solo':
-    'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.',
   '/me/availability':
     'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.',
   '/me/emails':

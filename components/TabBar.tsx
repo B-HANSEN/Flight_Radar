@@ -11,8 +11,6 @@ type TabKey =
   | 'courses'
   | 'signatures'
   | 'logbook'
-  | 'flightDutyTimes'
-  | 'solo'
   | 'availability'
   | 'emails'
 
@@ -32,8 +30,6 @@ const items: TabItem[] = [
   { key: 'courses', href: '/me/courses' },
   { key: 'signatures', href: '/me/signatures' },
   { key: 'logbook', href: '/me/logbook' },
-  { key: 'flightDutyTimes', href: '/me/flight-duty-times' },
-  { key: 'solo', href: '/me/solo' },
   { key: 'availability', href: '/me/availability' },
   { key: 'emails', href: '/me/emails' },
 ]
