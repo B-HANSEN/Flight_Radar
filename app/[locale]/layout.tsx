@@ -4,6 +4,11 @@ import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import NavBar from '@/components/NavBar'
+import JsonLd from '@/components/JsonLd'
+import {
+  buildOrganizationSchema,
+  buildWebSiteSchema,
+} from '@/lib/structuredData'
 import '../globals.css'
 
 export function generateStaticParams() {
@@ -42,6 +47,9 @@ export default async function LocaleLayout({
       className='scroll-pt-16 scrollbar-gutter-stable md:scroll-pt-18'
     >
       <body className='min-h-screen overflow-x-hidden bg-white text-slate-900 antialiased'>
+        <JsonLd
+          data={[buildOrganizationSchema(), buildWebSiteSchema(locale)]}
+        />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <NavBar />
           <main className='mx-auto max-w-3xl px-4 py-8'>{children}</main>
