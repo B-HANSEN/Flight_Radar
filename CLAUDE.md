@@ -26,6 +26,8 @@ npm run build-storybook     # static storybook build
 
 Run a single test file: `npx vitest run components/PageHeading.test.tsx`
 
+The user runs their own dev server on :3000 and Storybook on :6006. When Claude needs to launch either to verify a change, use `npm run dev:claude` (port 3100) and `npm run storybook:claude` (port 6106) instead, so the user's own running instances aren't killed or reused.
+
 ## Architecture
 
 - **Locale-scoped routing**: every route lives under `app/[locale]/`, driven by `i18n/routing.ts` (`locales: ['en', 'de', 'es']`, default `en`, `localePrefix: 'always'`). `/` redirects to `/en`. `app/[locale]/layout.tsx` validates the locale param with `hasLocale`/`notFound()` and calls `setRequestLocale`; every page does the same and must export `generateStaticParams()` returning `routing.locales.map(locale => ({ locale }))` for static rendering.
