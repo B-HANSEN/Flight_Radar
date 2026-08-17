@@ -72,25 +72,6 @@
       }
     }
   },
-  "EmergencyContactModal": {
-    "title": "Edit emergency contact",
-    "close": "Close",
-    "nameLabel": "Contact name",
-    "relationLabel": "Relation",
-    "phoneLabel": "Contact phone",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete emergency contact"
-  },
-  "ChangePasswordModal": {
-    "title": "Change password",
-    "close": "Close",
-    "currentPasswordLabel": "Current password",
-    "newPasswordLabel": "New password",
-    "confirmPasswordLabel": "Confirm new password",
-    "underDevelopment": "Password change is still under development.",
-    "save": "Save"
-  },
   "NewsPage": {
     "title": "News",
     "body": "Safety bulletins, maintenance reminders, and operational updates for pilots and ground crew."

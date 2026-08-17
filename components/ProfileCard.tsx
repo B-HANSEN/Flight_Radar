@@ -7,7 +7,6 @@ import {
   HeartHandshake,
   Info,
   Lock,
-  LockOpen,
   Mail,
   Pencil,
   Phone,
@@ -18,7 +17,7 @@ import {
 import { useTranslations } from 'next-intl'
 import { focusRing } from '@/lib/styles'
 
-export type EmergencyContact = {
+type EmergencyContact = {
   name: string
   relation: string
   phone: string
@@ -35,7 +34,6 @@ type Props = {
   emergencyContact: EmergencyContact
   onEdit?: () => void
   onLock?: () => void
-  isPasswordModalOpen?: boolean
 }
 
 type Tab = 'information' | 'emergency'
@@ -74,7 +72,6 @@ export default function ProfileCard({
   emergencyContact,
   onEdit,
   onLock,
-  isPasswordModalOpen = false,
 }: Props) {
   const t = useTranslations('MePage.profileCard')
   const [activeTab, setActiveTab] = useState<Tab>('information')
@@ -163,11 +160,7 @@ export default function ProfileCard({
             aria-label={t('lockLabel')}
             className={`rounded-sm p-1.5 ${focusRing}`}
           >
-            {isPasswordModalOpen ? (
-              <LockOpen size={18} aria-hidden='true' />
-            ) : (
-              <Lock size={18} aria-hidden='true' />
-            )}
+            <Lock size={18} aria-hidden='true' />
           </button>
         </div>
       </div>

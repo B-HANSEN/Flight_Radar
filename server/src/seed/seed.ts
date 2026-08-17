@@ -9,7 +9,6 @@ import { Booking } from '../bookings/schemas/booking.schema'
 import { Certificate } from '../certificates/schemas/certificate.schema'
 import { CourseProgress } from '../courses/schemas/course-progress.schema'
 import { DocumentFolder } from '../documents/schemas/document-folder.schema'
-import { EmergencyContact } from '../emergency-contact/schemas/emergency-contact.schema'
 import { FlightEvaluation } from '../flight-evaluations/schemas/flight-evaluation.schema'
 import { LogbookEntry } from '../logbook/schemas/logbook-entry.schema'
 import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
@@ -1415,13 +1414,6 @@ const courseProgress: Omit<CourseProgress, '_id'> = {
   studentId,
 }
 
-const emergencyContact: Omit<EmergencyContact, '_id'> = {
-  name: 'Jane Doe',
-  relation: 'Sister',
-  phone: '+34 600 987 654',
-  studentId,
-}
-
 const calendarEvents: Omit<CalendarEvent, '_id'>[] = [
   {
     type: 'unavailability',
@@ -1646,9 +1638,6 @@ async function seed() {
   const documentFolderModel = app.get<Model<DocumentFolder>>(
     getModelToken(DocumentFolder.name),
   )
-  const emergencyContactModel = app.get<Model<EmergencyContact>>(
-    getModelToken(EmergencyContact.name),
-  )
   const flightEvaluationModel = app.get<Model<FlightEvaluation>>(
     getModelToken(FlightEvaluation.name),
   )
@@ -1700,14 +1689,6 @@ async function seed() {
   }
 
   await seedMany(documentFolderModel, documentFolders, 'document folders')
-
-  if (onlyIfEmpty && (await emergencyContactModel.countDocuments()) > 0) {
-    console.log('Skipped emergency contact (already has data)')
-  } else {
-    await emergencyContactModel.deleteMany({})
-    await emergencyContactModel.insertOne(emergencyContact)
-    console.log('Seeded emergency contact')
-  }
   await seedMany(flightEvaluationModel, flightEvaluations, 'flight evaluations')
   await seedMany(logbookEntryModel, logbookEntries, 'logbook entries')
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
