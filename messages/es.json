@@ -77,7 +77,10 @@
     "body": "Boletines de seguridad, recordatorios de mantenimiento y actualizaciones operativas para pilotos y personal de tierra."
   },
   "SchedulePage": {
-    "title": "Horario"
+    "title": "Horario",
+    "meta": {
+      "description": "Consulta la disponibilidad y las reservas de las aeronaves por día o semana."
+    }
   },
   "ScheduleBoard": {
     "title": "Programación de aeronaves",
@@ -97,7 +100,10 @@
     "close": "Cerrar"
   },
   "AircraftPage": {
-    "title": "Aeronaves"
+    "title": "Aeronaves",
+    "meta": {
+      "description": "Consulta la flota con matrícula, tipo y estado actual de cada aeronave."
+    }
   },
   "AircraftDirectory": {
     "title": "Directorio de aeronaves",
@@ -112,7 +118,10 @@
     "photoAlt": "{type} ({arcid})"
   },
   "DocumentsPage": {
-    "title": "Documentos"
+    "title": "Documentos",
+    "meta": {
+      "description": "Encuentra manuales de operación, listas de verificación y documentos de referencia de la escuela de vuelo."
+    }
   },
   "NotFoundPage": {
     "title": "Parece que esta página desapareció del radar.",

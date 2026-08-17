@@ -77,7 +77,10 @@
     "body": "Sicherheitsbulletins, Wartungserinnerungen und Betriebsupdates für Piloten und Bodenpersonal."
   },
   "SchedulePage": {
-    "title": "Flugplan"
+    "title": "Flugplan",
+    "meta": {
+      "description": "Verfügbarkeit und Buchungen der Flugzeuge für Tag oder Woche auf einen Blick."
+    }
   },
   "ScheduleBoard": {
     "title": "Flugzeugbelegung",
@@ -97,7 +100,10 @@
     "close": "Schließen"
   },
   "AircraftPage": {
-    "title": "Flugzeuge"
+    "title": "Flugzeuge",
+    "meta": {
+      "description": "Durchsuche die Flotte mit Kennzeichen, Typ und aktuellem Status jedes Flugzeugs."
+    }
   },
   "AircraftDirectory": {
     "title": "Flugzeugverzeichnis",
@@ -112,7 +118,10 @@
     "photoAlt": "{type} ({arcid})"
   },
   "DocumentsPage": {
-    "title": "Dokumente"
+    "title": "Dokumente",
+    "meta": {
+      "description": "Finde Betriebshandbücher, Checklisten und Referenzdokumente der Flugschule."
+    }
   },
   "NotFoundPage": {
     "title": "Sieht so aus, als wäre diese Seite vom Radar verschwunden.",

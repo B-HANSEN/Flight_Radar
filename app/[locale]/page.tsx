@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
-import { getPathname } from '@/i18n/navigation'
 import Homepage from '@/components/Homepage'
 import type {
   Booking,
@@ -10,6 +9,7 @@ import type {
 } from '@/components/Homepage.types'
 import type { FlightEvaluation } from '@/components/Signatures.types'
 import { fetchApi } from '@/lib/api'
+import { buildPageMetadata } from '@/lib/metadata'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -23,20 +23,13 @@ export async function generateMetadata({
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Homepage.meta' })
 
-  return {
-    // The root layout's title.template doesn't apply here since this page
-    // shares the [locale] segment with the layout that defines it.
-    title: `${t('title')} | Flight Radar`,
+  return buildPageMetadata({
+    locale,
+    href: '/',
+    title: t('title'),
     description: t('description'),
-    alternates: {
-      languages: Object.fromEntries(
-        routing.locales.map((altLocale) => [
-          altLocale,
-          getPathname({ href: '/', locale: altLocale }),
-        ]),
-      ),
-    },
-  }
+    isHomeSegment: true,
+  })
 }
 
 export default async function HomePage({

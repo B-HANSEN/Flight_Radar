@@ -77,7 +77,10 @@
     "body": "Safety bulletins, maintenance reminders, and operational updates for pilots and ground crew."
   },
   "SchedulePage": {
-    "title": "Schedule"
+    "title": "Schedule",
+    "meta": {
+      "description": "See aircraft availability and bookings for the day or week at a glance."
+    }
   },
   "ScheduleBoard": {
     "title": "Aircraft schedule",
@@ -97,7 +100,10 @@
     "close": "Close"
   },
   "AircraftPage": {
-    "title": "Aircraft"
+    "title": "Aircraft",
+    "meta": {
+      "description": "Browse the fleet with registration, type, and current status for every aircraft."
+    }
   },
   "AircraftDirectory": {
     "title": "Aircraft directory",
@@ -112,7 +118,10 @@
     "photoAlt": "{type} ({arcid})"
   },
   "DocumentsPage": {
-    "title": "Documents"
+    "title": "Documents",
+    "meta": {
+      "description": "Find operating manuals, checklists, and reference documents for the flight school."
+    }
   },
   "NotFoundPage": {
     "title": "Looks like this page went off the radar.",

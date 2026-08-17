@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import ProfileCard from '@/components/ProfileCard'
@@ -5,6 +6,12 @@ import TabBar from '@/components/TabBar'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
+}
+
+// Every /me route is a signed-in student's private data — keep it out of
+// search results regardless of what each nested page's own metadata says.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
 }
 
 const PLACEHOLDER_PROFILE = {

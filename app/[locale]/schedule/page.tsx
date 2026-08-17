@@ -1,7 +1,9 @@
+import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import PageHeading from '@/components/PageHeading'
 import ScheduleBoard from '@/components/ScheduleBoard'
+import { buildPageMetadata } from '@/lib/metadata'
 import type {
   ScheduleAircraft,
   ScheduleBlock,
@@ -16,6 +18,22 @@ type ScheduleBlockRecord = ScheduleBlock & {
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'SchedulePage' })
+
+  return buildPageMetadata({
+    locale,
+    href: '/schedule',
+    title: t('title'),
+    description: t('meta.description'),
+  })
 }
 
 function toRows(blocks: ScheduleBlockRecord[], period: 'day' | 'week') {
