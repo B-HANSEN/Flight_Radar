@@ -93,10 +93,10 @@ export default function Mailbox({
     <>
       <section
         aria-label={t('title')}
-        className='grid overflow-hidden rounded-xl border border-black-100 bg-white md:min-h-160 md:grid-cols-[360px_1fr]'
+        className='grid overflow-hidden rounded-xl border border-black-200 bg-white md:min-h-160 md:grid-cols-[360px_1fr]'
       >
         <div className='flex flex-col border-b border-black-100 md:border-r md:border-b-0'>
-          <div className='flex flex-col gap-2.5 border-b border-black-100 px-4.5 py-4'>
+          <div className='flex flex-col gap-2.5 border-b border-black-200 px-4.5 py-4'>
             <div className='flex items-center justify-between'>
               <span className='font-primary text-base font-bold text-black-300'>
                 {t('emailCount', { count: emails.length })}
@@ -157,7 +157,7 @@ export default function Mailbox({
                         markAsRead(email)
                       }}
                       aria-current={isSelected ? 'true' : undefined}
-                      className={`flex w-full items-start gap-3 border-b border-black-100 px-4.5 py-3.5 text-left ${focusRing} ${isSelected ? 'bg-blue-100/40' : 'hover:bg-black-100/20'}`}
+                      className={`flex w-full items-start gap-3 border-b border-black-200 px-4.5 py-3.5 text-left ${focusRing} ${isSelected ? 'bg-blue-100/40' : 'hover:bg-black-100/20'}`}
                     >
                       {!isRead(email) && (
                         <span className='sr-only'>{t('unreadLabel')}</span>

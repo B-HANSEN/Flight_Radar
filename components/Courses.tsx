@@ -16,11 +16,11 @@ type Props = {
 }
 
 const groupThClass =
-  'border-r border-b border-black-100 bg-black-100/40 px-3 py-2 text-left font-primary text-[11px] font-bold tracking-wide text-black-300 uppercase last:border-r-0'
+  'border-r border-b border-black-200 bg-black-100/40 px-3 py-2 text-left font-primary text-[11px] font-bold tracking-wide text-black-300 uppercase last:border-r-0'
 const leafThClass =
-  'border-r border-b border-black-100 bg-black-100/40 px-3 py-1.5 text-left font-secondary text-[11px] font-semibold text-black-300 uppercase last:border-r-0'
+  'border-r border-b border-black-200 bg-black-100/40 px-3 py-1.5 text-left font-secondary text-[11px] font-semibold text-black-300 uppercase last:border-r-0'
 const tdClass =
-  'border-r border-b border-black-100 px-3 py-1.5 font-secondary text-sm whitespace-nowrap last:border-r-0'
+  'border-r border-b border-black-200 px-3 py-1.5 font-secondary text-sm whitespace-nowrap last:border-r-0'
 
 const HOURS_COLUMNS: {
   key: keyof CourseHoursValues
@@ -95,7 +95,7 @@ function HoursTable({
       role='group'
       aria-label={t('hoursTableCaption')}
       tabIndex={0}
-      className={`mb-9 overflow-x-auto rounded-lg border border-black-100 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+      className={`mb-9 overflow-x-auto rounded-lg border border-black-200 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
       {...dragHandlers}
     >
       <table className='w-full min-w-275 border-collapse'>

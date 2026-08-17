@@ -31,24 +31,24 @@ export default function BulletinReferenceCard() {
         {tables.map((table) => (
           <div
             key={table.title}
-            className='overflow-hidden rounded-lg border border-black-100'
+            className='overflow-hidden rounded-lg border border-black-200'
           >
             <div className='bg-blue-100 px-3.5 py-2.5 font-primary text-xs font-bold text-blue-300 uppercase'>
               {table.title}
             </div>
             <div className='grid grid-cols-[minmax(180px,1.1fr)_minmax(200px,1fr)]'>
-              <div className='border-r border-b border-black-100 bg-[#f0f4f1] px-3 py-2.5 font-primary text-[11.5px] font-bold text-black-300'>
+              <div className='border-r border-b border-black-200 bg-[#f0f4f1] px-3 py-2.5 font-primary text-[11.5px] font-bold text-black-300'>
                 {t('situationHeader')}
               </div>
-              <div className='border-b border-black-100 bg-[#f0f4f1] px-3 py-2.5 font-primary text-[11.5px] font-bold text-black-300'>
+              <div className='border-b border-black-200 bg-[#f0f4f1] px-3 py-2.5 font-primary text-[11.5px] font-bold text-black-300'>
                 {t('minimumHeader')}
               </div>
               {table.rows.map((row) => (
                 <Fragment key={row.situation}>
-                  <div className='border-r border-b border-black-100/60 px-3 py-2.5 font-secondary text-xs font-semibold text-black-300'>
+                  <div className='border-r border-b border-black-200/60 px-3 py-2.5 font-secondary text-xs font-semibold text-black-300'>
                     {row.situation}
                   </div>
-                  <div className='border-b border-black-100/60 px-3 py-2.5 font-secondary text-xs text-black-200'>
+                  <div className='border-b border-black-200/60 px-3 py-2.5 font-secondary text-xs text-black-200'>
                     {row.minimum}
                   </div>
                 </Fragment>

@@ -51,7 +51,7 @@ export default function Availability({ entries: initialEntries = [] }: Props) {
   }
 
   return (
-    <div className='relative rounded-xl border border-black-100 bg-white'>
+    <div className='relative rounded-xl border border-black-200 bg-white'>
       <div className='p-8'>
         {entries.length === 0 ? (
           <p className='rounded-lg border border-dashed border-black-100 px-6 py-6 text-center font-secondary text-sm text-black-200'>
@@ -61,7 +61,7 @@ export default function Availability({ entries: initialEntries = [] }: Props) {
           <div className='overflow-x-auto'>
             <div className='min-w-180'>
               <div
-                className={`${gridColumnsClassName} border-b border-black-100 pb-3.5`}
+                className={`${gridColumnsClassName} border-b border-black-200 pb-3.5`}
               >
                 <div className='font-primary text-[11px] font-bold tracking-wide text-black-200 uppercase'>
                   {t('datesHeading')}
@@ -77,7 +77,7 @@ export default function Availability({ entries: initialEntries = [] }: Props) {
               {entries.map((entry) => (
                 <div
                   key={entry.id}
-                  className={`${gridColumnsClassName} border-b border-black-100 py-4`}
+                  className={`${gridColumnsClassName} border-b border-black-200 py-4`}
                 >
                   <div className='font-secondary text-sm text-black-300'>
                     {entry.dateLabel}

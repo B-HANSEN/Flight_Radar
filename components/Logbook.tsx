@@ -16,11 +16,11 @@ type Props = {
 }
 
 const groupThClass =
-  'border-r border-b border-black-100 bg-black-100/40 px-3 py-2 text-left font-primary text-[11px] font-bold tracking-wide text-black-300 uppercase last:border-r-0'
+  'border-r border-b border-black-200 bg-black-100/40 px-3 py-2 text-left font-primary text-[11px] font-bold tracking-wide text-black-300 uppercase last:border-r-0'
 const leafThClass =
-  'border-r border-b border-black-100 bg-black-100/40 px-3 py-1.5 text-left font-secondary text-[11px] font-semibold text-black-300 uppercase last:border-r-0'
+  'border-r border-b border-black-200 bg-black-100/40 px-3 py-1.5 text-left font-secondary text-[11px] font-semibold text-black-300 uppercase last:border-r-0'
 const tdClass =
-  'border-r border-b border-black-100 px-3 py-2 font-secondary text-sm whitespace-nowrap text-black-300 last:border-r-0'
+  'border-r border-b border-black-200 px-3 py-2 font-secondary text-sm whitespace-nowrap text-black-300 last:border-r-0'
 
 function parseHM(value?: string): number {
   if (!value) return 0
@@ -72,7 +72,7 @@ function LogbookSummary({ entries }: { entries: LogbookEntry[] }) {
       role='group'
       aria-label={t('summaryCaption')}
       tabIndex={0}
-      className={`mb-7 overflow-x-auto rounded-lg border border-black-100 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+      className={`mb-7 overflow-x-auto rounded-lg border border-black-200 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
       {...dragHandlers}
     >
       <table className='w-full border-collapse'>
@@ -207,7 +207,7 @@ function LogbookPage({
   const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
 
   return (
-    <div className='mb-4 overflow-hidden rounded-lg border border-black-100'>
+    <div className='mb-4 overflow-hidden rounded-lg border border-black-200'>
       <button
         type='button'
         onClick={onToggle}
@@ -350,7 +350,7 @@ function LogbookPage({
           </table>
         </div>
 
-        <div className='flex flex-wrap items-center gap-6 border-t border-black-100 bg-black-100/10 px-4 py-3'>
+        <div className='flex flex-wrap items-center gap-6 border-t border-black-200 bg-black-100/10 px-4 py-3'>
           <span className='font-primary text-[11px] font-bold tracking-wide text-black-200 uppercase'>
             {t('blockTotal')}
           </span>

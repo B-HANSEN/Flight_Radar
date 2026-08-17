@@ -43,7 +43,7 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
           role='group'
           aria-label={t('weather.label')}
           tabIndex={0}
-          className={`overflow-x-auto rounded-xl border border-black-100 bg-white px-5.5 py-4.5 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+          className={`overflow-x-auto rounded-xl border border-black-200 bg-white px-5.5 py-4.5 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
           {...dragHandlers}
         >
           <ul className='flex list-none flex-col gap-2'>
@@ -72,11 +72,11 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
   return (
     <section
       aria-labelledby='homepage-bookings-heading'
-      className='overflow-hidden rounded-xl border border-black-100 bg-white'
+      className='overflow-hidden rounded-xl border border-black-200 bg-white'
     >
       <h2
         id='homepage-bookings-heading'
-        className='border-b border-black-100 px-5 py-4 font-primary text-base font-bold text-black-300'
+        className='border-b border-black-200 px-5 py-4 font-primary text-base font-bold text-black-300'
       >
         {t('bookings.title')}
       </h2>
@@ -96,7 +96,7 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
             {bookings.map((booking) => (
               <li
                 key={booking.id}
-                className='flex flex-col gap-1.5 border-b border-black-100 px-5 py-4 last:border-b-0'
+                className='flex flex-col gap-1.5 border-b border-black-200 px-5 py-4 last:border-b-0 even:bg-black-100/50'
               >
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
@@ -155,11 +155,11 @@ function SignaturesCard({
   return (
     <section
       aria-labelledby='homepage-signatures-heading'
-      className='overflow-hidden rounded-xl border border-black-100 bg-white'
+      className='overflow-hidden rounded-xl border border-black-200 bg-white'
     >
       <h2
         id='homepage-signatures-heading'
-        className='border-b border-black-100 px-5 py-4 font-primary text-base font-bold text-black-300'
+        className='border-b border-black-200 px-5 py-4 font-primary text-base font-bold text-black-300'
       >
         {t('signatures.title')}
       </h2>
@@ -183,7 +183,7 @@ function SignaturesCard({
               return (
                 <li
                   key={signature.id}
-                  className='flex items-center justify-between gap-4 border-b border-black-100 px-5 py-3.5 last:border-b-0'
+                  className='flex items-center justify-between gap-4 border-b border-black-200 px-5 py-3.5 last:border-b-0 even:bg-black-100/50'
                 >
                   <div className='flex items-center gap-4'>
                     <span className='font-secondary text-xs font-semibold text-black-200'>

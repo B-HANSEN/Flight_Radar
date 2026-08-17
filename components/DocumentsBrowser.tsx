@@ -24,11 +24,11 @@ export default function DocumentsBrowser({ folders = [] }: Props) {
   return (
     <section
       aria-label={t('title')}
-      className='overflow-hidden rounded-xl border border-black-100 bg-white'
+      className='overflow-hidden rounded-xl border border-black-200 bg-white'
     >
       <nav
         aria-label={t('breadcrumbLabel')}
-        className='border-b border-black-100 px-6 py-4'
+        className='border-b border-black-200 px-6 py-4'
       >
         <ol className='flex list-none items-center gap-2 font-secondary text-sm'>
           <li className='flex items-center gap-2'>
@@ -88,7 +88,7 @@ export default function DocumentsBrowser({ folders = [] }: Props) {
             openFolder.files.map((file) => (
               <li
                 key={file.name}
-                className='flex cursor-pointer items-center gap-3.5 border-b border-black-100 px-6 py-3 last:border-b-0'
+                className='flex cursor-pointer items-center gap-3.5 border-b border-black-200 px-6 py-3 last:border-b-0'
               >
                 <span
                   className={`flex size-8 flex-none items-center justify-center rounded-md ${EXT_COLORS[file.ext] ?? 'bg-black-200'}`}
@@ -113,7 +113,7 @@ export default function DocumentsBrowser({ folders = [] }: Props) {
           {folders.map((folder) => (
             <li
               key={folder.id}
-              className='border-b border-black-100 last:border-b-0'
+              className='border-b border-black-200 last:border-b-0'
             >
               <button
                 type='button'

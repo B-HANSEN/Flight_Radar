@@ -101,7 +101,7 @@ function ScheduleGrid({
   return (
     <div className={minWidthClassName}>
       <div
-        className={`grid h-9.5 border-b border-black-100 ${gridColsClassName}`}
+        className={`grid h-9.5 border-b border-black-200 ${gridColsClassName}`}
       >
         {labels.map((label) => (
           <div key={label} className={labelClassName}>
@@ -114,7 +114,7 @@ function ScheduleGrid({
         return (
           <div
             key={ac.id}
-            className={`relative grid h-18 border-b border-black-100 last:border-b-0 ${gridColsClassName}`}
+            className={`relative grid h-18 border-b border-black-200 last:border-b-0 ${gridColsClassName}`}
           >
             {labels.map((label) => (
               <div key={label} className='border-l border-black-100/30' />
@@ -230,9 +230,9 @@ export default function ScheduleBoard({
     <>
       <section
         aria-label={t('title')}
-        className='overflow-hidden rounded-xl border border-black-100 bg-white'
+        className='overflow-hidden rounded-xl border border-black-200 bg-white'
       >
-        <div className='flex flex-wrap items-center gap-4 border-b border-black-100 px-5 py-3.5'>
+        <div className='flex flex-wrap items-center gap-4 border-b border-black-200 px-5 py-3.5'>
           <button
             type='button'
             onClick={() => handleStep(-1)}
@@ -291,14 +291,14 @@ export default function ScheduleBoard({
           </p>
         ) : (
           <div className='grid grid-cols-[220px_1fr]'>
-            <div className='border-r border-black-100'>
-              <div className='flex h-9.5 items-center border-b border-black-100 px-4 font-primary text-xs font-bold tracking-wide text-black-200 uppercase'>
+            <div className='border-r border-black-200'>
+              <div className='flex h-9.5 items-center border-b border-black-200 px-4 font-primary text-xs font-bold tracking-wide text-black-200 uppercase'>
                 {t('singleEngineGroup')}
               </div>
               {aircraft.map((ac) => (
                 <div
                   key={ac.id}
-                  className='flex h-18 items-center gap-2.5 border-b border-black-100 px-4 last:border-b-0'
+                  className='flex h-18 items-center gap-2.5 border-b border-black-200 px-4 last:border-b-0'
                 >
                   <div className='relative size-11 flex-none overflow-hidden rounded-lg bg-black-100/40'>
                     <Image

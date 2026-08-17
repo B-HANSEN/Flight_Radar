@@ -93,9 +93,9 @@ export default function Signatures({ flights: initialFlights = [] }: Props) {
               {t('noFlights')}
             </p>
           ) : (
-            <div className='overflow-hidden rounded-xl border border-black-100 bg-white'>
+            <div className='overflow-hidden rounded-xl border border-black-200 bg-white'>
               <div
-                className={`${rowGridClassName} h-11 border-b border-black-100 bg-black-100/20`}
+                className={`${rowGridClassName} h-11 border-b border-black-200 bg-black-100/20`}
               >
                 <div className='font-primary text-[11px] font-bold tracking-wide text-black-200 uppercase'>
                   {t('flight')}
@@ -123,7 +123,7 @@ export default function Signatures({ flights: initialFlights = [] }: Props) {
                 return (
                   <div
                     key={flight.id}
-                    className={`${rowGridClassName} h-14 border-b border-black-100 last:border-b-0`}
+                    className={`${rowGridClassName} h-14 border-b border-black-200 last:border-b-0`}
                   >
                     <span className='font-mono text-sm font-semibold text-black-300'>
                       {flight.sessionId}

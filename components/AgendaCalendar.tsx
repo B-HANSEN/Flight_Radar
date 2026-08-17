@@ -89,9 +89,9 @@ export default function AgendaCalendar({
   return (
     <section
       aria-label={t('calendarLabel')}
-      className='overflow-hidden rounded-xl border border-black-100 bg-white'
+      className='overflow-hidden rounded-xl border border-black-200 bg-white'
     >
-      <div className='flex flex-wrap items-center gap-4 border-b border-black-100 px-5 py-4'>
+      <div className='flex flex-wrap items-center gap-4 border-b border-black-200 px-5 py-4'>
         <button
           type='button'
           onClick={() => setMonth((current) => addMonths(current, -1))}
@@ -162,7 +162,7 @@ export default function AgendaCalendar({
             {weekdayLabels.map((label) => (
               <div
                 key={label}
-                className='border-b border-black-100 bg-black-100/40 px-2 py-2 font-primary text-xs font-semibold tracking-[0.03em] text-black-300 uppercase'
+                className='border-b border-black-200 bg-black-100/40 px-2 py-2 font-primary text-xs font-semibold tracking-[0.03em] text-black-300 uppercase'
               >
                 {label}
               </div>
@@ -179,7 +179,7 @@ export default function AgendaCalendar({
               return (
                 <div
                   key={iso}
-                  className='flex min-h-24 flex-col gap-0.75 border-r border-b border-black-100 pb-1.5 last:border-r-0'
+                  className='flex min-h-24 flex-col gap-0.75 border-r border-b border-black-200 pb-1.5 last:border-r-0'
                 >
                   <div className='px-2.5 pt-2 pb-1'>
                     {isToday ? (
