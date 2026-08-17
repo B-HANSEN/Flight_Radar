@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
-import ProfileCard from '@/components/ProfileCard'
+import ProfileCardContainer from '@/components/ProfileCardContainer'
 import TabBar from '@/components/TabBar'
+import { fetchApi } from '@/lib/api'
+import type { EmergencyContact } from '@/components/ProfileCard'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -22,11 +24,6 @@ const PLACEHOLDER_PROFILE = {
   birthday: '14 March 1994',
   info: 'PPL online · Q1 2025',
   role: 'Student',
-  emergencyContact: {
-    name: 'Jane Doe',
-    relation: 'Sister',
-    phone: '+34 600 987 654',
-  },
 }
 
 export default async function MeLayout({
@@ -38,6 +35,8 @@ export default async function MeLayout({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const emergencyContact =
+    await fetchApi<EmergencyContact>('/emergency-contact')
 
   return (
     <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12 2xl:px-20'>
@@ -47,7 +46,10 @@ export default async function MeLayout({
           <div className='mt-6'>{children}</div>
         </div>
         <div className='lg:w-122 lg:flex-none 2xl:w-lg'>
-          <ProfileCard {...PLACEHOLDER_PROFILE} />
+          <ProfileCardContainer
+            {...PLACEHOLDER_PROFILE}
+            emergencyContact={emergencyContact}
+          />
         </div>
       </div>
     </div>

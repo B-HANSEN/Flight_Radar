@@ -72,6 +72,25 @@
       }
     }
   },
+  "EmergencyContactModal": {
+    "title": "Editar contacto de emergencia",
+    "close": "Cerrar",
+    "nameLabel": "Nombre de contacto",
+    "relationLabel": "Relación",
+    "phoneLabel": "Teléfono de contacto",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar contacto de emergencia"
+  },
+  "ChangePasswordModal": {
+    "title": "Cambiar contraseña",
+    "close": "Cerrar",
+    "currentPasswordLabel": "Contraseña actual",
+    "newPasswordLabel": "Nueva contraseña",
+    "confirmPasswordLabel": "Confirmar nueva contraseña",
+    "underDevelopment": "El cambio de contraseña todavía está en desarrollo.",
+    "save": "Guardar"
+  },
   "NewsPage": {
     "title": "Noticias",
     "body": "Boletines de seguridad, recordatorios de mantenimiento y actualizaciones operativas para pilotos y personal de tierra."

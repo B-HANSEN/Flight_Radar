@@ -11,6 +11,7 @@ import { CertificatesModule } from './certificates/certificates.module'
 import { validate } from './config/env.validation'
 import { CoursesModule } from './courses/courses.module'
 import { DocumentsModule } from './documents/documents.module'
+import { EmergencyContactModule } from './emergency-contact/emergency-contact.module'
 import { FlightEvaluationsModule } from './flight-evaluations/flight-evaluations.module'
 import { HealthModule } from './health/health.module'
 import { LogbookModule } from './logbook/logbook.module'
@@ -36,6 +37,7 @@ import { WeatherModule } from './weather/weather.module'
     CertificatesModule,
     CoursesModule,
     DocumentsModule,
+    EmergencyContactModule,
     FlightEvaluationsModule,
     LogbookModule,
     MailboxModule,
