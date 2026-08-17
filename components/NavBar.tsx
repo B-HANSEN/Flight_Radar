@@ -7,9 +7,9 @@ import {
   CalendarDays,
   PlaneTakeoff,
   FileText,
-  Radar,
   type LucideIcon,
 } from 'lucide-react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { focusRing } from '@/lib/styles'
@@ -69,8 +69,8 @@ export default function NavBar({
       </button>
 
       <div className='flex flex-none items-center gap-2.5'>
-        <div className='flex size-8.5 items-center justify-center rounded-lg bg-blue-300'>
-          <Radar size={20} className='text-mint' aria-hidden='true' />
+        <div className='relative size-10.5 flex-none overflow-hidden rounded-lg'>
+          <Image src='/logo.webp' alt='' fill sizes='42px' priority />
         </div>
         <span className='text-md font-bold tracking-[0.01em] text-black-300'>
           Flight Radar

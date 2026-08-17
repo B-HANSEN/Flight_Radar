@@ -18,10 +18,6 @@
   --color-blue-200: #6e9edd;
   --color-blue-300: #10243e;
 
-  /* Brand accent — the logo's radar-sweep mint, used sparingly for the
-     in-app mark (NavBar icon) rather than as a semantic status color. */
-  --color-mint: #3fd9a5;
-
   /* Colors — Red */
   --color-red-100: #fecaca;
   --color-red-200: #ef4444;
