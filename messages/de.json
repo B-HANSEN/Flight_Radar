@@ -20,7 +20,9 @@
     "greeting": "Willkommen, {name}",
     "weather": {
       "label": "Wetterbriefing",
-      "empty": "Keine Wetterberichte verfügbar."
+      "empty": "Keine Wetterberichte verfügbar.",
+      "updated": "Zuletzt aktualisiert: {date} (Madrider Zeit)",
+      "source": "Quelle:"
     },
     "bookings": {
       "title": "Meine Buchungen",

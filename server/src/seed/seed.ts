@@ -15,7 +15,6 @@ import { LogbookEntry } from '../logbook/schemas/logbook-entry.schema'
 import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
 import { NewsItem } from '../news/schemas/news-item.schema'
 import { ScheduleBlock } from '../schedule/schemas/schedule-block.schema'
-import { WeatherReport } from '../weather/schemas/weather-report.schema'
 
 // Single demo student — no Users module / auth yet, see TODO-BE-setup.md.
 const studentId = 'student-1'
@@ -726,29 +725,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     night: true,
     remarks: 'Night circuits',
     studentId,
-  },
-]
-
-const weatherReports: Omit<WeatherReport, '_id'>[] = [
-  {
-    code: 'LEDA',
-    metar: '081630Z 24017KT 210V270 9999 TS VCSH SCT050 SCT070CB 27/14 Q1017',
-    taf: '081400Z 0815/0915 10006KT 9999 FEW060 TX39/0914Z TN22/0905Z TEMPO 0815/0819 VRB18G35KT 2500 TSRAGR SCT060CB',
-  },
-  {
-    code: 'LEGE',
-    metar: '081630Z 18010KT CAVOK 29/14 Q1015 NOSIG',
-    taf: '081100Z 0812/0912 VRB03KT CAVOK TX38/0813Z TN22/0906Z BECMG 0812/0813 18010KT BECMG 0818/0821 VRB03KT',
-  },
-  {
-    code: 'LELL',
-    metar: '081630Z 11008KT 060V150 CAVOK 31/23 Q1015',
-    taf: '081400Z 0815/0915 14008KT CAVOK TX38/0913Z TN21/0905Z TEMPO 0816/0820 20008KT BECMG 0818/0820 VRB03KT',
-  },
-  {
-    code: 'LERS',
-    metar: '081630Z 16005KT 130V230 9999 FEW025 31/23 Q1016',
-    taf: '081400Z 0815/0915 16008KT 9999 FEW020 TX34/0912Z TN25/0905Z TEMPO 0816/0823 TS FEW030CB',
   },
 ]
 
@@ -1662,10 +1638,6 @@ async function seed() {
   const scheduleBlockModel = app.get<Model<ScheduleBlock>>(
     getModelToken(ScheduleBlock.name),
   )
-  const weatherReportModel = app.get<Model<WeatherReport>>(
-    getModelToken(WeatherReport.name),
-  )
-
   await seedMany(calendarEventModel, calendarEvents, 'calendar events')
 
   let aircraftDocs
@@ -1713,7 +1685,6 @@ async function seed() {
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
   await seedMany(bookingModel, bookings, 'bookings')
   await seedMany(newsItemModel, newsItems, 'news items')
-  await seedMany(weatherReportModel, weatherReports, 'weather reports')
 
   await app.close()
 }

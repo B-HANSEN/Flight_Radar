@@ -20,7 +20,9 @@
     "greeting": "Bienvenido, {name}",
     "weather": {
       "label": "Briefing meteorológico",
-      "empty": "No hay partes meteorológicos disponibles."
+      "empty": "No hay partes meteorológicos disponibles.",
+      "updated": "Última actualización: {date} (hora de Madrid)",
+      "source": "Fuente:"
     },
     "bookings": {
       "title": "Mis reservas",

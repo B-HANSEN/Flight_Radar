@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { PenLine, Plane, User } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Fragment, useState } from 'react'
+import { Clock, ExternalLink, PenLine, Plane, User } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
+import { AIRFIELD_NAMES } from '@/lib/airfields'
 import { fetchApi } from '@/lib/api'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
@@ -28,8 +29,36 @@ const NEWS_TAG_STYLES: Record<
   atc: { accent: 'bg-yellow-200', text: 'text-yellow-300' },
 }
 
+const AVIATION_WEATHER_SOURCE_URL = 'https://aviationweather.gov'
+const AVIATION_WEATHER_SOURCE_LABEL = 'aviationweather.gov'
+const MADRID_TIME_ZONE = 'Europe/Madrid'
+
+function formatMadridTime(observedAt: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: MADRID_TIME_ZONE,
+  }).format(new Date(observedAt))
+}
+
+// Stations observe independently, so this picks the oldest report — the
+// most conservative reading of "how fresh is this weather" for the group.
+function oldestObservedAt(stations: WeatherReport[]) {
+  return stations.reduce(
+    (oldest, station) =>
+      station.observedAt < oldest ? station.observedAt : oldest,
+    stations[0].observedAt,
+  )
+}
+
 function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
   const t = useTranslations('Homepage')
+  const locale = useLocale()
   const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
 
   return (
@@ -39,26 +68,56 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
           {t('weather.empty')}
         </p>
       ) : (
-        <div
-          role='group'
-          aria-label={t('weather.label')}
-          tabIndex={0}
-          className={`overflow-x-auto rounded-xl border border-black-200 bg-white px-5.5 py-4.5 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
-          {...dragHandlers}
-        >
-          <ul className='flex list-none flex-col gap-2'>
-            {stations.map((station) => (
-              <li key={station.code} className='whitespace-nowrap'>
-                <p className='font-mono text-sm font-semibold text-black-300'>
-                  <span className='font-bold'>{station.code}</span>{' '}
+        <div className='overflow-hidden rounded-xl border border-black-200 bg-white'>
+          <div
+            role='group'
+            aria-label={t('weather.label')}
+            tabIndex={0}
+            className={`grid grid-cols-[max-content_max-content_1fr] items-baseline gap-x-2 overflow-x-auto px-5.5 py-4.5 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+            {...dragHandlers}
+          >
+            {stations.map((station, index) => (
+              <Fragment key={station.code}>
+                <span
+                  className={`font-secondary text-sm font-semibold whitespace-nowrap text-black-200 ${index > 0 ? 'mt-2' : ''}`}
+                >
+                  {AIRFIELD_NAMES[station.code] ?? ''}
+                </span>
+                <span
+                  className={`font-mono text-sm font-bold whitespace-nowrap text-black-300 ${index > 0 ? 'mt-2' : ''}`}
+                >
+                  {station.code}
+                </span>
+                <span
+                  className={`font-mono text-sm font-semibold whitespace-nowrap text-black-300 ${index > 0 ? 'mt-2' : ''}`}
+                >
                   {station.metar}
-                </p>
-                <p className='pl-11 font-mono text-sm text-black-200'>
+                </span>
+                <span />
+                <span />
+                <span className='font-mono text-sm whitespace-nowrap text-black-200'>
                   {station.taf}
-                </p>
-              </li>
+                </span>
+              </Fragment>
             ))}
-          </ul>
+          </div>
+          <div className='flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-black-100 bg-black-100/40 px-5.5 py-3'>
+            <span className='flex items-center gap-1.5 font-secondary text-xs text-black-200'>
+              <Clock size={13} aria-hidden='true' />
+              {t('weather.updated', {
+                date: formatMadridTime(oldestObservedAt(stations), locale),
+              })}
+            </span>
+            <a
+              href={AVIATION_WEATHER_SOURCE_URL}
+              target='_blank'
+              rel='noopener noreferrer'
+              className={`flex items-center gap-1 rounded-sm font-secondary text-xs font-semibold text-blue-300 hover:underline ${focusRing}`}
+            >
+              {t('weather.source')} {AVIATION_WEATHER_SOURCE_LABEL}
+              <ExternalLink size={11} aria-hidden='true' />
+            </a>
+          </div>
         </div>
       )}
     </section>

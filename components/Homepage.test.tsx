@@ -26,7 +26,18 @@ vi.mock('@/i18n/navigation', () => ({
 }))
 
 const weather = [
-  { code: 'LEDA', metar: '081630Z 24017KT CAVOK', taf: '081400Z TEMPO' },
+  {
+    code: 'LEDA',
+    metar: '081630Z 24017KT CAVOK',
+    taf: '081400Z TEMPO',
+    observedAt: '2026-08-18T16:00:00.000Z',
+  },
+  {
+    code: 'ZZZZ',
+    metar: '081630Z 18010KT CAVOK',
+    taf: '081400Z TEMPO',
+    observedAt: '2026-08-18T14:00:00.000Z',
+  },
 ]
 
 const bookings = [
@@ -101,7 +112,15 @@ describe('Homepage', () => {
     ).toBeInTheDocument()
 
     expect(screen.getByText('LEDA')).toBeInTheDocument()
+    expect(screen.getByText('Lleida')).toBeInTheDocument()
     expect(screen.getByText(/081630Z 24017KT CAVOK/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Last updated:.*16:00.*Madrid time/),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: /Source:.*aviationweather\.gov/ }),
+    ).toHaveAttribute('href', 'https://aviationweather.gov')
+    expect(screen.getByText('ZZZZ')).toBeInTheDocument()
 
     const bookingsSection = screen
       .getByRole('heading', { name: 'My bookings' })

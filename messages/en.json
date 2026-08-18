@@ -20,7 +20,9 @@
     "greeting": "Welcome, {name}",
     "weather": {
       "label": "Weather briefing",
-      "empty": "No weather reports available."
+      "empty": "No weather reports available.",
+      "updated": "Last updated: {date} (Madrid time)",
+      "source": "Source:"
     },
     "bookings": {
       "title": "My bookings",
