@@ -73,6 +73,7 @@ Run from the repo root — npm workspaces resolves both projects from one
 | `npm run test`            | Run frontend unit tests                   |
 | `npm run test:watch`      | Run frontend unit tests in watch mode     |
 | `npm run test:coverage`   | Frontend unit tests with coverage         |
+| `npm run type-check`      | Type-check the frontend (`tsc --noEmit`)  |
 | `npm run storybook`       | Start Storybook locally                   |
 | `npm run build-storybook` | Build a static Storybook site             |
 | `npm run server:dev`      | Start the backend dev server (watch mode) |
@@ -85,16 +86,40 @@ Backend-specific scripts (`lint`, `test`, `test:cov`, `test:e2e`, ...) live in
 
 ```
 app/[locale]/    Pages (App Router, one segment per locale)
+app/robots.ts    Generated robots.txt
+app/sitemap.ts   Generated sitemap.xml
 components/      React components, documented with Storybook
+  JsonLd.tsx       Renders Organization/WebSite/WebPage JSON-LD schema
 i18n/            next-intl routing/navigation/request config
 lib/api.ts       fetchApi() — fetches from NEXT_PUBLIC_API_URL, no-store
+lib/metadata.ts  buildPageMetadata() — shared <title>/description/OG helper
 messages/        Translation files (en, de, es)
 server/          NestJS backend (npm workspace)
   src/
-    certificates/  GET /certificates
-    config/        Env validation
-    health/        GET /health — reports API + Mongo connection status
-    mailbox/       GET /mailbox
-    seed/          npm run seed — reseeds collections from fixture data
-    app.module.ts   Wires ConfigModule, MongooseModule, feature modules
+    agenda/              GET /agenda
+    aircraft/            GET /aircraft
+    availability/        GET /availability
+    bookings/            GET /bookings
+    certificates/        GET /certificates
+    config/              Env validation
+    courses/             GET /courses
+    documents/           GET /documents
+    emergency-contact/   GET/PUT/DELETE /emergency-contact
+    flight-evaluations/  GET /flight-evaluations, PATCH /flight-evaluations/:id/sign
+    health/              GET /health — reports API + Mongo connection status
+    logbook/             GET /logbook
+    mailbox/             GET /mailbox
+    news/                GET /news
+    schedule/            GET /schedule
+    weather/             GET /weather — live METAR/TAF from aviationweather.gov
+                         (not database-backed; see note below)
+    seed/                npm run seed — reseeds collections from fixture data
+    app.module.ts        Wires ConfigModule, MongooseModule, feature modules
 ```
+
+Everything above is MongoDB-backed except `weather`, which proxies the free,
+keyless [aviationweather.gov Data API](https://aviationweather.gov/data/api/)
+for the four training airfields (LEDA, LEGE, LELL, LERS) on every request,
+with a short in-memory cache. If the upstream API is unreachable it falls
+back to the last cached response (or an empty list) rather than failing the
+homepage.
