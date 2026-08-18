@@ -22,4 +22,5 @@ export type NewsItem = {
   date: string
   title: string
   summary: string
+  body: string[]
 }

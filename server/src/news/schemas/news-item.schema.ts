@@ -27,6 +27,9 @@ export class NewsItem {
 
   @Prop({ required: true })
   summary!: string
+
+  @Prop({ type: [String], required: true })
+  body!: string[]
 }
 
 export const NewsItemSchema = SchemaFactory.createForClass(NewsItem)

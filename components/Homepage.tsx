@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { AIRFIELD_NAMES } from '@/lib/airfields'
 import { fetchApi } from '@/lib/api'
+import { NEWS_TAG_STYLES } from '@/lib/newsTags'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
 import FlightEvaluationModal from './FlightEvaluationModal'
@@ -18,15 +19,6 @@ type Props = {
   bookings?: Booking[]
   signatures?: FlightEvaluation[]
   news?: NewsItem[]
-}
-
-const NEWS_TAG_STYLES: Record<
-  NewsItem['tag'],
-  { accent: string; text: string }
-> = {
-  operations: { accent: 'bg-blue-200', text: 'text-blue-300' },
-  fuel: { accent: 'bg-green-200', text: 'text-green-300' },
-  atc: { accent: 'bg-yellow-200', text: 'text-yellow-300' },
 }
 
 const AVIATION_WEATHER_SOURCE_URL = 'https://aviationweather.gov'
@@ -316,7 +308,7 @@ function NewsGrid({ news }: { news: NewsItem[] }) {
                   {item.summary}
                 </p>
                 <Link
-                  href='/news'
+                  href={`/news#${item.id}`}
                   aria-label={t('news.readMoreLabel', { title: item.title })}
                   className={`mt-1 rounded-sm font-secondary text-xs font-semibold text-blue-300 hover:underline ${focusRing}`}
                 >

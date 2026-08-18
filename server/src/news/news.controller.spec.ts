@@ -12,6 +12,9 @@ describe('NewsController', () => {
       title: 'Sabadell tower frequency change effective now',
       summary:
         'The 8.33 kHz channel spacing update is live at LELL: TWR now runs on 120.805 MHz and GND on 121.605 MHz.',
+      body: [
+        'As part of the wider 8.33 kHz channel-spacing rollout across Spanish controlled aerodromes, Sabadell TWR and GND have moved to their new frequencies with immediate effect.',
+      ],
     },
   ]
   const newsService = { findAll: jest.fn().mockResolvedValue(news) }

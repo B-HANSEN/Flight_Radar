@@ -19,7 +19,7 @@ const meta: Meta<typeof Homepage> = {
     weather: DUMMY_WEATHER,
     bookings: DUMMY_BOOKINGS,
     signatures: DUMMY_SIGNATURES,
-    news: DUMMY_NEWS,
+    news: DUMMY_NEWS.slice(0, 3),
   },
   beforeEach: () => mockFlightEvaluationSign(DUMMY_SIGNATURES),
 }

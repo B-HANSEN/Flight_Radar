@@ -13,6 +13,8 @@ import { fetchApi } from '@/lib/api'
 import { buildPageMetadata } from '@/lib/metadata'
 import { buildWebPageSchema } from '@/lib/structuredData'
 
+const LATEST_NEWS_COUNT = 3
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
@@ -67,7 +69,7 @@ export default async function HomePage({
           weather={weather}
           bookings={bookings}
           signatures={signatures}
-          news={news}
+          news={news.slice(0, LATEST_NEWS_COUNT)}
         />
       </div>
     </div>

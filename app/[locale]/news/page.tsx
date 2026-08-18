@@ -3,6 +3,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import PageHeading from '@/components/PageHeading'
 import JsonLd from '@/components/JsonLd'
+import NewsFeed from '@/components/NewsFeed'
+import type { NewsItem } from '@/components/Homepage.types'
+import { fetchApi } from '@/lib/api'
 import { buildPageMetadata } from '@/lib/metadata'
 import { buildWebPageSchema } from '@/lib/structuredData'
 import BulletinReminderCard from '@/components/BulletinReminderCard'
@@ -38,6 +41,7 @@ export default async function NewsPage({
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations('NewsPage')
+  const news = await fetchApi<NewsItem[]>('/news')
 
   return (
     <>
@@ -50,6 +54,8 @@ export default async function NewsPage({
         })}
       />
       <PageHeading title={t('title')} description={t('body')} />
+      <NewsFeed news={news} />
+      <hr className='my-10 border-t border-black-200' />
       <div className='flex flex-col gap-10'>
         <BulletinReminderCard />
         <hr className='border-t border-black-200' />

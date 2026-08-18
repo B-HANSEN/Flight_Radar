@@ -88,6 +88,7 @@ const news = [
     date: '02/08/2026',
     title: 'Sabadell tower frequency change effective now',
     summary: 'The 8.33 kHz channel spacing update is live at LELL.',
+    body: ['TWR now runs on 120.805 MHz and GND on 121.605 MHz.'],
   },
 ]
 
@@ -150,7 +151,7 @@ describe('Homepage', () => {
       screen.getByRole('link', {
         name: 'Read more about Sabadell tower frequency change effective now',
       }),
-    ).toHaveAttribute('href', '/news')
+    ).toHaveAttribute('href', '/news#news-1')
   })
 
   it('shows empty-state messages when there is no data for a section', () => {
