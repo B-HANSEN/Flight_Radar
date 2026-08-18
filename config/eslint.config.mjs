@@ -20,6 +20,9 @@ const eslintConfig = defineConfig([
     // server/ is its own workspace with its own eslint config — lint it via
     // `npm run lint --workspace server`, not the root Next.js config.
     'server/**',
+    // Untracked output from the design-handoff extraction tool, not source
+    // this repo maintains.
+    'designs/extracted/**',
   ]),
   ...storybook.configs['flat/recommended'],
   prettier,

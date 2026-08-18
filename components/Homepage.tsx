@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { Clock, ExternalLink, PenLine, Plane, User } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
@@ -62,39 +62,45 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
       ) : (
         <div className='overflow-hidden rounded-xl border border-black-200 bg-white'>
           <div
-            role='group'
+            role='table'
             aria-label={t('weather.label')}
             tabIndex={0}
             className={`grid grid-cols-[max-content_max-content_1fr] items-baseline gap-x-2 overflow-x-auto px-5.5 py-4.5 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
             {...dragHandlers}
           >
             {stations.map((station, index) => (
-              <Fragment key={station.code}>
+              <div key={station.code} role='row' className='contents'>
                 <span
+                  role='cell'
                   className={`font-secondary text-sm font-semibold whitespace-nowrap text-black-200 ${index > 0 ? 'mt-2' : ''}`}
                 >
                   {AIRFIELD_NAMES[station.code] ?? ''}
                 </span>
                 <span
+                  role='cell'
                   className={`font-mono text-sm font-bold whitespace-nowrap text-black-300 ${index > 0 ? 'mt-2' : ''}`}
                 >
                   {station.code}
                 </span>
                 <span
+                  role='cell'
                   className={`font-mono text-sm font-semibold whitespace-nowrap text-black-300 ${index > 0 ? 'mt-2' : ''}`}
                 >
                   {station.metar}
                 </span>
-                <span />
-                <span />
-                <span className='font-mono text-sm whitespace-nowrap text-black-200'>
+                <span aria-hidden='true' />
+                <span aria-hidden='true' />
+                <span
+                  role='cell'
+                  className='font-mono text-sm whitespace-nowrap text-black-200'
+                >
                   {station.taf}
                 </span>
-              </Fragment>
+              </div>
             ))}
           </div>
           <div className='flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-black-100 bg-black-100/40 px-5.5 py-3'>
-            <span className='flex items-center gap-1.5 font-secondary text-xs text-black-200'>
+            <span className='flex items-center gap-1.5 font-secondary text-xs text-black-300'>
               <Clock size={13} aria-hidden='true' />
               {t('weather.updated', {
                 date: formatMadridTime(oldestObservedAt(stations), locale),

@@ -40,9 +40,9 @@ export default function NewsFeed({ news = [] }: Props) {
                 {item.summary}
               </p>
               <div className='flex flex-col gap-3'>
-                {item.body.map((paragraph, index) => (
+                {item.body.map((paragraph) => (
                   <p
-                    key={index}
+                    key={paragraph}
                     className='font-secondary text-sm text-black-200'
                   >
                     {paragraph}
