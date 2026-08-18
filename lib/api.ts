@@ -1,5 +1,6 @@
 const MAX_ATTEMPTS = 3
 const RETRY_DELAY_MS = 500
+const TIMEOUT_MS = 10_000
 
 async function fetchWithRetry(
   url: string,
@@ -7,7 +8,10 @@ async function fetchWithRetry(
   attemptsLeft: number,
 ): Promise<Response> {
   try {
-    return await fetch(url, options)
+    return await fetch(url, {
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      ...options,
+    })
   } catch (error) {
     if (attemptsLeft <= 1) {
       throw error
