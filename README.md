@@ -1,5 +1,7 @@
 # Flight Radar
 
+Live: [flight-radar-rosy.vercel.app](https://flight-radar-rosy.vercel.app/en)
+
 A flight school management platform: a Next.js frontend backed by a NestJS +
 MongoDB API, in one repo as an npm workspace.
 
@@ -123,3 +125,20 @@ for the four training airfields (LEDA, LEGE, LELL, LERS) on every request,
 with a short in-memory cache. If the upstream API is unreachable it falls
 back to the last cached response (or an empty list) rather than failing the
 homepage.
+
+## Deployment
+
+`render.yaml` is a [Render](https://render.com) blueprint that deploys the
+backend (`server/`) as a web service:
+
+- Builds with `npm install --include=dev && npm run build` (devDependencies
+  are needed at build time for the TypeScript compiler) and runs
+  `npm run start:prod`.
+- Render calls `GET /health` to verify the service is up.
+- `MONGODB_URI` and `CORS_ORIGIN` are marked `sync: false`, so they're not
+  set here — add them as secrets in the Render dashboard for the service.
+
+The frontend is hosted on [Vercel](https://vercel.com) at
+[flight-radar-rosy.vercel.app](https://flight-radar-rosy.vercel.app/en),
+deployed separately from this blueprint; its `NEXT_PUBLIC_API_URL` env var
+points at the Render service's URL.
