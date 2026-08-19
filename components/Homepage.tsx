@@ -92,7 +92,7 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
                 <span aria-hidden='true' />
                 <span
                   role='cell'
-                  className='font-mono text-sm whitespace-nowrap text-black-200'
+                  className='wrap-break-word font-mono text-sm text-black-200'
                 >
                   {station.taf}
                 </span>
