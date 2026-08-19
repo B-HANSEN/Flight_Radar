@@ -6,17 +6,24 @@ import { Calendar, Clock } from 'lucide-react'
 import Modal from './Modal'
 import TimePickerModal from './TimePickerModal'
 import DatePickerModal from './DatePickerModal'
-import { isValidAvailabilityDate } from '@/lib/availabilityDateRange'
-import type { AvailabilityFormValues } from './Availability.types'
+import {
+  isValidAvailabilityDate,
+  parseAvailabilityDate,
+} from '@/lib/availabilityDateRange'
+import { WEEKDAY_ORDER } from './Availability.types'
+import type { AvailabilityFormValues, Weekday } from './Availability.types'
 
 type Props = {
   isOpen: boolean
   onClose: () => void
-  onSave: (values: AvailabilityFormValues) => void
+  onSave: (values: AvailabilityFormValues) => void | Promise<void>
+  initialValues?: AvailabilityFormValues
+  title?: string
 }
 
-type DateMode = 'all' | 'on' | 'range'
+type DateMode = 'on' | 'range'
 type TimeMode = 'allDay' | 'between'
+type RecurrenceMode = 'everyday' | 'days'
 type TimeTarget = 'start' | 'end' | null
 type DateTarget = 'on' | 'from' | 'to' | null
 
@@ -32,38 +39,129 @@ const legendClassName =
   'mb-3.5 block w-full border-b border-black-100 pb-2 font-secondary text-xs font-semibold text-black-200'
 const optionsClassName = 'flex flex-col gap-3'
 
+function weekdayButtonClassName(selected: boolean) {
+  return `flex size-8 flex-none cursor-pointer items-center justify-center rounded-full font-secondary text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-30 ${
+    selected ? 'bg-blue-300 text-white' : 'bg-black-100/60 text-black-300'
+  }`
+}
+
 function dateInputClassName(isInvalid: boolean) {
   return `${dateInputBaseClassName} ${isInvalid ? 'border-red-200' : 'border-black-200'}`
+}
+
+// Date.prototype.getDay() returns 0 for Sunday through 6 for Saturday.
+const WEEKDAYS_BY_DATE_GET_DAY_INDEX: Weekday[] = [
+  'sun',
+  'mon',
+  'tue',
+  'wed',
+  'thu',
+  'fri',
+  'sat',
+]
+
+function weekdayOfDate(date: Date): Weekday {
+  return WEEKDAYS_BY_DATE_GET_DAY_INDEX[date.getDay()]
+}
+
+type FormState = {
+  dateMode: DateMode
+  onDate: string
+  fromDate: string
+  toDate: string
+  timeMode: TimeMode
+  startTime: string
+  endTime: string
+  recurrenceMode: RecurrenceMode
+  recurrenceDays: Weekday[]
+}
+
+function initialFormState(initialValues?: AvailabilityFormValues): FormState {
+  const date = initialValues?.date
+  const time = initialValues?.time
+  const recurrence = initialValues?.recurrence
+
+  return {
+    dateMode: date?.mode ?? 'range',
+    onDate: date?.mode === 'on' ? date.date : '',
+    fromDate: date?.mode === 'range' ? date.from : '',
+    toDate: date?.mode === 'range' ? date.to : '',
+    timeMode: time?.mode ?? 'allDay',
+    startTime: time?.mode === 'between' ? time.start : '08:00',
+    endTime: time?.mode === 'between' ? time.end : '10:00',
+    recurrenceMode: recurrence?.mode ?? 'everyday',
+    recurrenceDays: recurrence?.mode === 'days' ? recurrence.days : [],
+  }
+}
+
+// The days actually present in [from, to] (inclusive) — a range of 6+ days
+// always spans every weekday at least once.
+function weekdaysInRange(from: Date, to: Date): Set<Weekday> {
+  const spanDays = Math.round(
+    (to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000),
+  )
+  if (spanDays < 0) return new Set()
+  if (spanDays >= 6) return new Set(WEEKDAY_ORDER)
+
+  const allowed = new Set<Weekday>()
+  const cursor = new Date(from)
+  for (let i = 0; i <= spanDays; i++) {
+    allowed.add(weekdayOfDate(cursor))
+    cursor.setDate(cursor.getDate() + 1)
+  }
+  return allowed
 }
 
 export default function AvailabilityFormModal({
   isOpen,
   onClose,
   onSave,
+  initialValues,
+  title,
 }: Props) {
   const t = useTranslations('AvailabilityFormModal')
   const formId = useId()
 
-  const [dateMode, setDateMode] = useState<DateMode>('all')
-  const [onDate, setOnDate] = useState('')
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
-  const [timeMode, setTimeMode] = useState<TimeMode>('allDay')
-  const [startTime, setStartTime] = useState('08:00')
-  const [endTime, setEndTime] = useState('10:00')
+  const initial = initialFormState(initialValues)
+
+  const [dateMode, setDateMode] = useState<DateMode>(initial.dateMode)
+  const [onDate, setOnDate] = useState(initial.onDate)
+  const [fromDate, setFromDate] = useState(initial.fromDate)
+  const [toDate, setToDate] = useState(initial.toDate)
+  const [timeMode, setTimeMode] = useState<TimeMode>(initial.timeMode)
+  const [startTime, setStartTime] = useState(initial.startTime)
+  const [endTime, setEndTime] = useState(initial.endTime)
+  const [recurrenceMode, setRecurrenceMode] = useState<RecurrenceMode>(
+    initial.recurrenceMode,
+  )
+  const [recurrenceDays, setRecurrenceDays] = useState<Weekday[]>(
+    initial.recurrenceDays,
+  )
   const [timePickerTarget, setTimePickerTarget] = useState<TimeTarget>(null)
   const [datePickerTarget, setDatePickerTarget] = useState<DateTarget>(null)
 
   function reset() {
-    setDateMode('all')
-    setOnDate('')
-    setFromDate('')
-    setToDate('')
-    setTimeMode('allDay')
-    setStartTime('08:00')
-    setEndTime('10:00')
+    const initial = initialFormState(initialValues)
+    setDateMode(initial.dateMode)
+    setOnDate(initial.onDate)
+    setFromDate(initial.fromDate)
+    setToDate(initial.toDate)
+    setTimeMode(initial.timeMode)
+    setStartTime(initial.startTime)
+    setEndTime(initial.endTime)
+    setRecurrenceMode(initial.recurrenceMode)
+    setRecurrenceDays(initial.recurrenceDays)
     setTimePickerTarget(null)
     setDatePickerTarget(null)
+  }
+
+  function toggleWeekday(day: Weekday) {
+    setRecurrenceMode('days')
+    setRecurrenceDays((current) =>
+      current.includes(day)
+        ? current.filter((selected) => selected !== day)
+        : [...current, day],
+    )
   }
 
   function handleClose() {
@@ -71,21 +169,33 @@ export default function AvailabilityFormModal({
     onClose()
   }
 
-  function handleSave() {
+  async function handleSave() {
     const date =
-      dateMode === 'all'
-        ? ({ mode: 'all' } as const)
-        : dateMode === 'on'
-          ? ({ mode: 'on', date: onDate } as const)
-          : ({ mode: 'range', from: fromDate, to: toDate } as const)
+      dateMode === 'on'
+        ? ({ mode: 'on', date: onDate } as const)
+        : ({ mode: 'range', from: fromDate, to: toDate } as const)
 
     const time: AvailabilityFormValues['time'] =
       timeMode === 'allDay'
         ? { mode: 'allDay' }
         : { mode: 'between', start: startTime, end: endTime }
 
-    onSave({ date, time })
-    reset()
+    const orderedDays = WEEKDAY_ORDER.filter((day) =>
+      effectiveRecurrenceDays.includes(day),
+    )
+    const recurrence: AvailabilityFormValues['recurrence'] =
+      recurrenceMode === 'everyday' ||
+      orderedDays.length === WEEKDAY_ORDER.length
+        ? { mode: 'everyday' }
+        : { mode: 'days', days: orderedDays }
+
+    try {
+      await onSave({ date, time, recurrence })
+      reset()
+    } catch {
+      // The caller already surfaced an error to the user; keep the form
+      // open with their input intact so they can retry.
+    }
   }
 
   function handleTimeConfirm(time: string) {
@@ -101,19 +211,42 @@ export default function AvailabilityFormModal({
     setDatePickerTarget(null)
   }
 
+  const weekdayLetters = t.raw('weekdayLetters') as string[]
+  const weekdayNames = t.raw('weekdayNames') as string[]
+
   const isOnDateInvalid = onDate !== '' && !isValidAvailabilityDate(onDate)
   const isFromDateInvalid =
     fromDate !== '' && !isValidAvailabilityDate(fromDate)
   const isToDateInvalid = toDate !== '' && !isValidAvailabilityDate(toDate)
   const isTimeRangeInvalid = timeMode === 'between' && startTime >= endTime
 
+  // null = dates aren't valid yet, so no weekday restriction can be computed.
+  const allowedWeekdays =
+    dateMode === 'on'
+      ? (() => {
+          const date = parseAvailabilityDate(onDate)
+          return date ? new Set([weekdayOfDate(date)]) : null
+        })()
+      : (() => {
+          const from = parseAvailabilityDate(fromDate)
+          const to = parseAvailabilityDate(toDate)
+          return from && to ? weekdaysInRange(from, to) : null
+        })()
+
+  const effectiveRecurrenceDays = allowedWeekdays
+    ? recurrenceDays.filter((day) => allowedWeekdays.has(day))
+    : recurrenceDays
+
+  const isRecurrenceInvalid =
+    recurrenceMode === 'days' && effectiveRecurrenceDays.length === 0
+
   const canSave =
-    (dateMode === 'all' ||
-      (dateMode === 'on' && isValidAvailabilityDate(onDate)) ||
+    ((dateMode === 'on' && isValidAvailabilityDate(onDate)) ||
       (dateMode === 'range' &&
         isValidAvailabilityDate(fromDate) &&
         isValidAvailabilityDate(toDate))) &&
-    !isTimeRangeInvalid
+    !isTimeRangeInvalid &&
+    !isRecurrenceInvalid
 
   const datePickerInitialValue =
     datePickerTarget === 'on'
@@ -126,23 +259,13 @@ export default function AvailabilityFormModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('title')}
+      title={title ?? t('title')}
       closeLabel={t('close')}
       active={timePickerTarget === null && datePickerTarget === null}
     >
       <fieldset className='m-0 border-0 p-0'>
         <legend className={legendClassName}>{t('datesLegend')}</legend>
         <div className={optionsClassName}>
-          <label className='flex cursor-pointer items-center gap-3 font-primary text-sm font-semibold text-black-300'>
-            <input
-              type='radio'
-              name={`${formId}-date-mode`}
-              className={radioInputClassName}
-              checked={dateMode === 'all'}
-              onChange={() => setDateMode('all')}
-            />
-            {t('allTheTime')}
-          </label>
           <label className='flex cursor-pointer flex-col gap-1 font-secondary text-sm text-black-300'>
             <div className='flex items-center gap-3'>
               <input
@@ -367,6 +490,63 @@ export default function AvailabilityFormModal({
                 className='ml-7 font-secondary text-xs text-red-300'
               >
                 {t('invalidTimeRangeError')}
+              </p>
+            )}
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset className='m-0 mt-5.5 border-0 p-0'>
+        <legend className={legendClassName}>{t('recurrenceLegend')}</legend>
+        <div className={optionsClassName}>
+          <label className='flex cursor-pointer items-center gap-3 font-primary text-sm font-semibold text-black-300'>
+            <input
+              type='radio'
+              name={`${formId}-recurrence-mode`}
+              className={radioInputClassName}
+              checked={recurrenceMode === 'everyday'}
+              onChange={() => setRecurrenceMode('everyday')}
+            />
+            {t('everyday')}
+          </label>
+          <label className='flex cursor-pointer flex-col gap-1 font-secondary text-sm text-black-300'>
+            <div className='flex items-center gap-3'>
+              <input
+                type='radio'
+                name={`${formId}-recurrence-mode`}
+                className={radioInputClassName}
+                checked={recurrenceMode === 'days'}
+                onChange={() => setRecurrenceMode('days')}
+              />
+              {t('theseDays')}
+              <div
+                className={`flex items-center gap-1.5 ${recurrenceMode === 'days' ? '' : 'opacity-50'}`}
+              >
+                {WEEKDAY_ORDER.map((day, index) => (
+                  <button
+                    key={day}
+                    type='button'
+                    onClick={() => toggleWeekday(day)}
+                    disabled={
+                      allowedWeekdays !== null && !allowedWeekdays.has(day)
+                    }
+                    aria-pressed={effectiveRecurrenceDays.includes(day)}
+                    aria-label={weekdayNames[index]}
+                    className={weekdayButtonClassName(
+                      effectiveRecurrenceDays.includes(day),
+                    )}
+                  >
+                    {weekdayLetters[index]}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {isRecurrenceInvalid && (
+              <p
+                role='alert'
+                className='ml-7 font-secondary text-xs text-red-300'
+              >
+                {t('invalidRecurrenceError')}
               </p>
             )}
           </label>

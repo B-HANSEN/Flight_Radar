@@ -1,19 +1,42 @@
+export type Weekday = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun'
+
+export const WEEKDAY_ORDER: Weekday[] = [
+  'mon',
+  'tue',
+  'wed',
+  'thu',
+  'fri',
+  'sat',
+  'sun',
+]
+
 export type AvailabilityEntry = {
   id: string
   dateLabel: string
+  dateMode: 'on' | 'range'
+  onDate?: string
+  fromDate?: string
+  toDate?: string
   timeLabel: string
+  timeMode: 'allDay' | 'between'
+  startTime?: string
+  endTime?: string
   recurrence: string
+  recurrenceMode: 'everyday' | 'days'
+  recurrenceDays?: Weekday[]
 }
 
 export type DateSelection =
-  | { mode: 'all' }
-  | { mode: 'on'; date: string }
-  | { mode: 'range'; from: string; to: string }
+  { mode: 'on'; date: string } | { mode: 'range'; from: string; to: string }
 
 export type TimeSelection =
   { mode: 'allDay' } | { mode: 'between'; start: string; end: string }
 
+export type RecurrenceSelection =
+  { mode: 'everyday' } | { mode: 'days'; days: Weekday[] }
+
 export type AvailabilityFormValues = {
   date: DateSelection
   time: TimeSelection
+  recurrence: RecurrenceSelection
 }

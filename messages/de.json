@@ -336,19 +336,25 @@
     "recurrenceHeading": "Wiederholung",
     "addLabel": "Verfügbarkeit hinzufügen",
     "noEntries": "Noch keine Verfügbarkeitseinträge.",
-    "dateAllTime": "Immer",
     "dateOn": "Am {date}",
     "dateRange": "Von {from} bis {to}",
     "timeAllDay": "Ganztägig",
     "timeBetween": "Zwischen {start} und {end}",
-    "oneTime": "Einmalig"
+    "recurrenceEveryday": "Täglich",
+    "recurrenceDays": "Am {days}",
+    "editLabel": "Verfügbarkeit vom {date} bearbeiten",
+    "deleteLabel": "Verfügbarkeit vom {date} löschen",
+    "createdToast": "Verfügbarkeit hinzugefügt",
+    "updatedToast": "Verfügbarkeit aktualisiert",
+    "deletedToast": "Verfügbarkeit gelöscht",
+    "errorToast": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "AvailabilityFormModal": {
     "title": "Verfügbarkeit des Schülers",
+    "editTitle": "Verfügbarkeit bearbeiten",
     "close": "Schließen",
     "save": "Speichern",
     "datesLegend": "Daten",
-    "allTheTime": "Immer",
     "on": "Am",
     "onDateLabel": "Datum",
     "from": "Von",
@@ -363,7 +369,21 @@
     "and": "und",
     "startTimeLabel": "Startzeit",
     "endTimeLabel": "Endzeit",
-    "invalidTimeRangeError": "Die Endzeit muss nach der Startzeit liegen."
+    "invalidTimeRangeError": "Die Endzeit muss nach der Startzeit liegen.",
+    "recurrenceLegend": "Wiederholung",
+    "everyday": "Täglich",
+    "theseDays": "An diesen Tagen",
+    "weekdayLetters": ["M", "D", "M", "D", "F", "S", "S"],
+    "weekdayNames": [
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag",
+      "Sonntag"
+    ],
+    "invalidRecurrenceError": "Wähle mindestens einen Tag aus."
   },
   "TimePickerModal": {
     "title": "Uhrzeit auswählen",

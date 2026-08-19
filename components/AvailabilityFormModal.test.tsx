@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import AvailabilityFormModal from './AvailabilityFormModal'
-import type { AvailabilityFormValues } from './Availability.types'
+import type { AvailabilityFormValues, Weekday } from './Availability.types'
 import enMessages from '@/messages/en.json'
 
 function formatDMY(date: Date): string {
@@ -19,6 +19,50 @@ const sevenMonthsAhead = new Date(
   today.getFullYear(),
   today.getMonth() + 7,
   today.getDate(),
+)
+
+const WEEKDAY_NAMES = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+]
+const WEEKDAY_CODES: Weekday[] = [
+  'sun',
+  'mon',
+  'tue',
+  'wed',
+  'thu',
+  'fri',
+  'sat',
+]
+
+function weekdayNameOf(date: Date): string {
+  return WEEKDAY_NAMES[date.getDay()]
+}
+function weekdayCodeOf(name: string): Weekday {
+  return WEEKDAY_CODES[WEEKDAY_NAMES.indexOf(name)]
+}
+
+// A 4-day span, far enough out to stay inside the 6-month picker window.
+const narrowRangeStart = new Date(today)
+narrowRangeStart.setDate(narrowRangeStart.getDate() + 7)
+const narrowRangeEnd = new Date(narrowRangeStart)
+narrowRangeEnd.setDate(narrowRangeEnd.getDate() + 3)
+
+const namesInNarrowRange: string[] = []
+for (
+  let d = new Date(narrowRangeStart);
+  d <= narrowRangeEnd;
+  d.setDate(d.getDate() + 1)
+) {
+  namesInNarrowRange.push(weekdayNameOf(d))
+}
+const namesOutsideNarrowRange = WEEKDAY_NAMES.filter(
+  (name) => !namesInNarrowRange.includes(name),
 )
 
 function renderModal(
@@ -51,14 +95,27 @@ describe('AvailabilityFormModal', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('saves an "all the time" / "all day" availability entry by default', () => {
+  it('defaults to the date range mode with all-day time, disabled until dates are filled in', () => {
     const { onSave } = renderModal()
 
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
-      date: { mode: 'all' },
+      date: {
+        mode: 'range',
+        from: formatDMY(inTwoWeeks),
+        to: formatDMY(inThreeWeeks),
+      },
       time: { mode: 'allDay' },
+      recurrence: { mode: 'everyday' },
     })
   })
 
@@ -133,6 +190,7 @@ describe('AvailabilityFormModal', () => {
   it('selects the "From" radio when opening its calendar picker, without clicking the radio first', () => {
     renderModal()
 
+    fireEvent.click(screen.getByRole('radio', { name: /^On/ }))
     const rangeRadio = screen.getByRole('radio', { name: /^From/ })
     expect(rangeRadio).not.toBeChecked()
 
@@ -177,6 +235,7 @@ describe('AvailabilityFormModal', () => {
         to: formatDMY(inThreeWeeks),
       },
       time: { mode: 'allDay' },
+      recurrence: { mode: 'everyday' },
     })
   })
 
@@ -208,11 +267,19 @@ describe('AvailabilityFormModal', () => {
     expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
       date: expect.objectContaining({ mode: 'on' }),
       time: { mode: 'allDay' },
+      recurrence: { mode: 'everyday' },
     })
   })
 
   it('picks a between-time range through the time-picker dial', () => {
     const { onSave } = renderModal()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
 
     fireEvent.click(screen.getByRole('radio', { name: /^Between/ }))
 
@@ -233,13 +300,25 @@ describe('AvailabilityFormModal', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
-      date: { mode: 'all' },
+      date: {
+        mode: 'range',
+        from: formatDMY(inTwoWeeks),
+        to: formatDMY(inThreeWeeks),
+      },
       time: { mode: 'between', start: '09:00', end: '17:00' },
+      recurrence: { mode: 'everyday' },
     })
   })
 
   it('rejects an end time that is before the start time', () => {
     const { onSave } = renderModal()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
 
     fireEvent.click(screen.getByRole('radio', { name: /^Between/ }))
 
@@ -262,9 +341,208 @@ describe('AvailabilityFormModal', () => {
     fireEvent.click(saveButton)
 
     expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
-      date: { mode: 'all' },
+      date: {
+        mode: 'range',
+        from: formatDMY(inTwoWeeks),
+        to: formatDMY(inThreeWeeks),
+      },
       time: { mode: 'between', start: '17:00', end: '18:00' },
+      recurrence: { mode: 'everyday' },
     })
+  })
+
+  it('saves a "these days" recurrence selection', () => {
+    const { onSave } = renderModal()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Monday' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Wednesday' }))
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
+      date: {
+        mode: 'range',
+        from: formatDMY(inTwoWeeks),
+        to: formatDMY(inThreeWeeks),
+      },
+      time: { mode: 'allDay' },
+      recurrence: { mode: 'days', days: ['mon', 'wed'] },
+    })
+  })
+
+  it('saves selected weekdays in natural order regardless of click order', () => {
+    const { onSave } = renderModal()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Friday' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Monday' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Wednesday' }))
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
+      date: {
+        mode: 'range',
+        from: formatDMY(inTwoWeeks),
+        to: formatDMY(inThreeWeeks),
+      },
+      time: { mode: 'allDay' },
+      recurrence: { mode: 'days', days: ['mon', 'wed', 'fri'] },
+    })
+  })
+
+  it('collapses to "everyday" when all seven weekdays are selected', () => {
+    const { onSave } = renderModal()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
+
+    for (const day of [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ]) {
+      fireEvent.click(screen.getByRole('button', { name: day }))
+    }
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
+      date: {
+        mode: 'range',
+        from: formatDMY(inTwoWeeks),
+        to: formatDMY(inThreeWeeks),
+      },
+      time: { mode: 'allDay' },
+      recurrence: { mode: 'everyday' },
+    })
+  })
+
+  it('disables weekday buttons that fall outside the selected date range', () => {
+    renderModal()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(narrowRangeStart) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(narrowRangeEnd) },
+    })
+
+    for (const name of namesInNarrowRange) {
+      expect(screen.getByRole('button', { name })).toBeEnabled()
+    }
+    for (const name of namesOutsideNarrowRange) {
+      expect(screen.getByRole('button', { name })).toBeDisabled()
+    }
+  })
+
+  it('drops a selected weekday from the save payload once the date range narrows past it', () => {
+    const { onSave } = renderModal()
+
+    // Wide range first, so every weekday is selectable.
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
+
+    const keptDay = namesInNarrowRange[0]
+    const droppedDay = namesOutsideNarrowRange[0]
+    fireEvent.click(screen.getByRole('button', { name: keptDay }))
+    fireEvent.click(screen.getByRole('button', { name: droppedDay }))
+
+    // Narrowing the range now excludes droppedDay.
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(narrowRangeStart) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(narrowRangeEnd) },
+    })
+
+    expect(screen.getByRole('button', { name: droppedDay })).toBeDisabled()
+    expect(screen.getByRole('button', { name: droppedDay })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
+      date: {
+        mode: 'range',
+        from: formatDMY(narrowRangeStart),
+        to: formatDMY(narrowRangeEnd),
+      },
+      time: { mode: 'allDay' },
+      recurrence: {
+        mode: 'days',
+        days: [weekdayCodeOf(keptDay)],
+      },
+    })
+  })
+
+  it('toggles a weekday off when clicked again', () => {
+    renderModal()
+
+    const mondayButton = screen.getByRole('button', { name: 'Monday' })
+    fireEvent.click(mondayButton)
+    expect(mondayButton).toHaveAttribute('aria-pressed', 'true')
+
+    fireEvent.click(mondayButton)
+    expect(mondayButton).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('selects the "These days" radio when a weekday is clicked, without clicking the radio first', () => {
+    renderModal()
+
+    const theseDaysRadio = screen.getByRole('radio', { name: /^These days/ })
+    expect(theseDaysRadio).not.toBeChecked()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tuesday' }))
+
+    expect(theseDaysRadio).toBeChecked()
+  })
+
+  it('disables save until at least one weekday is selected for "these days"', () => {
+    renderModal()
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
+
+    fireEvent.click(screen.getByRole('radio', { name: /^These days/ }))
+
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    expect(saveButton).toBeDisabled()
+    expect(screen.getByText('Select at least one day.')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Friday' }))
+    expect(saveButton).toBeEnabled()
   })
 
   it('discards the pick and keeps the previous time when the picker is cancelled', () => {
@@ -320,14 +598,28 @@ describe('AvailabilityFormModal', () => {
 
     fireEvent.click(screen.getByRole('radio', { name: /^On/ }))
     fireEvent.click(screen.getByRole('radio', { name: /^Between/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Monday' }))
 
-    fireEvent.click(screen.getByRole('radio', { name: 'All the time' }))
+    fireEvent.click(screen.getByRole('radio', { name: /^From/ }))
     fireEvent.click(screen.getByRole('radio', { name: 'All day' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Everyday' }))
+
+    fireEvent.change(screen.getByLabelText('From date'), {
+      target: { value: formatDMY(inTwoWeeks) },
+    })
+    fireEvent.change(screen.getByLabelText('To date'), {
+      target: { value: formatDMY(inThreeWeeks) },
+    })
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(onSave).toHaveBeenCalledWith<[AvailabilityFormValues]>({
-      date: { mode: 'all' },
+      date: {
+        mode: 'range',
+        from: formatDMY(inTwoWeeks),
+        to: formatDMY(inThreeWeeks),
+      },
       time: { mode: 'allDay' },
+      recurrence: { mode: 'everyday' },
     })
   })
 

@@ -336,19 +336,25 @@
     "recurrenceHeading": "Recurrence",
     "addLabel": "Add availability",
     "noEntries": "No availability entries yet.",
-    "dateAllTime": "All the time",
     "dateOn": "On {date}",
     "dateRange": "From {from} to {to}",
     "timeAllDay": "All day",
     "timeBetween": "Between {start} and {end}",
-    "oneTime": "One time"
+    "recurrenceEveryday": "Everyday",
+    "recurrenceDays": "On {days}",
+    "editLabel": "Edit availability from {date}",
+    "deleteLabel": "Delete availability from {date}",
+    "createdToast": "Availability added",
+    "updatedToast": "Availability updated",
+    "deletedToast": "Availability deleted",
+    "errorToast": "Something went wrong. Please try again."
   },
   "AvailabilityFormModal": {
     "title": "Student Availability",
+    "editTitle": "Edit Availability",
     "close": "Close",
     "save": "Save",
     "datesLegend": "Dates",
-    "allTheTime": "All the time",
     "on": "On",
     "onDateLabel": "Date",
     "from": "From",
@@ -363,7 +369,21 @@
     "and": "and",
     "startTimeLabel": "Start time",
     "endTimeLabel": "End time",
-    "invalidTimeRangeError": "End time must be after the start time."
+    "invalidTimeRangeError": "End time must be after the start time.",
+    "recurrenceLegend": "Recurrence",
+    "everyday": "Everyday",
+    "theseDays": "These days",
+    "weekdayLetters": ["M", "T", "W", "T", "F", "S", "S"],
+    "weekdayNames": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "invalidRecurrenceError": "Select at least one day."
   },
   "TimePickerModal": {
     "title": "Select time",

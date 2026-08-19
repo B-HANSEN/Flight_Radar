@@ -336,19 +336,25 @@
     "recurrenceHeading": "Recurrencia",
     "addLabel": "Añadir disponibilidad",
     "noEntries": "Todavía no hay entradas de disponibilidad.",
-    "dateAllTime": "Todo el tiempo",
     "dateOn": "El {date}",
     "dateRange": "Del {from} al {to}",
     "timeAllDay": "Todo el día",
     "timeBetween": "Entre las {start} y las {end}",
-    "oneTime": "Una vez"
+    "recurrenceEveryday": "Todos los días",
+    "recurrenceDays": "Los {days}",
+    "editLabel": "Editar disponibilidad del {date}",
+    "deleteLabel": "Eliminar disponibilidad del {date}",
+    "createdToast": "Disponibilidad añadida",
+    "updatedToast": "Disponibilidad actualizada",
+    "deletedToast": "Disponibilidad eliminada",
+    "errorToast": "Algo salió mal. Inténtalo de nuevo."
   },
   "AvailabilityFormModal": {
     "title": "Disponibilidad del alumno",
+    "editTitle": "Editar disponibilidad",
     "close": "Cerrar",
     "save": "Guardar",
     "datesLegend": "Fechas",
-    "allTheTime": "Todo el tiempo",
     "on": "El",
     "onDateLabel": "Fecha",
     "from": "Del",
@@ -363,7 +369,21 @@
     "and": "y las",
     "startTimeLabel": "Hora de inicio",
     "endTimeLabel": "Hora de fin",
-    "invalidTimeRangeError": "La hora de fin debe ser posterior a la hora de inicio."
+    "invalidTimeRangeError": "La hora de fin debe ser posterior a la hora de inicio.",
+    "recurrenceLegend": "Recurrencia",
+    "everyday": "Todos los días",
+    "theseDays": "Estos días",
+    "weekdayLetters": ["L", "M", "X", "J", "V", "S", "D"],
+    "weekdayNames": [
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+      "Domingo"
+    ],
+    "invalidRecurrenceError": "Selecciona al menos un día."
   },
   "TimePickerModal": {
     "title": "Seleccionar hora",

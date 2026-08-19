@@ -3,6 +3,12 @@ import { HydratedDocument } from 'mongoose'
 
 export type AvailabilityEntryDocument = HydratedDocument<AvailabilityEntry>
 
+export type AvailabilityDateMode = 'on' | 'range'
+export type AvailabilityTimeMode = 'allDay' | 'between'
+export type AvailabilityRecurrenceMode = 'everyday' | 'days'
+export type AvailabilityWeekday =
+  'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun'
+
 @Schema({
   toJSON: {
     virtuals: true,
@@ -17,11 +23,38 @@ export class AvailabilityEntry {
   @Prop({ required: true })
   dateLabel!: string
 
+  @Prop({ required: true, enum: ['on', 'range'] })
+  dateMode!: AvailabilityDateMode
+
+  @Prop()
+  onDate?: string
+
+  @Prop()
+  fromDate?: string
+
+  @Prop()
+  toDate?: string
+
   @Prop({ required: true })
   timeLabel!: string
 
+  @Prop({ required: true, enum: ['allDay', 'between'] })
+  timeMode!: AvailabilityTimeMode
+
+  @Prop()
+  startTime?: string
+
+  @Prop()
+  endTime?: string
+
   @Prop({ required: true })
   recurrence!: string
+
+  @Prop({ required: true, enum: ['everyday', 'days'] })
+  recurrenceMode!: AvailabilityRecurrenceMode
+
+  @Prop({ type: [String] })
+  recurrenceDays?: AvailabilityWeekday[]
 
   // No Users module yet (no auth) — plain id for now, becomes a real
   // ObjectId ref once the Users module exists.
