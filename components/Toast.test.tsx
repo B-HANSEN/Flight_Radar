@@ -48,4 +48,23 @@ describe('Toast', () => {
 
     vi.useRealTimers()
   })
+
+  it('shows a spinning loader by default', () => {
+    const { container } = renderToast()
+
+    expect(container.querySelector('.animate-spin')).toBeInTheDocument()
+  })
+
+  it('shows a checkmark instead of a spinner for the success variant', () => {
+    const { container } = renderToast({ variant: 'success' })
+
+    expect(container.querySelector('.animate-spin')).not.toBeInTheDocument()
+  })
+
+  it('shows an alert icon instead of a spinner for the error variant', () => {
+    const { container } = renderToast({ variant: 'error' })
+
+    expect(container.querySelector('.animate-spin')).not.toBeInTheDocument()
+    expect(container.querySelector('.text-red-300')).toBeInTheDocument()
+  })
 })

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Loader2, X } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Loader2, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { focusRing } from '@/lib/styles'
 
@@ -10,6 +10,8 @@ type Props = {
   open: boolean
   onClose: () => void
   durationMs?: number
+  /** 'loading' (default) shows a spinner for an in-progress action; 'success' shows a checkmark for a completed one; 'error' shows an alert icon for a failed one. */
+  variant?: 'loading' | 'success' | 'error'
 }
 
 export default function Toast({
@@ -17,6 +19,7 @@ export default function Toast({
   open,
   onClose,
   durationMs = 3000,
+  variant = 'loading',
 }: Props) {
   const t = useTranslations('Toast')
 
@@ -34,11 +37,25 @@ export default function Toast({
       aria-live='polite'
       className='fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2.5 rounded-lg border border-black-100 bg-white px-4 py-3 shadow-xl'
     >
-      <Loader2
-        size={16}
-        className='flex-none animate-spin text-blue-300'
-        aria-hidden='true'
-      />
+      {variant === 'loading' ? (
+        <Loader2
+          size={16}
+          className='flex-none animate-spin text-blue-300'
+          aria-hidden='true'
+        />
+      ) : variant === 'success' ? (
+        <CheckCircle2
+          size={16}
+          className='flex-none text-green-300'
+          aria-hidden='true'
+        />
+      ) : (
+        <AlertCircle
+          size={16}
+          className='flex-none text-red-300'
+          aria-hidden='true'
+        />
+      )}
       <span className='font-secondary text-sm font-semibold text-black-300'>
         {message}
       </span>

@@ -10,11 +10,13 @@ const meta: Meta<typeof Toast> = {
     open: true,
     onClose: fn(),
     durationMs: 3000,
+    variant: 'loading',
   },
   argTypes: {
     message: { control: 'text' },
     open: { control: 'boolean' },
     durationMs: { control: 'number' },
+    variant: { control: 'radio', options: ['loading', 'success', 'error'] },
   },
 }
 export default meta
