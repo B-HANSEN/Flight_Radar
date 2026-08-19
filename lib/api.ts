@@ -1,6 +1,9 @@
 const MAX_ATTEMPTS = 3
 const RETRY_DELAY_MS = 500
-const TIMEOUT_MS = 10_000
+// Render's free tier spins the API down after inactivity; a cold start can
+// take 30s+, and build-time page rendering fetches from it, so the timeout
+// needs enough headroom to survive a cold start rather than fail the build.
+const TIMEOUT_MS = 30_000
 
 async function fetchWithRetry(
   url: string,
