@@ -23,6 +23,7 @@ If a diff has already been included in your prompt, use that — it's the exact 
 - Duplicated logic that should reuse existing code.
 - Dead code: unused exports, unreachable branches, leftover debug code.
 - Convention drift from the rest of the codebase (naming, file layout, import style) — check how similar code elsewhere in the repo does it before flagging.
+- Non-canonical Tailwind utility classes (`suggestCanonicalClasses`): a numeric/arbitrary-value class (`max-w-128`, `z-[60]`) that exactly matches one of Tailwind's built-in scale tokens instead of using the named utility, or a utility name Tailwind v4 renamed (e.g. `break-words` → `wrap-break-word`, `break-all` → `wrap-anywhere`, `flex-shrink-*`/`flex-grow-*` → `shrink-*`/`grow-*`, `overflow-ellipsis` → `text-ellipsis`) — only exact scale matches count, not approximate ones.
 - Comments that restate the code instead of explaining a non-obvious why.
 
 ## What NOT to report
