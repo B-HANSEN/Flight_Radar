@@ -12,6 +12,10 @@
     "localTime": "Hora Local",
     "zuluTime": "Hora Zulú"
   },
+  "RoleSwitcher": {
+    "switchView": "Cambiar vista",
+    "instructor": "Instructor"
+  },
   "Homepage": {
     "meta": {
       "title": "Inicio",

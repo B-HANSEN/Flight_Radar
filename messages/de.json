@@ -12,6 +12,10 @@
     "localTime": "Ortszeit",
     "zuluTime": "Zulu-Zeit"
   },
+  "RoleSwitcher": {
+    "switchView": "Ansicht wechseln",
+    "instructor": "Fluglehrer"
+  },
   "Homepage": {
     "meta": {
       "title": "Startseite",

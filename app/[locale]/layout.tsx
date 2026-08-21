@@ -5,10 +5,12 @@ import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import NavBar from '@/components/NavBar'
 import JsonLd from '@/components/JsonLd'
+import { fetchApi } from '@/lib/api'
 import {
   buildOrganizationSchema,
   buildWebSiteSchema,
 } from '@/lib/structuredData'
+import type { Student } from '@/components/RoleSwitcher.types'
 import '../globals.css'
 
 export function generateStaticParams() {
@@ -40,6 +42,7 @@ export default async function LocaleLayout({
   }
   setRequestLocale(locale)
   const messages = await getMessages()
+  const students = await fetchApi<Student[]>('/students')
 
   return (
     <html
@@ -51,7 +54,7 @@ export default async function LocaleLayout({
           data={[buildOrganizationSchema(), buildWebSiteSchema(locale)]}
         />
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <NavBar />
+          <NavBar students={students} />
           <main className='mx-auto max-w-3xl px-4 py-8'>{children}</main>
         </NextIntlClientProvider>
       </body>

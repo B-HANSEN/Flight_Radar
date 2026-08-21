@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ComponentProps, ReactNode } from 'react'
 import NavBar from './NavBar'
+import { DUMMY_STUDENTS } from './RoleSwitcher.data'
 import enMessages from '@/messages/en.json'
 
 type MockLinkProps = {
@@ -135,6 +136,30 @@ describe('NavBar', () => {
     renderNavBar()
     expect(
       screen.getByRole('button', { name: 'Change language: English' }),
+    ).toBeInTheDocument()
+  })
+
+  it('calls onItemClick when the wordmark link is clicked', () => {
+    const onItemClick = vi.fn()
+    renderNavBar({ onItemClick })
+    fireEvent.click(screen.getByRole('link', { name: 'Flight Radar' }))
+    expect(onItemClick).toHaveBeenCalledWith('/')
+  })
+
+  it('defaults the role switcher to Jamie Torres and lets picking a student update the selection', () => {
+    renderNavBar({ students: DUMMY_STUDENTS })
+    const trigger = screen.getByRole('button', { name: 'Jamie Torres' })
+    fireEvent.click(trigger)
+
+    const panel = screen.getByText('Switch view').parentElement as HTMLElement
+    expect(
+      within(panel).getByRole('button', { name: 'Jamie Torres' }),
+    ).toHaveAttribute('aria-current', 'true')
+
+    fireEvent.click(within(panel).getByRole('button', { name: 'Alex Moreau' }))
+
+    expect(
+      screen.getByRole('button', { name: 'Alex Moreau' }),
     ).toBeInTheDocument()
   })
 

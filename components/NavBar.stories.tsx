@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useArgs } from 'storybook/preview-api'
 import { fn } from 'storybook/test'
 import NavBar from './NavBar'
+import { DUMMY_STUDENTS } from './RoleSwitcher.data'
 
 const meta: Meta<typeof NavBar> = {
   component: NavBar,
@@ -16,6 +17,7 @@ const meta: Meta<typeof NavBar> = {
     },
   },
   args: {
+    students: DUMMY_STUDENTS,
     onMenuClick: fn(),
   },
 }

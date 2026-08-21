@@ -12,6 +12,10 @@
     "localTime": "Local Time",
     "zuluTime": "Zulu Time"
   },
+  "RoleSwitcher": {
+    "switchView": "Switch view",
+    "instructor": "Instructor"
+  },
   "Homepage": {
     "meta": {
       "title": "Home",

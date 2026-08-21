@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   Home,
   UserCircle,
@@ -15,6 +16,8 @@ import { Link, usePathname } from '@/i18n/navigation'
 import { focusRing } from '@/lib/styles'
 import LanguageSwitcher from './LanguageSwitcher'
 import NavClock from './NavClock'
+import RoleSwitcher from './RoleSwitcher'
+import type { Student } from './RoleSwitcher.types'
 
 type NavItemKey = 'home' | 'me' | 'news' | 'schedule' | 'aircraft' | 'documents'
 
@@ -27,6 +30,7 @@ type NavItem = {
 type Props = {
   activePath?: string
   collapsed?: boolean
+  students?: Student[]
   onMenuClick?: () => void
   onItemClick?: (href: string) => void
 }
@@ -40,15 +44,26 @@ const items: NavItem[] = [
   { key: 'documents', href: '/documents', icon: FileText },
 ]
 
+// No Users module yet (no auth) — the signed-in instructor is a fixed
+// placeholder, same approach as PLACEHOLDER_PROFILE in app/[locale]/me/layout.tsx.
+const CURRENT_INSTRUCTOR = { name: 'D. Fabri', initials: 'DF' }
+
 export default function NavBar({
   activePath,
   collapsed = false,
+  students = [],
   onMenuClick,
   onItemClick,
 }: Props) {
   const t = useTranslations('Nav')
   const pathname = usePathname() ?? '/'
   const currentPath = activePath ?? pathname
+  // Jamie Torres is the site's default demo persona (app/[locale]/me/layout.tsx's
+  // PLACEHOLDER_PROFILE) — default the picker to her instead of the instructor.
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(
+    () =>
+      students.find((student) => student.name === 'Jamie Torres')?.id ?? null,
+  )
 
   return (
     <nav
@@ -119,6 +134,12 @@ export default function NavBar({
       <div className='ml-auto flex flex-none items-center gap-4'>
         <NavClock />
         <LanguageSwitcher />
+        <RoleSwitcher
+          currentUser={CURRENT_INSTRUCTOR}
+          students={students}
+          selectedStudentId={selectedStudentId}
+          onSelect={(student) => setSelectedStudentId(student?.id ?? null)}
+        />
       </div>
     </nav>
   )
