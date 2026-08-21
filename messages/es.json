@@ -434,6 +434,17 @@
       "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
     ]
   },
+  "InstructorScheduleList": {
+    "title": "Programar un vuelo",
+    "instructorLabel": "Instructor · {name}",
+    "previousWeek": "Semana anterior",
+    "nextWeek": "Semana siguiente",
+    "openSlots": "{count, plural, one {# horario disponible} other {# horarios disponibles}}",
+    "noStudents": "Todavía no hay alumnos",
+    "noSlots": "Sin disponibilidad esta semana",
+    "scheduleButton": "Programar",
+    "scheduleLabel": "Programar un vuelo con {name} el {day} a las {time}"
+  },
   "NewsBulletins": {
     "reminder": {
       "title": "Notificación de defectos en la aeronave",
