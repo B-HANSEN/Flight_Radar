@@ -6,11 +6,16 @@ import {
   CalendarEvent,
   CalendarEventSchema,
 } from './schemas/calendar-event.schema'
+import {
+  AvailabilityEntry,
+  AvailabilityEntrySchema,
+} from '../availability/schemas/availability-entry.schema'
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: CalendarEvent.name, schema: CalendarEventSchema },
+      { name: AvailabilityEntry.name, schema: AvailabilityEntrySchema },
     ]),
   ],
   controllers: [AgendaController],
