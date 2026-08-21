@@ -19,6 +19,15 @@ function renderAvailability(
 
 beforeEach(() => {
   vi.mocked(fetchApi).mockReset()
+  // Availability dates must fall within [today, today + 6 months], so pin
+  // "today" behind every hardcoded date in this file — otherwise the fixed
+  // dates below eventually roll into the past as the calendar advances.
+  vi.useFakeTimers({ shouldAdvanceTime: true })
+  vi.setSystemTime(new Date(2026, 7, 15)) // 15 Aug 2026
+})
+
+afterEach(() => {
+  vi.useRealTimers()
 })
 
 describe('Availability', () => {
