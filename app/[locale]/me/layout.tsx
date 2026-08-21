@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 }
 
 const PLACEHOLDER_PROFILE = {
-  name: 'Doe, John',
-  avatarSrc: '/me/john-doe.webp',
-  email: 'john.doe@example.com',
+  name: 'Torres, Jamie',
+  avatarSrc: '/me/jamie-torres.webp',
+  email: 'jamie.torres@example.com',
   phone: '+34 600 123 456',
   birthday: '14 March 1994',
   info: 'PPL online · Q1 2025',

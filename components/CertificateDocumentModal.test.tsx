@@ -14,7 +14,7 @@ const fullCertificate: Certificate = {
   expiration: '06/03/2027',
   documentNumber: 'MED2-2025-04821',
   issuingAuthority: 'AESA — Agencia Estatal de Seguridad Aérea',
-  holderName: 'Doe, John',
+  holderName: 'Torres, Jamie',
 }
 
 const minimalCertificate: Certificate = {
@@ -60,7 +60,7 @@ describe('CertificateDocumentModal', () => {
     expect(
       screen.getByText('AESA — Agencia Estatal de Seguridad Aérea'),
     ).toBeInTheDocument()
-    expect(screen.getByText('Doe, John')).toBeInTheDocument()
+    expect(screen.getByText('Torres, Jamie')).toBeInTheDocument()
     expect(screen.getByText('MED2-2025-04821')).toBeInTheDocument()
     expect(screen.getByText('12/03/2025')).toBeInTheDocument()
     expect(screen.getByText('12/03/2026')).toBeInTheDocument()

@@ -12,7 +12,7 @@ const SAMPLE_CERTIFICATE: Certificate = {
   expiration: '06/03/2027',
   documentNumber: 'MED2-2025-04821',
   issuingAuthority: 'AESA — Agencia Estatal de Seguridad Aérea',
-  holderName: 'Doe, John',
+  holderName: 'Torres, Jamie',
 }
 
 const meta: Meta<typeof CertificateDocumentModal> = {

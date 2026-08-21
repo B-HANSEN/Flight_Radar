@@ -65,7 +65,7 @@ describe('Mailbox', () => {
     expect(
       screen.getByText('Runway 07/25 will be closed for maintenance.'),
     ).toBeInTheDocument()
-    expect(screen.getByText('to John Doe')).toBeInTheDocument()
+    expect(screen.getByText('to Jamie Torres')).toBeInTheDocument()
   })
 
   it('reveals automatic emails when the filter checkbox is unchecked', () => {

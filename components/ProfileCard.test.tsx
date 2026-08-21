@@ -5,8 +5,8 @@ import ProfileCard from './ProfileCard'
 import enMessages from '@/messages/en.json'
 
 const baseProps: ComponentProps<typeof ProfileCard> = {
-  name: 'Doe, John',
-  email: 'john.doe@example.com',
+  name: 'Torres, Jamie',
+  email: 'jamie.torres@example.com',
   phone: '+34 600 123 456',
   birthday: '14 March 1994',
   info: 'PPL online · Q1 2025',
@@ -30,7 +30,7 @@ describe('ProfileCard', () => {
   it('renders the name as a heading and the Information tab active by default', () => {
     renderCard()
     expect(
-      screen.getByRole('heading', { name: 'Doe, John' }),
+      screen.getByRole('heading', { name: 'Torres, Jamie' }),
     ).toBeInTheDocument()
 
     expect(screen.getByRole('tab', { name: 'Information' })).toHaveAttribute(
@@ -42,7 +42,7 @@ describe('ProfileCard', () => {
       'false',
     )
 
-    expect(screen.getByText('john.doe@example.com')).toBeInTheDocument()
+    expect(screen.getByText('jamie.torres@example.com')).toBeInTheDocument()
     expect(screen.getByText('+34 600 123 456')).toBeInTheDocument()
     expect(screen.getByText('14 March 1994')).toBeInTheDocument()
     expect(screen.getByText('PPL online · Q1 2025')).toBeInTheDocument()
@@ -66,7 +66,7 @@ describe('ProfileCard', () => {
     expect(screen.getByText('Jane Doe')).toBeInTheDocument()
     expect(screen.getByText('Sister')).toBeInTheDocument()
     expect(screen.getByText('+34 600 987 654')).toBeInTheDocument()
-    expect(screen.queryByText('john.doe@example.com')).not.toBeInTheDocument()
+    expect(screen.queryByText('jamie.torres@example.com')).not.toBeInTheDocument()
   })
 
   it('calls onEdit and onLock when the header actions are clicked', () => {

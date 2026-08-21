@@ -15,7 +15,7 @@ const meta: Meta<typeof Homepage> = {
     name: { control: 'text' },
   },
   args: {
-    name: 'John Doe',
+    name: 'Jamie Torres',
     weather: DUMMY_WEATHER,
     bookings: DUMMY_BOOKINGS,
     signatures: DUMMY_SIGNATURES,

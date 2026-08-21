@@ -39,7 +39,7 @@ function avatarColor(id: string) {
 
 export default function Mailbox({
   emails = [],
-  recipientName = 'John Doe',
+  recipientName = 'Jamie Torres',
   onRefresh,
 }: Props) {
   const t = useTranslations('Mailbox')

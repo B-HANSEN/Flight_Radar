@@ -58,7 +58,7 @@ const signatures = [
     date: '07/08/2026',
     type: 'Instruction',
     signed: false,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'Jane Smith',
     course: 'PPL Flight Phase (A_1_PPL(A)_v2_FLT)',
     sessionTitle: 'Final check before solo flight',
@@ -95,7 +95,7 @@ const news = [
 function renderHomepage(props: Partial<ComponentProps<typeof Homepage>> = {}) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <Homepage name='John Doe' {...props} />
+      <Homepage name='Jamie Torres' {...props} />
     </NextIntlClientProvider>,
   )
 }
@@ -109,7 +109,7 @@ describe('Homepage', () => {
     renderHomepage({ weather, bookings, signatures, news })
 
     expect(
-      screen.getByRole('heading', { name: 'Welcome, John Doe' }),
+      screen.getByRole('heading', { name: 'Welcome, Jamie Torres' }),
     ).toBeInTheDocument()
 
     expect(screen.getByText('LEDA')).toBeInTheDocument()

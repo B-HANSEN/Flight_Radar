@@ -12,7 +12,7 @@ export const DUMMY_CERTIFICATES: Certificate[] = [
     expiration: '06/03/2027',
     documentNumber: 'MED2-2025-04821',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
   },
   {
     id: 'cert-2',
@@ -23,7 +23,7 @@ export const DUMMY_CERTIFICATES: Certificate[] = [
     expiration: '—',
     documentNumber: 'ES.FCL.PPL.00318',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
   },
   {
     id: 'cert-3',
@@ -35,7 +35,7 @@ export const DUMMY_CERTIFICATES: Certificate[] = [
     expiration: '18/09/2028',
     documentNumber: 'RTF-2023-00912',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
   },
   {
     id: 'cert-4',
@@ -46,6 +46,6 @@ export const DUMMY_CERTIFICATES: Certificate[] = [
     expiration: '06/03/2025',
     documentNumber: 'MED2-2023-04821',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
   },
 ]

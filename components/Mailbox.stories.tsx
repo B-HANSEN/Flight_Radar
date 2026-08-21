@@ -7,7 +7,7 @@ const meta: Meta<typeof Mailbox> = {
   title: 'Components/Mailbox',
   args: {
     emails: DUMMY_MAILBOX_EMAILS,
-    recipientName: 'John Doe',
+    recipientName: 'Jamie Torres',
   },
   argTypes: {
     recipientName: { control: 'text' },

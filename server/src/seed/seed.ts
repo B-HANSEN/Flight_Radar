@@ -15,6 +15,7 @@ import { LogbookEntry } from '../logbook/schemas/logbook-entry.schema'
 import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
 import { NewsItem } from '../news/schemas/news-item.schema'
 import { ScheduleBlock } from '../schedule/schemas/schedule-block.schema'
+import { Student } from '../students/schemas/student.schema'
 
 // Single demo student — no Users module / auth yet, see TODO-BE-setup.md.
 const studentId = 'student-1'
@@ -269,7 +270,7 @@ const certificates: Omit<Certificate, '_id'>[] = [
     expiration: '06/03/2027',
     documentNumber: 'MED2-2025-04821',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
     studentId,
   },
   {
@@ -280,7 +281,7 @@ const certificates: Omit<Certificate, '_id'>[] = [
     expiration: '—',
     documentNumber: 'ES.FCL.PPL.00318',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
     studentId,
   },
   {
@@ -292,7 +293,7 @@ const certificates: Omit<Certificate, '_id'>[] = [
     expiration: '18/09/2028',
     documentNumber: 'RTF-2023-00912',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
     studentId,
   },
   {
@@ -303,7 +304,7 @@ const certificates: Omit<Certificate, '_id'>[] = [
     expiration: '06/03/2025',
     documentNumber: 'MED2-2023-04821',
     issuingAuthority: AESA,
-    holderName: 'Doe, John',
+    holderName: 'Torres, Jamie',
     studentId,
   },
 ]
@@ -869,7 +870,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '19/07/2025',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'J. Whitfield',
     course: flightEvaluationCourse,
     sessionTitle: 'Familiarization with the airplane',
@@ -887,7 +888,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
       { title: 'FAM04 - Aerial experience' },
     ],
     observations:
-      "First flight of John, we took some flight time and did all the paperwork together and read all the meteorology/NOTAMS, mass and balance... John now knows how to and where to check all the preflight documentation. Afterwards we did the flight plan together and we went to the aircraft. The student followed all the checklists step by step, he tried to do communications and he did well. We took off rwy 13 and went to the East to do and see how the basic primary flight controls work and understood them, we saw the relationship between power/altitude and pitch/airspeed. During the flight he was paying a lot of attention outside in order to that there weren't other aircraft close to us. As said on the post briefing, he needs to study the meteorology charts and meaning of codes and study the departure/take-off/emergency briefings.",
+      "First flight of Jamie, we took some flight time and did all the paperwork together and read all the meteorology/NOTAMS, mass and balance... Jamie now knows how to and where to check all the preflight documentation. Afterwards we did the flight plan together and we went to the aircraft. The student followed all the checklists step by step, he tried to do communications and he did well. We took off rwy 13 and went to the East to do and see how the basic primary flight controls work and understood them, we saw the relationship between power/altitude and pitch/airspeed. During the flight he was paying a lot of attention outside in order to that there weren't other aircraft close to us. As said on the post briefing, he needs to study the meteorology charts and meaning of codes and study the departure/take-off/emergency briefings.",
     scorePreparation: 2,
     scoreTechnique: 3,
     scoreInitiative: 3,
@@ -902,7 +903,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '20/07/2025',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'J. Whitfield',
     course: flightEvaluationCourse,
     sessionTitle: 'Steep turns and stalls',
@@ -930,7 +931,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '06/09/2025',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'J. Whitfield',
     course: flightEvaluationCourse,
     sessionTitle: 'Emergency procedures',
@@ -958,7 +959,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '07/09/2025',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'J. Whitfield',
     course: flightEvaluationCourse,
     sessionTitle: 'First cross-country navigation exercise',
@@ -973,7 +974,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
       { title: 'NAV01 - First cross-country navigation exercise', score: '3' },
     ],
     observations:
-      'First cross-country navigation exercise, LELL to LEVD and back.\n\nFlight planning was thorough and the fuel/time calculations were accurate. In the air, John held his headings well but was slow to notice track drift over the second leg — work on cross-checking the plog against ground features more frequently. Good radio work on both frequencies.',
+      'First cross-country navigation exercise, LELL to LEVD and back.\n\nFlight planning was thorough and the fuel/time calculations were accurate. In the air, Jamie held his headings well but was slow to notice track drift over the second leg — work on cross-checking the plog against ground features more frequently. Good radio work on both frequencies.',
     scorePreparation: 3,
     scoreTechnique: 3,
     scoreInitiative: 4,
@@ -988,7 +989,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '05/04/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'R. Sinclair',
     course: flightEvaluationCourse,
     sessionTitle: 'Circuit consolidation',
@@ -1016,7 +1017,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '08/04/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'K. Ashford',
     course: flightEvaluationCourse,
     sessionTitle: 'Introduction to night flying',
@@ -1044,7 +1045,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '09/04/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'R. Sinclair',
     course: flightEvaluationCourse,
     sessionTitle: 'Crosswind landings',
@@ -1072,7 +1073,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '19/05/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'R. Sinclair',
     course: flightEvaluationCourse,
     sessionTitle: 'Traffic circuits and landing (II)',
@@ -1088,7 +1089,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
       { title: 'Assessment of Competencies' },
     ],
     observations:
-      "In this second touch-and-go session, John arrived with all the documentation ready and prepared, showing a good disposition to continue building on his skills in the traffic circuit. The student demonstrates that he theoretically knows the legs of the circuit and its structure. However, during today's flight, severe difficulties in the approach and landing phases became evident, which require immediate attention:\n\nUnlike the previous session, during this flight John was unable to correctly maintain the approach path. When closing in on the runway, he presents serious difficulties maintaining the centerline, especially after cutting the power. At that critical moment, he fails to keep the aircraft parallel to the runway, heading directly towards it. On the first approach, this caused a hard impact that resulted in a bounce, forcing the instructor to immediately take control to execute a safety go-around.\n\nOn the second attempt, once the student was over the runway after cutting the power, he applied power in an uncontrolled manner and the aircraft veered sharply to the left. As a result, the instructor had to take over the controls once again to perform a second go-around. During the final approach, John was also unable to safely manage the path and parameters, so the instructor assumed control definitively to perform the final landing.\n\nIn conclusion, this session has made it clear that the student is at a stage where he needs more touch-and-go sessions aimed at assimilating the approach path, correcting aircraft tendencies after power reduction, and stabilizing the attitude before touching the ground. We will continue working intensively in the cockpit to consolidate this maneuver with full safety.",
+      "In this second touch-and-go session, Jamie arrived with all the documentation ready and prepared, showing a good disposition to continue building on his skills in the traffic circuit. The student demonstrates that he theoretically knows the legs of the circuit and its structure. However, during today's flight, severe difficulties in the approach and landing phases became evident, which require immediate attention:\n\nUnlike the previous session, during this flight Jamie was unable to correctly maintain the approach path. When closing in on the runway, he presents serious difficulties maintaining the centerline, especially after cutting the power. At that critical moment, he fails to keep the aircraft parallel to the runway, heading directly towards it. On the first approach, this caused a hard impact that resulted in a bounce, forcing the instructor to immediately take control to execute a safety go-around.\n\nOn the second attempt, once the student was over the runway after cutting the power, he applied power in an uncontrolled manner and the aircraft veered sharply to the left. As a result, the instructor had to take over the controls once again to perform a second go-around. During the final approach, Jamie was also unable to safely manage the path and parameters, so the instructor assumed control definitively to perform the final landing.\n\nIn conclusion, this session has made it clear that the student is at a stage where he needs more touch-and-go sessions aimed at assimilating the approach path, correcting aircraft tendencies after power reduction, and stabilizing the attitude before touching the ground. We will continue working intensively in the cockpit to consolidate this maneuver with full safety.",
     scorePreparation: 2,
     scoreTechnique: 2,
     scoreInitiative: 2,
@@ -1103,7 +1104,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '24/05/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'R. Sinclair',
     course: flightEvaluationCourse,
     sessionTitle: 'Go-around practice',
@@ -1131,7 +1132,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '30/06/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'R. Sinclair',
     course: flightEvaluationCourse,
     sessionTitle: 'Solo consolidation prep',
@@ -1147,7 +1148,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
       { title: 'Assessment of Competencies', score: '3' },
     ],
     observations:
-      "It has been another takeoff and landing session with John, who demonstrated good preparation, a solid understanding of each leg of the traffic pattern, proper radio management, and good overall control of the aircraft's attitudes.\n\nHowever, his primary difficulties arise once on the final approach leg. Although John is progressively improving his airspeed management, he still struggles to maintain a precise aiming point on the runway, tending to lose his reference on the threshold. Additionally, he finds it challenging to maintain a stable glideslope, showing a tendency to fly either too high or too low without applying sufficient or timely corrections. Once over the runway, judging the flare height remains a challenge; he sometimes executes it too high or too abruptly, causing a balloon, floating down a significant amount of runway, and making it difficult to control a second smooth flare. These unstable approaches led to a few go-arounds today, as well as some bounced landings settling on all three wheels at once.\n\nIn conclusion, although he is gradually getting the concepts, we need to keep reinforcing takeoffs and landings in the upcoming sessions to fine-tune and consolidate his stability during the final phase of the approach. Let's keep working on it!",
+      "It has been another takeoff and landing session with Jamie, who demonstrated good preparation, a solid understanding of each leg of the traffic pattern, proper radio management, and good overall control of the aircraft's attitudes.\n\nHowever, his primary difficulties arise once on the final approach leg. Although Jamie is progressively improving his airspeed management, he still struggles to maintain a precise aiming point on the runway, tending to lose his reference on the threshold. Additionally, he finds it challenging to maintain a stable glideslope, showing a tendency to fly either too high or too low without applying sufficient or timely corrections. Once over the runway, judging the flare height remains a challenge; he sometimes executes it too high or too abruptly, causing a balloon, floating down a significant amount of runway, and making it difficult to control a second smooth flare. These unstable approaches led to a few go-arounds today, as well as some bounced landings settling on all three wheels at once.\n\nIn conclusion, although he is gradually getting the concepts, we need to keep reinforcing takeoffs and landings in the upcoming sessions to fine-tune and consolidate his stability during the final phase of the approach. Let's keep working on it!",
     scorePreparation: 4,
     scoreTechnique: 2,
     scoreInitiative: 4,
@@ -1162,7 +1163,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '03/07/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'M. Whitcombe',
     course: flightEvaluationCourse,
     sessionTitle: 'Cross-country to LEVD',
@@ -1190,7 +1191,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '07/07/2026',
     type: 'Instruction',
     signed: false,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'R. Sinclair',
     course: flightEvaluationCourse,
     sessionTitle: 'Circuit revision',
@@ -1221,7 +1222,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '13/07/2026',
     type: 'Instruction',
     signed: true,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'R. Sinclair',
     course: flightEvaluationCourse,
     sessionTitle: 'Steep turns revision',
@@ -1249,7 +1250,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '21/07/2026',
     type: 'Instruction',
     signed: false,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'Jane Smith',
     course: flightEvaluationCourse,
     sessionTitle: 'Pre-solo consolidation flight',
@@ -1262,7 +1263,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     landingsSolo: 0,
     maneuvers: [{ title: 'VBD14 - Pre-solo consolidation flight', score: '3' }],
     observations:
-      "Full circuit consolidation session ahead of the pre-solo check: normal, flapless and short-field landings, plus two practice forced landings from the circuit.\n\nJohn is now consistently stabilized by short final and handling the radio calls without prompting. One more session polishing the flare and he'll be ready for the pre-solo check.",
+      "Full circuit consolidation session ahead of the pre-solo check: normal, flapless and short-field landings, plus two practice forced landings from the circuit.\n\nJamie is now consistently stabilized by short final and handling the radio calls without prompting. One more session polishing the flare and he'll be ready for the pre-solo check.",
     scorePreparation: 3,
     scoreTechnique: 4,
     scoreInitiative: 3,
@@ -1277,7 +1278,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     date: '07/08/2026',
     type: 'Instruction',
     signed: false,
-    student: 'John Doe',
+    student: 'Jamie Torres',
     instructor: 'Jane Smith',
     course: flightEvaluationCourse,
     sessionTitle: 'Final check before solo flight',
@@ -1378,6 +1379,15 @@ const newsItems: Omit<NewsItem, '_id'>[] = [
       'Expect tower to route inbound traffic via these points more frequently during peak circuit hours, especially at weekends.',
     ],
   },
+]
+
+// The instructor's students, shown in the role-switcher's "switch view"
+// picker so an instructor can preview the app as one of them.
+const students: Omit<Student, '_id'>[] = [
+  { name: 'Alex Moreau', initials: 'AM', color: '#0ea5e9' },
+  { name: 'Jamie Torres', initials: 'JT', color: '#84cc16' },
+  { name: 'Priya Shah', initials: 'PS', color: '#f59e0b' },
+  { name: 'Noah Becker', initials: 'NB', color: '#a855f7' },
 ]
 
 const documentFolders: Omit<DocumentFolder, '_id'>[] = [
@@ -1798,6 +1808,7 @@ async function seed() {
   const scheduleBlockModel = app.get<Model<ScheduleBlock>>(
     getModelToken(ScheduleBlock.name),
   )
+  const studentModel = app.get<Model<Student>>(getModelToken(Student.name))
   await seedMany(calendarEventModel, calendarEvents, 'calendar events')
 
   let aircraftDocs
@@ -1845,6 +1856,7 @@ async function seed() {
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
   await seedMany(bookingModel, bookings, 'bookings')
   await seedMany(newsItemModel, newsItems, 'news items')
+  await seedMany(studentModel, students, 'students')
 
   await app.close()
 }

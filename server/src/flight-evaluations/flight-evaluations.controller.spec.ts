@@ -11,7 +11,7 @@ describe('FlightEvaluationsController', () => {
       date: '07/08/2026',
       type: 'Instruction',
       signed: false,
-      student: 'John Doe',
+      student: 'Jamie Torres',
       instructor: 'Jane Smith',
       course: 'PPL Flight Phase (A_1_PPL(A)_v2_FLT)',
       sessionTitle: 'Final check before solo flight',

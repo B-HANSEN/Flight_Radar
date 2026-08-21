@@ -9,7 +9,7 @@ vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
 
 const BASE = {
   type: 'Instruction',
-  student: 'John Doe',
+  student: 'Jamie Torres',
   instructor: 'R. Sinclair',
   course: 'PPL Flight Phase (A_1_PPL(A)_v2_FLT)',
   aircraft: 'EC-ERV',

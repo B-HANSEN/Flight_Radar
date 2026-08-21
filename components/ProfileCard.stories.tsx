@@ -16,8 +16,8 @@ const meta: Meta<typeof ProfileCard> = {
     emergencyContact: { control: 'object' },
   },
   args: {
-    name: 'Doe, John',
-    email: 'john.doe@example.com',
+    name: 'Torres, Jamie',
+    email: 'jamie.torres@example.com',
     phone: '+34 600 123 456',
     birthday: '14 March 1994',
     info: 'PPL online · Q1 2025',

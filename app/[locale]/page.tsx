@@ -65,7 +65,7 @@ export default async function HomePage({
       />
       <div className='mx-auto max-w-350'>
         <Homepage
-          name='John Doe'
+          name='Jamie Torres'
           weather={weather}
           bookings={bookings}
           signatures={signatures}
