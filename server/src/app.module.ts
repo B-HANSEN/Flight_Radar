@@ -18,6 +18,7 @@ import { LogbookModule } from './logbook/logbook.module'
 import { MailboxModule } from './mailbox/mailbox.module'
 import { NewsModule } from './news/news.module'
 import { ScheduleModule } from './schedule/schedule.module'
+import { StudentsModule } from './students/students.module'
 import { WeatherModule } from './weather/weather.module'
 
 @Module({
@@ -43,6 +44,7 @@ import { WeatherModule } from './weather/weather.module'
     MailboxModule,
     NewsModule,
     ScheduleModule,
+    StudentsModule,
     WeatherModule,
   ],
   controllers: [AppController],
