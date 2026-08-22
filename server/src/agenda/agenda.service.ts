@@ -66,8 +66,10 @@ export class AgendaService {
 
   async findAll() {
     const [bookings, availabilityEntries] = await Promise.all([
-      this.calendarEventModel.find({ type: 'booking' }).exec(),
-      this.availabilityEntryModel.find().exec(),
+      this.calendarEventModel
+        .find({ type: 'booking', studentId: STUDENT_ID })
+        .exec(),
+      this.availabilityEntryModel.find({ studentId: STUDENT_ID }).exec(),
     ])
 
     const rangeStart = startOfDay(addMonths(new Date(), -AGENDA_MONTHS_BEHIND))

@@ -1384,11 +1384,126 @@ const newsItems: Omit<NewsItem, '_id'>[] = [
 // The instructor's students, shown in the role-switcher's "switch view"
 // picker so an instructor can preview the app as one of them.
 const students: Omit<Student, '_id'>[] = [
-  { name: 'Alex Moreau', initials: 'AM', color: '#0ea5e9' },
-  { name: 'Jamie Torres', initials: 'JT', color: '#84cc16' },
-  { name: 'Priya Shah', initials: 'PS', color: '#f59e0b' },
-  { name: 'Noah Becker', initials: 'NB', color: '#a855f7' },
+  {
+    name: 'Alex Moreau',
+    initials: 'AM',
+    color: '#0ea5e9',
+    track: 'PPL',
+    course: 'CPL Flight Phase',
+  },
+  {
+    name: 'Jamie Torres',
+    initials: 'JT',
+    color: '#84cc16',
+    track: 'PPL',
+    course: 'PPL Flight Phase',
+  },
+  {
+    name: 'Priya Shah',
+    initials: 'PS',
+    color: '#f59e0b',
+    track: 'CPL',
+    course: 'PPL Flight Phase',
+  },
+  {
+    name: 'Noah Becker',
+    initials: 'NB',
+    color: '#a855f7',
+    track: 'PPL',
+    course: 'PPL Flight Phase',
+  },
 ]
+
+// Extra AvailabilityEntry rows keyed to each student's real seeded _id,
+// distinct from `availabilityEntries` above (which are keyed to the
+// hardcoded single-demo-persona placeholder `studentId`, not a real id) —
+// these feed the instructor schedule view (`GET /students/schedule`),
+// which needs per-student availability to compute open slots.
+function buildInstructorAvailabilityEntries(
+  studentIdByName: Record<string, string>,
+): Omit<AvailabilityEntry, '_id'>[] {
+  return [
+    {
+      dateLabel: 'From 24/08/2026 to 30/08/2026',
+      dateMode: 'range',
+      fromDate: '24/08/2026',
+      toDate: '30/08/2026',
+      timeLabel: 'Between 09:00 and 12:00',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '12:00',
+      recurrence: 'On Monday, Wednesday',
+      recurrenceMode: 'days',
+      recurrenceDays: ['mon', 'wed'],
+      studentId: studentIdByName['Alex Moreau'],
+    },
+    {
+      dateLabel: 'From 31/08/2026 to 06/09/2026',
+      dateMode: 'range',
+      fromDate: '31/08/2026',
+      toDate: '06/09/2026',
+      timeLabel: 'Between 14:00 and 16:00',
+      timeMode: 'between',
+      startTime: '14:00',
+      endTime: '16:00',
+      recurrence: 'On Wednesday',
+      recurrenceMode: 'days',
+      recurrenceDays: ['wed'],
+      studentId: studentIdByName['Alex Moreau'],
+    },
+    {
+      dateLabel: 'From 24/08/2026 to 30/08/2026',
+      dateMode: 'range',
+      fromDate: '24/08/2026',
+      toDate: '30/08/2026',
+      timeLabel: 'Between 08:00 and 10:00',
+      timeMode: 'between',
+      startTime: '08:00',
+      endTime: '10:00',
+      recurrence: 'On Tuesday, Thursday, Friday',
+      recurrenceMode: 'days',
+      recurrenceDays: ['tue', 'thu', 'fri'],
+      studentId: studentIdByName['Jamie Torres'],
+    },
+    {
+      dateLabel: 'On 26/08/2026',
+      dateMode: 'on',
+      onDate: '26/08/2026',
+      timeLabel: 'Between 10:00 and 13:00',
+      timeMode: 'between',
+      startTime: '10:00',
+      endTime: '13:00',
+      recurrence: 'Once',
+      recurrenceMode: 'everyday',
+      studentId: studentIdByName['Priya Shah'],
+    },
+    {
+      dateLabel: 'From 27/08/2026 to 29/08/2026',
+      dateMode: 'range',
+      fromDate: '27/08/2026',
+      toDate: '29/08/2026',
+      timeLabel: 'Between 15:00 and 18:00',
+      timeMode: 'between',
+      startTime: '15:00',
+      endTime: '18:00',
+      recurrence: 'Everyday',
+      recurrenceMode: 'everyday',
+      studentId: studentIdByName['Noah Becker'],
+    },
+    {
+      dateLabel: 'On 29/08/2026',
+      dateMode: 'on',
+      onDate: '29/08/2026',
+      timeLabel: 'Between 09:00 and 12:00',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '12:00',
+      recurrence: 'Once',
+      recurrenceMode: 'everyday',
+      studentId: studentIdByName['Noah Becker'],
+    },
+  ]
+}
 
 const documentFolders: Omit<DocumentFolder, '_id'>[] = [
   {
@@ -1827,9 +1942,25 @@ async function seed() {
   const scheduleBlocks = buildScheduleBlocks(aircraftIdByArcid)
   await seedMany(scheduleBlockModel, scheduleBlocks, 'schedule blocks')
 
+  let studentDocs: { name: string; _id: { toString(): string } }[]
+  if (onlyIfEmpty && (await studentModel.countDocuments()) > 0) {
+    console.log('Skipped students (already has data)')
+    studentDocs = await studentModel.find()
+  } else {
+    await studentModel.deleteMany({})
+    studentDocs = await studentModel.insertMany(students)
+    console.log(`Seeded ${students.length} students`)
+  }
+
+  const studentIdByName = Object.fromEntries(
+    studentDocs.map((doc) => [doc.name, doc._id.toString()]),
+  )
+  const instructorAvailabilityEntries =
+    buildInstructorAvailabilityEntries(studentIdByName)
+
   await seedMany(
     availabilityEntryModel,
-    availabilityEntries,
+    [...availabilityEntries, ...instructorAvailabilityEntries],
     'availability entries',
   )
   await seedMany(certificateModel, certificates, 'certificates')
@@ -1856,7 +1987,6 @@ async function seed() {
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
   await seedMany(bookingModel, bookings, 'bookings')
   await seedMany(newsItemModel, newsItems, 'news items')
-  await seedMany(studentModel, students, 'students')
 
   await app.close()
 }

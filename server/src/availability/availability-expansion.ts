@@ -175,3 +175,30 @@ export function formatMinutes(totalMinutes: number): string {
   const minutes = String(totalMinutes % 60).padStart(2, '0')
   return `${hours}:${minutes}`
 }
+
+// Removes booked windows from a set of available windows, e.g. to turn
+// "declared availability" into "still-open" slots once bookings are known.
+export function subtractBookedWindows(
+  availableWindows: MinuteWindow[],
+  bookedWindows: MinuteWindow[],
+): MinuteWindow[] {
+  let remaining = [...availableWindows]
+
+  for (const booked of bookedWindows) {
+    remaining = remaining.flatMap((window) => {
+      if (booked.end <= window.start || booked.start >= window.end) {
+        return [window]
+      }
+      const pieces: MinuteWindow[] = []
+      if (booked.start > window.start) {
+        pieces.push({ start: window.start, end: booked.start })
+      }
+      if (booked.end < window.end) {
+        pieces.push({ start: booked.end, end: window.end })
+      }
+      return pieces
+    })
+  }
+
+  return remaining
+}

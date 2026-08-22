@@ -9,4 +9,9 @@ export class StudentsController {
   findAll() {
     return this.studentsService.findAll()
   }
+
+  @Get('schedule')
+  findSchedule() {
+    return this.studentsService.findSchedule()
+  }
 }

@@ -3,6 +3,7 @@ import {
   computeUnavailableGaps,
   expandAvailability,
   formatMinutes,
+  subtractBookedWindows,
   type AvailabilityExpansionEntry,
 } from './availability-expansion'
 
@@ -176,5 +177,68 @@ describe('formatMinutes', () => {
     expect(formatMinutes(0)).toBe('00:00')
     expect(formatMinutes(540)).toBe('09:00')
     expect(formatMinutes(1439)).toBe('23:59')
+  })
+})
+
+describe('subtractBookedWindows', () => {
+  it('returns the available windows unchanged when nothing is booked', () => {
+    expect(subtractBookedWindows([{ start: 540, end: 720 }], [])).toEqual([
+      { start: 540, end: 720 },
+    ])
+  })
+
+  it('splits an available window around a booking in the middle', () => {
+    expect(
+      subtractBookedWindows(
+        [{ start: 540, end: 720 }],
+        [{ start: 600, end: 660 }],
+      ),
+    ).toEqual([
+      { start: 540, end: 600 },
+      { start: 660, end: 720 },
+    ])
+  })
+
+  it('trims an available window when the booking covers one edge', () => {
+    expect(
+      subtractBookedWindows(
+        [{ start: 540, end: 720 }],
+        [{ start: 660, end: 780 }],
+      ),
+    ).toEqual([{ start: 540, end: 660 }])
+  })
+
+  it('removes an available window entirely when fully booked', () => {
+    expect(
+      subtractBookedWindows(
+        [{ start: 540, end: 720 }],
+        [{ start: 480, end: 780 }],
+      ),
+    ).toEqual([])
+  })
+
+  it('ignores bookings outside the available window', () => {
+    expect(
+      subtractBookedWindows(
+        [{ start: 540, end: 720 }],
+        [{ start: 720, end: 780 }],
+      ),
+    ).toEqual([{ start: 540, end: 720 }])
+  })
+
+  it('applies multiple bookings in sequence', () => {
+    expect(
+      subtractBookedWindows(
+        [{ start: 0, end: 1440 }],
+        [
+          { start: 600, end: 660 },
+          { start: 900, end: 960 },
+        ],
+      ),
+    ).toEqual([
+      { start: 0, end: 600 },
+      { start: 660, end: 900 },
+      { start: 960, end: 1440 },
+    ])
   })
 })

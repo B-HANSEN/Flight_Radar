@@ -40,7 +40,7 @@ export class AvailabilityService {
   ) {}
 
   findAll() {
-    return this.availabilityEntryModel.find().exec()
+    return this.availabilityEntryModel.find({ studentId }).exec()
   }
 
   create(input: CreateAvailabilityEntryInput) {

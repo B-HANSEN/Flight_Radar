@@ -3,6 +3,8 @@ import { HydratedDocument } from 'mongoose'
 
 export type StudentDocument = HydratedDocument<Student>
 
+export type StudentTrack = 'PPL' | 'CPL'
+
 @Schema({
   toJSON: {
     virtuals: true,
@@ -22,6 +24,12 @@ export class Student {
 
   @Prop({ required: true })
   color!: string
+
+  @Prop({ required: true, enum: ['PPL', 'CPL'] })
+  track!: StudentTrack
+
+  @Prop({ required: true })
+  course!: string
 }
 
 export const StudentSchema = SchemaFactory.createForClass(Student)

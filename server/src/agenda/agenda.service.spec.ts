@@ -97,7 +97,10 @@ describe('AgendaService', () => {
 
   it('only reads bookings from CalendarEvent, never stored unavailability', async () => {
     await service.findAll()
-    expect(calendarEventModel.find).toHaveBeenCalledWith({ type: 'booking' })
+    expect(calendarEventModel.find).toHaveBeenCalledWith({
+      type: 'booking',
+      studentId: 'student-1',
+    })
   })
 
   it('includes the real bookings in the result', async () => {
