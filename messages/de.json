@@ -8,13 +8,15 @@
     "schedule": "Flugplan",
     "aircraft": "Flugzeuge",
     "documents": "Dokumente",
+    "scheduling": "Terminplanung",
     "language": "Sprache ändern",
     "localTime": "Ortszeit",
     "zuluTime": "Zulu-Zeit"
   },
   "RoleSwitcher": {
     "switchView": "Ansicht wechseln",
-    "instructor": "Fluglehrer"
+    "instructor": "Fluglehrer",
+    "studentTrack": "{track}-Flugschüler"
   },
   "Homepage": {
     "meta": {
@@ -444,6 +446,13 @@
     "noSlots": "Diese Woche keine freien Termine",
     "scheduleButton": "Planen",
     "scheduleLabel": "Flug mit {name} am {day} um {time} planen"
+  },
+  "InstructorScheduleView": {
+    "weekOf": "Woche vom {date}",
+    "scheduleComingSoon": "Die Flugplanung befindet sich noch in Entwicklung"
+  },
+  "InstructorPage": {
+    "title": "Terminplanung"
   },
   "NewsBulletins": {
     "reminder": {

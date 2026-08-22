@@ -69,6 +69,7 @@ describe('NavBar', () => {
       ['Schedule', '/schedule'],
       ['Aircraft', '/aircraft'],
       ['Documents', '/documents'],
+      ['Scheduling', '/instructor'],
     ]
     expected.forEach(([name, href]) => {
       expect(screen.getByRole('link', { name })).toHaveAttribute('href', href)
@@ -153,14 +154,59 @@ describe('NavBar', () => {
 
     const panel = screen.getByText('Switch view').parentElement as HTMLElement
     expect(
-      within(panel).getByRole('button', { name: 'Jamie Torres' }),
+      within(panel).getByRole('button', { name: 'Jamie Torres (PPL student)' }),
     ).toHaveAttribute('aria-current', 'true')
 
-    fireEvent.click(within(panel).getByRole('button', { name: 'Alex Moreau' }))
+    fireEvent.click(
+      within(panel).getByRole('button', { name: 'Alex Moreau (PPL student)' }),
+    )
 
     expect(
       screen.getByRole('button', { name: 'Alex Moreau' }),
     ).toBeInTheDocument()
+  })
+
+  it('hides the Scheduling nav item while a student is the current view', () => {
+    renderNavBar({ students: DUMMY_STUDENTS })
+    expect(
+      screen.queryByRole('link', { name: 'Scheduling' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the Scheduling nav item once switched to the instructor view, and sets the role cookie', () => {
+    document.cookie = 'fr-current-role=; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    renderNavBar({ students: DUMMY_STUDENTS })
+    fireEvent.click(screen.getByRole('button', { name: 'Jamie Torres' }))
+    fireEvent.click(
+      screen.getByRole('button', { name: 'James Whitfield (Instructor)' }),
+    )
+
+    expect(screen.getByRole('link', { name: 'Scheduling' })).toHaveAttribute(
+      'href',
+      '/instructor',
+    )
+    expect(document.cookie).toContain('fr-current-role=instructor')
+  })
+
+  it('honors an explicit initialSelectedStudentId of null (instructor) even when students are available', () => {
+    renderNavBar({ students: DUMMY_STUDENTS, initialSelectedStudentId: null })
+    expect(
+      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Scheduling' })).toBeInTheDocument()
+  })
+
+  it('honors an explicit initialSelectedStudentId of a student, hiding Scheduling', () => {
+    renderNavBar({
+      students: DUMMY_STUDENTS,
+      initialSelectedStudentId: 'student-3',
+    })
+    expect(
+      screen.getByRole('button', { name: 'Priya Shah' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Scheduling' }),
+    ).not.toBeInTheDocument()
   })
 
   it('falls back to / for the active state when there is no current pathname', () => {

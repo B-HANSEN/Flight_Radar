@@ -111,7 +111,7 @@ export default function RoleSwitcher({
       </button>
 
       {open && (
-        <div className='absolute top-full right-0 z-10 mt-2 w-52 rounded-lg bg-white p-2 shadow-lg'>
+        <div className='absolute top-full right-0 z-10 mt-2 w-72 rounded-lg bg-white p-2 shadow-lg'>
           <div className='px-2 py-1.5 text-[10px] font-bold tracking-[0.05em] text-black-200 uppercase'>
             {t('switchView')}
           </div>
@@ -140,7 +140,10 @@ export default function RoleSwitcher({
                     className={menuItemClass(isSelected)}
                   >
                     <Avatar initials={student.initials} color={student.color} />
-                    <span className='truncate'>{student.name}</span>
+                    <span className='truncate'>
+                      {student.name} (
+                      {t('studentTrack', { track: student.track })})
+                    </span>
                   </button>
                 </li>
               )

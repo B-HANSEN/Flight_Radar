@@ -8,13 +8,15 @@
     "schedule": "Schedule",
     "aircraft": "Aircraft",
     "documents": "Documents",
+    "scheduling": "Scheduling",
     "language": "Change language",
     "localTime": "Local Time",
     "zuluTime": "Zulu Time"
   },
   "RoleSwitcher": {
     "switchView": "Switch view",
-    "instructor": "Instructor"
+    "instructor": "Instructor",
+    "studentTrack": "{track} student"
   },
   "Homepage": {
     "meta": {
@@ -444,6 +446,13 @@
     "noSlots": "No open availability this week",
     "scheduleButton": "Schedule",
     "scheduleLabel": "Schedule a flight with {name} on {day} at {time}"
+  },
+  "InstructorScheduleView": {
+    "weekOf": "Week of {date}",
+    "scheduleComingSoon": "Scheduling flights is still under development"
+  },
+  "InstructorPage": {
+    "title": "Scheduling"
   },
   "NewsBulletins": {
     "reminder": {

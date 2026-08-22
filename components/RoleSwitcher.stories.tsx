@@ -8,7 +8,7 @@ const meta: Meta<typeof RoleSwitcher> = {
   component: RoleSwitcher,
   title: 'Components/RoleSwitcher',
   args: {
-    currentUser: { name: 'D. Fabri', initials: 'DF' },
+    currentUser: { name: 'James Whitfield', initials: 'JW' },
     students: DUMMY_STUDENTS,
     selectedStudentId:
       DUMMY_STUDENTS.find((student) => student.name === 'Jamie Torres')?.id ??

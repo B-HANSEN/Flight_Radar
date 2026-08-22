@@ -8,13 +8,15 @@
     "schedule": "Horario",
     "aircraft": "Aeronaves",
     "documents": "Documentos",
+    "scheduling": "Programación",
     "language": "Cambiar idioma",
     "localTime": "Hora Local",
     "zuluTime": "Hora Zulú"
   },
   "RoleSwitcher": {
     "switchView": "Cambiar vista",
-    "instructor": "Instructor"
+    "instructor": "Instructor",
+    "studentTrack": "Estudiante de {track}"
   },
   "Homepage": {
     "meta": {
@@ -444,6 +446,13 @@
     "noSlots": "Sin disponibilidad esta semana",
     "scheduleButton": "Programar",
     "scheduleLabel": "Programar un vuelo con {name} el {day} a las {time}"
+  },
+  "InstructorScheduleView": {
+    "weekOf": "Semana del {date}",
+    "scheduleComingSoon": "La programación de vuelos todavía está en desarrollo"
+  },
+  "InstructorPage": {
+    "title": "Programación"
   },
   "NewsBulletins": {
     "reminder": {

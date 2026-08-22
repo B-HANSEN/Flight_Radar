@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { routing } from '@/i18n/routing'
 import NavBar from '@/components/NavBar'
 import JsonLd from '@/components/JsonLd'
@@ -10,6 +11,7 @@ import {
   buildOrganizationSchema,
   buildWebSiteSchema,
 } from '@/lib/structuredData'
+import { CURRENT_ROLE_COOKIE, INSTRUCTOR_ROLE_VALUE } from '@/lib/currentRole'
 import type { Student } from '@/components/RoleSwitcher.types'
 import '../globals.css'
 
@@ -43,6 +45,13 @@ export default async function LocaleLayout({
   setRequestLocale(locale)
   const messages = await getMessages()
   const students = await fetchApi<Student[]>('/students')
+  const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value
+  const initialSelectedStudentId =
+    roleCookie === undefined
+      ? undefined
+      : roleCookie === INSTRUCTOR_ROLE_VALUE
+        ? null
+        : roleCookie
 
   return (
     <html
@@ -54,7 +63,10 @@ export default async function LocaleLayout({
           data={[buildOrganizationSchema(), buildWebSiteSchema(locale)]}
         />
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <NavBar students={students} />
+          <NavBar
+            students={students}
+            initialSelectedStudentId={initialSelectedStudentId}
+          />
           <main className='mx-auto max-w-3xl px-4 py-8'>{children}</main>
         </NextIntlClientProvider>
       </body>
