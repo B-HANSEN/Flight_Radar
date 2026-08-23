@@ -11,6 +11,7 @@ import { CourseProgress } from '../courses/schemas/course-progress.schema'
 import { DocumentFolder } from '../documents/schemas/document-folder.schema'
 import { EmergencyContact } from '../emergency-contact/schemas/emergency-contact.schema'
 import { FlightEvaluation } from '../flight-evaluations/schemas/flight-evaluation.schema'
+import { Instructor } from '../instructors/schemas/instructor.schema'
 import { LogbookEntry } from '../logbook/schemas/logbook-entry.schema'
 import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
 import { NewsItem } from '../news/schemas/news-item.schema'
@@ -1387,30 +1388,57 @@ const students: Omit<Student, '_id'>[] = [
   {
     name: 'Alex Moreau',
     initials: 'AM',
-    color: '#0ea5e9',
+    color: '#0369a1',
     track: 'PPL',
     course: 'CPL Flight Phase',
+    photoSrc: '/students/alex-moreau.webp',
   },
   {
     name: 'Jamie Torres',
     initials: 'JT',
-    color: '#84cc16',
+    color: '#4d7c0f',
     track: 'PPL',
     course: 'PPL Flight Phase',
+    // Reuses the photo already used for her profile card sidebar —
+    // app/[locale]/me/layout.tsx's PLACEHOLDER_PROFILE.avatarSrc.
+    photoSrc: '/me/jamie-torres.webp',
   },
   {
     name: 'Priya Shah',
     initials: 'PS',
-    color: '#f59e0b',
+    color: '#b45309',
     track: 'CPL',
     course: 'PPL Flight Phase',
+    photoSrc: '/students/priya-shah.webp',
   },
   {
     name: 'Noah Becker',
     initials: 'NB',
-    color: '#a855f7',
+    color: '#9333ea',
     track: 'PPL',
     course: 'PPL Flight Phase',
+    photoSrc: '/students/noah-becker.webp',
+  },
+]
+
+// The school's flight instructors. James Whitfield ("J. Whitfield") and
+// Kate Ashford ("K. Ashford") are the two names already scattered through
+// bookings/logbook/signatures/flight-evaluations seed data below — this is
+// the first place they exist as real profile records rather than loose
+// strings. No Users module yet (no auth), so there's still no login tied
+// to a specific instructor — RoleSwitcher lets a visitor preview either one.
+const instructors: Omit<Instructor, '_id'>[] = [
+  {
+    name: 'James Whitfield',
+    initials: 'JW',
+    color: '#1d4ed8',
+    photoSrc: '/instructors/james-whitfield.webp',
+  },
+  {
+    name: 'Kate Ashford',
+    initials: 'KA',
+    color: '#be185d',
+    photoSrc: '/instructors/kate-ashford.webp',
   },
 ]
 
@@ -1419,90 +1447,110 @@ const students: Omit<Student, '_id'>[] = [
 // hardcoded single-demo-persona placeholder `studentId`, not a real id) —
 // these feed the instructor schedule view (`GET /students/schedule`),
 // which needs per-student availability to compute open slots.
+type InstructorAvailabilitySlot = {
+  studentName: string
+  onDate: string
+  startTime: string
+  endTime: string
+}
+
+// One-off slots (not recurring) spanning the current week (w/c 17/08/2026)
+// and the two weeks after it, 0-5 per student, of varying lengths — enough
+// for the instructor schedule view to have real, varied data to browse
+// without needing to reseed every week. Priya deliberately has none, to
+// keep exercising InstructorSchedulePanel's empty-per-student state.
+const INSTRUCTOR_AVAILABILITY_SLOTS: InstructorAvailabilitySlot[] = [
+  {
+    studentName: 'Alex Moreau',
+    onDate: '22/08/2026',
+    startTime: '09:00',
+    endTime: '11:00',
+  },
+  {
+    studentName: 'Alex Moreau',
+    onDate: '26/08/2026',
+    startTime: '14:00',
+    endTime: '17:00',
+  },
+  {
+    studentName: 'Alex Moreau',
+    onDate: '02/09/2026',
+    startTime: '10:00',
+    endTime: '12:00',
+  },
+
+  {
+    studentName: 'Jamie Torres',
+    onDate: '23/08/2026',
+    startTime: '08:00',
+    endTime: '10:00',
+  },
+  {
+    studentName: 'Jamie Torres',
+    onDate: '25/08/2026',
+    startTime: '13:00',
+    endTime: '15:00',
+  },
+  {
+    studentName: 'Jamie Torres',
+    onDate: '27/08/2026',
+    startTime: '09:00',
+    endTime: '12:00',
+  },
+  {
+    studentName: 'Jamie Torres',
+    onDate: '29/08/2026',
+    startTime: '15:00',
+    endTime: '16:00',
+  },
+  {
+    studentName: 'Jamie Torres',
+    onDate: '03/09/2026',
+    startTime: '10:00',
+    endTime: '14:00',
+  },
+
+  {
+    studentName: 'Noah Becker',
+    onDate: '22/08/2026',
+    startTime: '13:00',
+    endTime: '16:00',
+  },
+  {
+    studentName: 'Noah Becker',
+    onDate: '28/08/2026',
+    startTime: '09:00',
+    endTime: '10:00',
+  },
+  {
+    studentName: 'Noah Becker',
+    onDate: '30/08/2026',
+    startTime: '11:00',
+    endTime: '15:00',
+  },
+  {
+    studentName: 'Noah Becker',
+    onDate: '05/09/2026',
+    startTime: '14:00',
+    endTime: '17:00',
+  },
+]
+
 function buildInstructorAvailabilityEntries(
   studentIdByName: Record<string, string>,
 ): Omit<AvailabilityEntry, '_id'>[] {
-  return [
-    {
-      dateLabel: 'From 24/08/2026 to 30/08/2026',
-      dateMode: 'range',
-      fromDate: '24/08/2026',
-      toDate: '30/08/2026',
-      timeLabel: 'Between 09:00 and 12:00',
-      timeMode: 'between',
-      startTime: '09:00',
-      endTime: '12:00',
-      recurrence: 'On Monday, Wednesday',
-      recurrenceMode: 'days',
-      recurrenceDays: ['mon', 'wed'],
-      studentId: studentIdByName['Alex Moreau'],
-    },
-    {
-      dateLabel: 'From 31/08/2026 to 06/09/2026',
-      dateMode: 'range',
-      fromDate: '31/08/2026',
-      toDate: '06/09/2026',
-      timeLabel: 'Between 14:00 and 16:00',
-      timeMode: 'between',
-      startTime: '14:00',
-      endTime: '16:00',
-      recurrence: 'On Wednesday',
-      recurrenceMode: 'days',
-      recurrenceDays: ['wed'],
-      studentId: studentIdByName['Alex Moreau'],
-    },
-    {
-      dateLabel: 'From 24/08/2026 to 30/08/2026',
-      dateMode: 'range',
-      fromDate: '24/08/2026',
-      toDate: '30/08/2026',
-      timeLabel: 'Between 08:00 and 10:00',
-      timeMode: 'between',
-      startTime: '08:00',
-      endTime: '10:00',
-      recurrence: 'On Tuesday, Thursday, Friday',
-      recurrenceMode: 'days',
-      recurrenceDays: ['tue', 'thu', 'fri'],
-      studentId: studentIdByName['Jamie Torres'],
-    },
-    {
-      dateLabel: 'On 26/08/2026',
-      dateMode: 'on',
-      onDate: '26/08/2026',
-      timeLabel: 'Between 10:00 and 13:00',
-      timeMode: 'between',
-      startTime: '10:00',
-      endTime: '13:00',
-      recurrence: 'Once',
-      recurrenceMode: 'everyday',
-      studentId: studentIdByName['Priya Shah'],
-    },
-    {
-      dateLabel: 'From 27/08/2026 to 29/08/2026',
-      dateMode: 'range',
-      fromDate: '27/08/2026',
-      toDate: '29/08/2026',
-      timeLabel: 'Between 15:00 and 18:00',
-      timeMode: 'between',
-      startTime: '15:00',
-      endTime: '18:00',
-      recurrence: 'Everyday',
-      recurrenceMode: 'everyday',
-      studentId: studentIdByName['Noah Becker'],
-    },
-    {
-      dateLabel: 'On 29/08/2026',
-      dateMode: 'on',
-      onDate: '29/08/2026',
-      timeLabel: 'Between 09:00 and 12:00',
-      timeMode: 'between',
-      startTime: '09:00',
-      endTime: '12:00',
-      recurrence: 'Once',
-      recurrenceMode: 'everyday',
-      studentId: studentIdByName['Noah Becker'],
-    },
-  ]
+  return INSTRUCTOR_AVAILABILITY_SLOTS.map((slot) => ({
+    dateLabel: `On ${slot.onDate}`,
+    dateMode: 'on',
+    onDate: slot.onDate,
+    timeLabel: `Between ${slot.startTime} and ${slot.endTime}`,
+    timeMode: 'between',
+    startTime: slot.startTime,
+    endTime: slot.endTime,
+    recurrence: 'Once',
+    recurrenceMode: 'everyday',
+    studentId: studentIdByName[slot.studentName],
+  }))
 }
 
 const documentFolders: Omit<DocumentFolder, '_id'>[] = [
@@ -1913,6 +1961,9 @@ async function seed() {
   const flightEvaluationModel = app.get<Model<FlightEvaluation>>(
     getModelToken(FlightEvaluation.name),
   )
+  const instructorModel = app.get<Model<Instructor>>(
+    getModelToken(Instructor.name),
+  )
   const logbookEntryModel = app.get<Model<LogbookEntry>>(
     getModelToken(LogbookEntry.name),
   )
@@ -1983,6 +2034,7 @@ async function seed() {
     console.log('Seeded emergency contact')
   }
   await seedMany(flightEvaluationModel, flightEvaluations, 'flight evaluations')
+  await seedMany(instructorModel, instructors, 'instructors')
   await seedMany(logbookEntryModel, logbookEntries, 'logbook entries')
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
   await seedMany(bookingModel, bookings, 'bookings')

@@ -14,6 +14,7 @@ import { DocumentsModule } from './documents/documents.module'
 import { EmergencyContactModule } from './emergency-contact/emergency-contact.module'
 import { FlightEvaluationsModule } from './flight-evaluations/flight-evaluations.module'
 import { HealthModule } from './health/health.module'
+import { InstructorsModule } from './instructors/instructors.module'
 import { LogbookModule } from './logbook/logbook.module'
 import { MailboxModule } from './mailbox/mailbox.module'
 import { NewsModule } from './news/news.module'
@@ -40,6 +41,7 @@ import { WeatherModule } from './weather/weather.module'
     DocumentsModule,
     EmergencyContactModule,
     FlightEvaluationsModule,
+    InstructorsModule,
     LogbookModule,
     MailboxModule,
     NewsModule,

@@ -1,9 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 
-export type StudentDocument = HydratedDocument<Student>
-
-export type StudentTrack = 'PPL' | 'CPL'
+export type InstructorDocument = HydratedDocument<Instructor>
 
 @Schema({
   toJSON: {
@@ -15,7 +13,7 @@ export type StudentTrack = 'PPL' | 'CPL'
     },
   },
 })
-export class Student {
+export class Instructor {
   @Prop({ required: true })
   name!: string
 
@@ -25,14 +23,8 @@ export class Student {
   @Prop({ required: true })
   color!: string
 
-  @Prop({ required: true, enum: ['PPL', 'CPL'] })
-  track!: StudentTrack
-
   @Prop({ required: true })
-  course!: string
-
-  @Prop()
-  photoSrc?: string
+  photoSrc!: string
 }
 
-export const StudentSchema = SchemaFactory.createForClass(Student)
+export const InstructorSchema = SchemaFactory.createForClass(Instructor)
