@@ -15,7 +15,10 @@ describe('BookingsController', () => {
       studentId: 'student-1',
     },
   ]
-  const bookingsService = { findAll: jest.fn().mockResolvedValue(bookings) }
+  const bookingsService = {
+    findAll: jest.fn().mockResolvedValue(bookings),
+    create: jest.fn().mockResolvedValue(bookings[0]),
+  }
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -29,5 +32,19 @@ describe('BookingsController', () => {
   it('returns the bookings from the service', async () => {
     await expect(controller.findAll()).resolves.toBe(bookings)
     expect(bookingsService.findAll).toHaveBeenCalled()
+  })
+
+  it('creates a booking through the service', async () => {
+    const input = {
+      studentId: 'student-1',
+      aircraftId: 'aircraft-1',
+      date: '2026-08-27',
+      startTime: '09:00',
+      endTime: '11:00',
+      lessonType: 'Dual instruction',
+    }
+
+    await expect(controller.create(input)).resolves.toBe(bookings[0])
+    expect(bookingsService.create).toHaveBeenCalledWith(input)
   })
 })
