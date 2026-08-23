@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
+import { addDays, startOfWeek, toISODate } from '@/lib/weekGrid'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
 import ScheduleBlockDetailModal from './ScheduleBlockDetailModal'
@@ -12,13 +13,14 @@ import type {
   ScheduleAircraft,
   ScheduleBlock,
   ScheduleBlockDetail,
+  ScheduleBlockRecord,
   ScheduleRow,
 } from './ScheduleBoard.types'
 
 type Props = {
   aircraft?: ScheduleAircraft[]
-  dayRows?: ScheduleRow[]
-  weekRows?: ScheduleRow[]
+  dayBlocks?: ScheduleBlockRecord[]
+  weekBlocks?: ScheduleBlockRecord[]
   initialDate?: Date
   onRefresh?: () => void
 }
@@ -40,18 +42,27 @@ const KIND_STYLES: Record<ScheduleBlock['kind'], string> = {
   unavailable: 'bg-black-100/70 text-black-300',
 }
 
-function startOfWeek(date: Date): Date {
-  const offset = (date.getDay() + 6) % 7
-  const start = new Date(date)
-  start.setDate(date.getDate() - offset)
-  start.setHours(0, 0, 0, 0)
-  return start
-}
+function groupByAircraft(blocks: ScheduleBlockRecord[]): ScheduleRow[] {
+  const rows: ScheduleRow[] = []
+  const rowByAircraftId = new Map<string, ScheduleRow>()
 
-function addDays(date: Date, delta: number): Date {
-  const next = new Date(date)
-  next.setDate(date.getDate() + delta)
-  return next
+  for (const record of blocks) {
+    let row = rowByAircraftId.get(record.aircraftId)
+    if (!row) {
+      row = { aircraftId: record.aircraftId, blocks: [] }
+      rowByAircraftId.set(record.aircraftId, row)
+      rows.push(row)
+    }
+    row.blocks.push({
+      id: record.id,
+      label: record.label,
+      kind: record.kind,
+      start: record.start,
+      end: record.end,
+    })
+  }
+
+  return rows
 }
 
 function dayPct(hour: number) {
@@ -139,8 +150,8 @@ function ScheduleGrid({
 
 export default function ScheduleBoard({
   aircraft = [],
-  dayRows = [],
-  weekRows = [],
+  dayBlocks = [],
+  weekBlocks = [],
   initialDate,
   onRefresh,
 }: Props) {
@@ -157,6 +168,31 @@ export default function ScheduleBoard({
 
   const weekStart = useMemo(() => startOfWeek(referenceDate), [referenceDate])
   const weekEnd = useMemo(() => addDays(weekStart, 6), [weekStart])
+
+  const activeDayIso = useMemo(() => toISODate(referenceDate), [referenceDate])
+  const weekStartIso = useMemo(() => toISODate(weekStart), [weekStart])
+  const weekEndIso = useMemo(() => toISODate(weekEnd), [weekEnd])
+
+  // A block with no date is a recurring demo block (always shown); a dated
+  // one is a real booking, only shown on the day/week it was booked for.
+  const dayRows = useMemo(
+    () =>
+      groupByAircraft(
+        dayBlocks.filter((block) => !block.date || block.date === activeDayIso),
+      ),
+    [dayBlocks, activeDayIso],
+  )
+  const weekRows = useMemo(
+    () =>
+      groupByAircraft(
+        weekBlocks.filter(
+          (block) =>
+            !block.date ||
+            (block.date >= weekStartIso && block.date <= weekEndIso),
+        ),
+      ),
+    [weekBlocks, weekStartIso, weekEndIso],
+  )
 
   const dayLabel = useMemo(
     () =>
@@ -261,7 +297,7 @@ export default function ScheduleBoard({
               type='button'
               onClick={() => setView('day')}
               aria-pressed={view === 'day'}
-              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'day' ? 'bg-white text-blue-300' : 'text-black-200'}`}
+              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'day' ? 'bg-white text-blue-300' : 'text-black-300'}`}
             >
               {t('dayView')}
             </button>
@@ -269,7 +305,7 @@ export default function ScheduleBoard({
               type='button'
               onClick={() => setView('week')}
               aria-pressed={view === 'week'}
-              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'week' ? 'bg-white text-blue-300' : 'text-black-200'}`}
+              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'week' ? 'bg-white text-blue-300' : 'text-black-300'}`}
             >
               {t('weekView')}
             </button>

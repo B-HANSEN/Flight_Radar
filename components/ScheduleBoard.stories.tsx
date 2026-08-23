@@ -3,8 +3,8 @@ import { fn } from 'storybook/test'
 import ScheduleBoard from './ScheduleBoard'
 import {
   DUMMY_SCHEDULE_AIRCRAFT,
-  DUMMY_SCHEDULE_DAY_ROWS,
-  DUMMY_SCHEDULE_WEEK_ROWS,
+  DUMMY_SCHEDULE_DAY_BLOCKS,
+  DUMMY_SCHEDULE_WEEK_BLOCKS,
 } from './ScheduleBoard.data'
 
 const meta: Meta<typeof ScheduleBoard> = {
@@ -12,8 +12,8 @@ const meta: Meta<typeof ScheduleBoard> = {
   title: 'Components/ScheduleBoard',
   args: {
     aircraft: DUMMY_SCHEDULE_AIRCRAFT,
-    dayRows: DUMMY_SCHEDULE_DAY_ROWS,
-    weekRows: DUMMY_SCHEDULE_WEEK_ROWS,
+    dayBlocks: DUMMY_SCHEDULE_DAY_BLOCKS,
+    weekBlocks: DUMMY_SCHEDULE_WEEK_BLOCKS,
     initialDate: new Date(2026, 7, 9),
     onRefresh: fn(),
   },

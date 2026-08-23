@@ -1,7 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import ScheduleBoard from './ScheduleBoard'
-import type { ScheduleAircraft, ScheduleRow } from './ScheduleBoard.types'
+import type {
+  ScheduleAircraft,
+  ScheduleBlockRecord,
+} from './ScheduleBoard.types'
 import enMessages from '@/messages/en.json'
 
 const AIRCRAFT: ScheduleAircraft[] = [
@@ -14,33 +17,25 @@ const AIRCRAFT: ScheduleAircraft[] = [
   { id: 'ec-exl', arcid: 'EC-EXL', type: 'Cessna 152' },
 ]
 
-const DAY_ROWS: ScheduleRow[] = [
+const DAY_BLOCKS: ScheduleBlockRecord[] = [
   {
+    id: 'b1',
     aircraftId: 'ec-erv',
-    blocks: [
-      {
-        id: 'b1',
-        label: 'Reserved 09:00–12:00',
-        kind: 'reserved',
-        start: 9,
-        end: 12,
-      },
-    ],
+    label: 'Reserved 09:00–12:00',
+    kind: 'reserved',
+    start: 9,
+    end: 12,
   },
 ]
 
-const WEEK_ROWS: ScheduleRow[] = [
+const WEEK_BLOCKS: ScheduleBlockRecord[] = [
   {
+    id: 'w1',
     aircraftId: 'ec-erv',
-    blocks: [
-      {
-        id: 'w1',
-        label: 'Scheduled maintenance',
-        kind: 'maintenance',
-        start: 9 / 24,
-        end: 10.5 / 24,
-      },
-    ],
+    label: 'Scheduled maintenance',
+    kind: 'maintenance',
+    start: 9 / 24,
+    end: 10.5 / 24,
   },
 ]
 
@@ -51,8 +46,8 @@ function renderBoard(
     <NextIntlClientProvider locale='en' messages={enMessages}>
       <ScheduleBoard
         aircraft={AIRCRAFT}
-        dayRows={DAY_ROWS}
-        weekRows={WEEK_ROWS}
+        dayBlocks={DAY_BLOCKS}
+        weekBlocks={WEEK_BLOCKS}
         initialDate={new Date(2026, 7, 9)}
         {...props}
       />
@@ -142,6 +137,60 @@ describe('ScheduleBoard', () => {
 
     expect(
       screen.getByText('Monday, Aug 3 · 09:00 – 10:30 · EC-ERV · Cessna 152'),
+    ).toBeInTheDocument()
+  })
+
+  it('only shows a dated block on the day it was booked for', () => {
+    renderBoard({
+      dayBlocks: [
+        ...DAY_BLOCKS,
+        {
+          id: 'booking-1',
+          aircraftId: 'ec-erv',
+          label: 'Dual instruction · Alex Moreau',
+          kind: 'reserved',
+          start: 13,
+          end: 14.5,
+          date: '2026-08-10',
+        },
+      ],
+    })
+
+    expect(
+      screen.queryByText('Dual instruction · Alex Moreau'),
+    ).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }))
+
+    expect(
+      screen.getByText('Dual instruction · Alex Moreau'),
+    ).toBeInTheDocument()
+  })
+
+  it('only shows a dated week block within the currently viewed week', () => {
+    renderBoard({
+      weekBlocks: [
+        ...WEEK_BLOCKS,
+        {
+          id: 'booking-1',
+          aircraftId: 'ec-erv',
+          label: 'Dual instruction · Alex Moreau',
+          kind: 'reserved',
+          start: 2 + 13 / 24,
+          end: 2 + 14.5 / 24,
+          date: '2026-08-12',
+        },
+      ],
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Week' }))
+    expect(
+      screen.queryByText('Dual instruction · Alex Moreau'),
+    ).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }))
+    expect(
+      screen.getByText('Dual instruction · Alex Moreau'),
     ).toBeInTheDocument()
   })
 })
