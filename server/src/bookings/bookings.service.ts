@@ -70,13 +70,13 @@ export class BookingsService {
     const sameDayBookings = await this.calendarEventModel
       .find({
         type: 'booking',
-        studentId: input.studentId,
         date: input.date,
         cancelled: { $ne: true },
+        $or: [{ studentId: input.studentId }, { tailNumber: aircraft.arcid }],
       })
       .exec()
 
-    const hasOverlap = sameDayBookings.some((event) => {
+    const overlapping = sameDayBookings.filter((event) => {
       const range = event.time ? parseTimeRange(event.time) : null
       return (
         range !== null &&
@@ -85,9 +85,14 @@ export class BookingsService {
       )
     })
 
-    if (hasOverlap) {
+    if (overlapping.some((event) => event.studentId === input.studentId)) {
       throw new ConflictException(
         `Student ${input.studentId} already has a booking overlapping ${input.startTime}-${input.endTime} on ${input.date}`,
+      )
+    }
+    if (overlapping.some((event) => event.tailNumber === aircraft.arcid)) {
+      throw new ConflictException(
+        `Aircraft ${aircraft.arcid} is already booked overlapping ${input.startTime}-${input.endTime} on ${input.date}`,
       )
     }
 

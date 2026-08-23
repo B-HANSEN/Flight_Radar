@@ -131,6 +131,23 @@ describe('BookingsService', () => {
     await expect(service.create(input)).resolves.toBeDefined()
   })
 
+  it('throws a conflict when a different student already has the aircraft booked at an overlapping time', async () => {
+    calendarEventModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          type: 'booking',
+          studentId: 'student-2',
+          tailNumber: 'EC-JOB',
+          date: '2026-08-27',
+          time: '10:00 - 12:00',
+        },
+      ]),
+    })
+
+    await expect(service.create(input)).rejects.toThrow(ConflictException)
+    expect(bookingModel.create).not.toHaveBeenCalled()
+  })
+
   it('ignores cancelled bookings when checking for a conflict', async () => {
     calendarEventModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue([]),
@@ -140,9 +157,9 @@ describe('BookingsService', () => {
 
     expect(calendarEventModel.find).toHaveBeenCalledWith({
       type: 'booking',
-      studentId: 'student-1',
       date: '2026-08-27',
       cancelled: { $ne: true },
+      $or: [{ studentId: 'student-1' }, { tailNumber: 'EC-JOB' }],
     })
   })
 })
