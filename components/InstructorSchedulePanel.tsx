@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ChevronUp,
 } from 'lucide-react'
+import { avatarColor, initialsOf } from '@/lib/avatar'
 import { focusRing } from '@/lib/styles'
 import type {
   InstructorScheduleSlot,
@@ -23,30 +24,6 @@ type Props = {
   onPreviousWeek?: () => void
   onNextWeek?: () => void
   onSchedule?: (studentId: string, slot: InstructorScheduleSlot) => void
-}
-
-const AVATAR_COLORS = [
-  'bg-blue-300',
-  'bg-green-300',
-  'bg-yellow-300',
-  'bg-black-300',
-]
-
-function initialsOf(name: string) {
-  return name
-    .split(' ')
-    .map((word) => word[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
-}
-
-function avatarColor(id: string) {
-  let hash = 0
-  for (let i = 0; i < id.length; i++) {
-    hash = (hash * 31 + id.charCodeAt(i)) % AVATAR_COLORS.length
-  }
-  return AVATAR_COLORS[hash]
 }
 
 export default function InstructorSchedulePanel({

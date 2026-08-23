@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { avatarColor, initialsOf } from '@/lib/avatar'
 import { focusRing } from '@/lib/styles'
 import Toast from './Toast'
 import type { MailboxEmail } from './Mailbox.types'
@@ -11,30 +12,6 @@ type Props = {
   emails?: MailboxEmail[]
   recipientName?: string
   onRefresh?: () => void
-}
-
-const AVATAR_COLORS = [
-  'bg-blue-300',
-  'bg-green-300',
-  'bg-yellow-300',
-  'bg-black-300',
-]
-
-function initialsOf(name: string) {
-  return name
-    .split(' ')
-    .map((word) => word[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
-}
-
-function avatarColor(id: string) {
-  let hash = 0
-  for (let i = 0; i < id.length; i++) {
-    hash = (hash * 31 + id.charCodeAt(i)) % AVATAR_COLORS.length
-  }
-  return AVATAR_COLORS[hash]
 }
 
 export default function Mailbox({
