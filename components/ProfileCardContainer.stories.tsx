@@ -12,6 +12,7 @@ const meta: Meta<typeof ProfileCardContainer> = {
   component: ProfileCardContainer,
   title: 'Components/ProfileCardContainer',
   argTypes: {
+    personId: { control: 'text' },
     name: { control: 'text' },
     avatarSrc: { control: 'text' },
     email: { control: 'text' },
@@ -22,6 +23,7 @@ const meta: Meta<typeof ProfileCardContainer> = {
     emergencyContact: { control: 'object' },
   },
   args: {
+    personId: 'student-2',
     name: 'Torres, Jamie',
     email: 'jamie.torres@example.com',
     phone: '+34 600 123 456',

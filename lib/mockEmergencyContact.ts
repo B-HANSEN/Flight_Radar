@@ -7,7 +7,7 @@ export function mockEmergencyContact(initial: EmergencyContact) {
   window.fetch = async (input, init) => {
     const url = typeof input === 'string' ? input : input.toString()
 
-    if (url.endsWith('/emergency-contact')) {
+    if (url.includes('/emergency-contact')) {
       if (init?.method === 'PUT') {
         current = JSON.parse(init.body as string) as EmergencyContact
       } else if (init?.method === 'DELETE') {

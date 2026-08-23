@@ -7,6 +7,7 @@ import enMessages from '@/messages/en.json'
 vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
 
 const baseProps = {
+  personId: 'student-2',
   name: 'Torres, Jamie',
   email: 'jamie.torres@example.com',
   phone: '+34 600 123 456',
@@ -20,10 +21,12 @@ const baseProps = {
   },
 }
 
-function renderContainer() {
+function renderContainer(
+  props: Partial<React.ComponentProps<typeof ProfileCardContainer>> = {},
+) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <ProfileCardContainer {...baseProps} />
+      <ProfileCardContainer {...baseProps} {...props} />
     </NextIntlClientProvider>,
   )
 }
@@ -62,7 +65,7 @@ describe('ProfileCardContainer', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     )
     expect(fetchApi).toHaveBeenCalledWith(
-      '/emergency-contact',
+      '/emergency-contact?personId=student-2',
       expect.objectContaining({ method: 'PUT' }),
     )
 
@@ -120,11 +123,29 @@ describe('ProfileCardContainer', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     )
     expect(fetchApi).toHaveBeenCalledWith(
-      '/emergency-contact',
+      '/emergency-contact?personId=student-2',
       expect.objectContaining({ method: 'DELETE' }),
     )
 
     fireEvent.click(screen.getByRole('tab', { name: 'Emergency' }))
     expect(screen.queryByText('Jane Doe')).not.toBeInTheDocument()
+  })
+
+  it('saves locally without calling the API when there is no student to scope it to', async () => {
+    renderContainer({ personId: null })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit profile' }))
+    fireEvent.change(screen.getByLabelText('Contact name'), {
+      target: { value: 'John Smith' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+    expect(fetchApi).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Emergency' }))
+    expect(screen.getByText('John Smith')).toBeInTheDocument()
   })
 })

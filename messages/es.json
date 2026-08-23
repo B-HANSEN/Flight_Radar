@@ -66,6 +66,8 @@
       "editLabel": "Editar perfil",
       "lockLabel": "Bloquear perfil",
       "avatarAlt": "Foto de perfil",
+      "studentRoleValue": "Estudiante",
+      "instructorRoleValue": "Instructor",
       "fields": {
         "email": "Correo electrónico",
         "phone": "Teléfono",

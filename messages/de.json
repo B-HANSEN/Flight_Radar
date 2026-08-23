@@ -66,6 +66,8 @@
       "editLabel": "Profil bearbeiten",
       "lockLabel": "Profil sperren",
       "avatarAlt": "Profilfoto",
+      "studentRoleValue": "Flugschüler",
+      "instructorRoleValue": "Fluglehrer",
       "fields": {
         "email": "E-Mail",
         "phone": "Telefon",

@@ -1,12 +1,17 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
-import { CURRENT_ROLE_COOKIE, isInstructorRoleValue } from '@/lib/currentRole'
+import {
+  CURRENT_ROLE_COOKIE,
+  instructorIdFromRoleValue,
+  isInstructorRoleValue,
+} from '@/lib/currentRole'
 import ProfileCardContainer from '@/components/ProfileCardContainer'
 import TabBar from '@/components/TabBar'
 import { fetchApi } from '@/lib/api'
 import type { EmergencyContact } from '@/components/ProfileCard'
+import type { Instructor, Student } from '@/components/RoleSwitcher.types'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -18,16 +23,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const PLACEHOLDER_PROFILE = {
-  name: 'Torres, Jamie',
-  avatarSrc: '/me/jamie-torres.webp',
-  email: 'jamie.torres@example.com',
-  phone: '+34 600 123 456',
-  birthday: '14 March 1994',
-  info: 'PPL online · Q1 2025',
-  role: 'Student',
-}
-
 export default async function MeLayout({
   children,
   params,
@@ -37,10 +32,62 @@ export default async function MeLayout({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const emergencyContact =
-    await fetchApi<EmergencyContact>('/emergency-contact')
+  const t = await getTranslations('MePage.profileCard')
+
   const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value
   const isInstructorView = isInstructorRoleValue(roleCookie)
+
+  let profile: {
+    personId: string
+    name: string
+    avatarSrc?: string
+    email: string
+    phone: string
+    birthday: string
+    info: string
+    role: string
+  }
+
+  if (isInstructorView) {
+    const instructors = await fetchApi<Instructor[]>('/instructors')
+    const instructorId = instructorIdFromRoleValue(roleCookie)
+    const instructor =
+      instructors.find((i) => i.id === instructorId) ?? instructors[0]
+
+    profile = {
+      personId: instructor.id,
+      name: instructor.name,
+      avatarSrc: instructor.photoSrc,
+      email: instructor.email,
+      phone: instructor.phone,
+      birthday: instructor.birthday,
+      info: instructor.info,
+      role: t('instructorRoleValue'),
+    }
+  } else {
+    const students = await fetchApi<Student[]>('/students')
+    // No cookie yet defaults to the site's default demo persona, matching
+    // NavBar's own fallback.
+    const student =
+      students.find((s) => s.id === roleCookie) ??
+      students.find((s) => s.name === 'Jamie Torres') ??
+      students[0]
+
+    profile = {
+      personId: student.id,
+      name: student.name,
+      avatarSrc: student.photoSrc,
+      email: student.email,
+      phone: student.phone,
+      birthday: student.birthday,
+      info: student.info,
+      role: t('studentRoleValue'),
+    }
+  }
+
+  const emergencyContact = await fetchApi<EmergencyContact>(
+    `/emergency-contact?personId=${profile.personId}`,
+  )
 
   return (
     <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12 2xl:px-20'>
@@ -50,8 +97,13 @@ export default async function MeLayout({
           <div className='mt-6'>{children}</div>
         </div>
         <div className='lg:w-122 lg:flex-none 2xl:w-lg'>
+          {/* key forces a remount when the previewed person changes —
+              emergencyContact is copied into local state on mount, so
+              without this it'd keep showing the previous person's contact
+              until a hard reload even though the server refetched it. */}
           <ProfileCardContainer
-            {...PLACEHOLDER_PROFILE}
+            key={profile.personId}
+            {...profile}
             emergencyContact={emergencyContact}
           />
         </div>
