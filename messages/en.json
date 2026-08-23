@@ -449,7 +449,30 @@
   },
   "InstructorScheduleView": {
     "weekOf": "Week of {date}",
-    "scheduleComingSoon": "Scheduling flights is still under development"
+    "bookingCreated": "Flight scheduled",
+    "bookingError": "Couldn't schedule the flight. Try again."
+  },
+  "ScheduleFlightModal": {
+    "title": "Schedule a flight",
+    "close": "Close",
+    "instructorLabel": "Instructor · {name}",
+    "timeLegend": "Time",
+    "startTimeLabel": "Start time",
+    "endTimeLabel": "End time",
+    "invalidTimeRangeError": "End time must be after start time and within the student's available window",
+    "availableWindowHint": "Student is available {start} – {end}",
+    "aircraftTypeLegend": "Aircraft type",
+    "tailNumberLegend": "Tail number",
+    "lessonTypeLegend": "Lesson type",
+    "lessonTypeDual": "Dual instruction",
+    "lessonTypeSolo": "Solo supervised",
+    "lessonTypeCheckride": "Checkride prep",
+    "commentsLegend": "Comments",
+    "commentsPlaceholder": "Notes for this lesson — manoeuvres to cover, meeting point, anything the student should prepare.",
+    "summaryReady": "{student} · {aircraft} · {lessonType} · {start} – {end}",
+    "summaryPrompt": "Pick a time, an aircraft and a lesson type",
+    "confirm": "Confirm lesson",
+    "confirming": "Confirming…"
   },
   "InstructorPage": {
     "title": "Scheduling"

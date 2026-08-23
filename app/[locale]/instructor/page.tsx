@@ -10,6 +10,7 @@ import {
 import InstructorScheduleView from '@/components/InstructorScheduleView'
 import type { RawStudentSchedule } from '@/components/InstructorScheduleView.types'
 import type { Instructor } from '@/components/RoleSwitcher.types'
+import type { ScheduleAircraft } from '@/components/ScheduleBoard.types'
 import { fetchApi } from '@/lib/api'
 
 export function generateStaticParams() {
@@ -34,9 +35,10 @@ export default async function InstructorPage({
   }
 
   const t = await getTranslations('InstructorPage')
-  const [students, instructors] = await Promise.all([
+  const [students, instructors, aircraft] = await Promise.all([
     fetchApi<RawStudentSchedule[]>('/students/schedule'),
     fetchApi<Instructor[]>('/instructors'),
+    fetchApi<ScheduleAircraft[]>('/aircraft'),
   ])
   const selectedInstructorId = instructorIdFromRoleValue(roleCookie)
   const currentInstructor =
@@ -49,6 +51,7 @@ export default async function InstructorPage({
       <InstructorScheduleView
         instructorName={currentInstructor?.name}
         students={students}
+        aircraft={aircraft}
       />
     </>
   )

@@ -449,7 +449,30 @@
   },
   "InstructorScheduleView": {
     "weekOf": "Semana del {date}",
-    "scheduleComingSoon": "La programación de vuelos todavía está en desarrollo"
+    "bookingCreated": "Vuelo programado",
+    "bookingError": "No se pudo programar el vuelo. Inténtalo de nuevo."
+  },
+  "ScheduleFlightModal": {
+    "title": "Programar un vuelo",
+    "close": "Cerrar",
+    "instructorLabel": "Instructor · {name}",
+    "timeLegend": "Hora",
+    "startTimeLabel": "Hora de inicio",
+    "endTimeLabel": "Hora de fin",
+    "invalidTimeRangeError": "La hora de fin debe ser posterior a la de inicio y estar dentro del horario disponible del alumno",
+    "availableWindowHint": "El alumno está disponible {start} – {end}",
+    "aircraftTypeLegend": "Tipo de avión",
+    "tailNumberLegend": "Matrícula",
+    "lessonTypeLegend": "Tipo de lección",
+    "lessonTypeDual": "Instrucción dual",
+    "lessonTypeSolo": "Solo supervisado",
+    "lessonTypeCheckride": "Preparación de examen",
+    "commentsLegend": "Comentarios",
+    "commentsPlaceholder": "Notas para esta lección: maniobras a cubrir, punto de encuentro, lo que el alumno debe preparar.",
+    "summaryReady": "{student} · {aircraft} · {lessonType} · {start} – {end}",
+    "summaryPrompt": "Elige una hora, un avión y un tipo de lección",
+    "confirm": "Confirmar lección",
+    "confirming": "Confirmando…"
   },
   "InstructorPage": {
     "title": "Programación"

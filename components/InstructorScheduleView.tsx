@@ -8,23 +8,37 @@ import {
   startOfWeek,
   toISODate,
 } from '@/lib/weekGrid'
+import { fetchApi } from '@/lib/api'
 import InstructorSchedulePanel from './InstructorSchedulePanel'
+import ScheduleFlightModal from './ScheduleFlightModal'
 import Toast from './Toast'
 import type {
   InstructorScheduleSlot,
   InstructorScheduleStudent,
 } from './InstructorSchedulePanel.types'
 import type { RawStudentSchedule } from './InstructorScheduleView.types'
+import type { ScheduleAircraft } from './ScheduleBoard.types'
+import type {
+  ScheduleFlightConfirmInput,
+  ScheduleFlightTarget,
+} from './ScheduleFlightModal.types'
 
 type Props = {
   instructorName?: string
   students?: RawStudentSchedule[]
+  aircraft?: ScheduleAircraft[]
   referenceDate?: Date
+}
+
+type SchedulingRef = {
+  studentId: string
+  slotId: string
 }
 
 export default function InstructorScheduleView({
   instructorName,
   students = [],
+  aircraft = [],
   referenceDate,
 }: Props) {
   const t = useTranslations('InstructorScheduleView')
@@ -32,7 +46,13 @@ export default function InstructorScheduleView({
   const today = useMemo(() => referenceDate ?? new Date(), [referenceDate])
   const currentWeekStart = useMemo(() => startOfWeek(today), [today])
   const [weekOffset, setWeekOffset] = useState(0)
-  const [isComingSoonToastOpen, setIsComingSoonToastOpen] = useState(false)
+  const [studentSchedules, setStudentSchedules] =
+    useState<RawStudentSchedule[]>(students)
+  const [scheduling, setScheduling] = useState<SchedulingRef | null>(null)
+  const [toast, setToast] = useState<{
+    message: string
+    variant: 'success' | 'error'
+  } | null>(null)
 
   const weekStart = useMemo(
     () => addWeeks(currentWeekStart, weekOffset),
@@ -57,7 +77,7 @@ export default function InstructorScheduleView({
     const weekStartIso = toISODate(weekStart)
     const weekEndIso = toISODate(weekEnd)
 
-    return students.map((student) => {
+    return studentSchedules.map((student) => {
       const slots: InstructorScheduleSlot[] = student.slots
         .filter((slot) => slot.date >= weekStartIso && slot.date < weekEndIso)
         .map((slot) => {
@@ -82,7 +102,45 @@ export default function InstructorScheduleView({
         slots,
       }
     })
-  }, [locale, students, weekEnd, weekStart])
+  }, [locale, studentSchedules, weekEnd, weekStart])
+
+  const schedulingTarget: ScheduleFlightTarget | null = useMemo(() => {
+    if (!scheduling) return null
+    const student = studentSchedules.find((s) => s.id === scheduling.studentId)
+    const slot = student?.slots.find((s) => s.id === scheduling.slotId)
+    return student && slot
+      ? { studentId: student.id, studentName: student.name, slot }
+      : null
+  }, [scheduling, studentSchedules])
+
+  async function handleConfirmBooking(input: ScheduleFlightConfirmInput) {
+    try {
+      await fetchApi('/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input),
+        cache: 'no-store',
+      })
+    } catch (error) {
+      setToast({ message: t('bookingError'), variant: 'error' })
+      throw error
+    }
+
+    // The booking already succeeded at this point — a failed refresh isn't
+    // a booking failure, so it doesn't get the error toast/retry treatment;
+    // the panel just keeps showing pre-booking slots until the next reload.
+    setScheduling(null)
+    setToast({ message: t('bookingCreated'), variant: 'success' })
+    try {
+      const refreshed = await fetchApi<RawStudentSchedule[]>(
+        '/students/schedule',
+        { cache: 'no-store' },
+      )
+      setStudentSchedules(refreshed)
+    } catch {
+      // Ignored — see comment above.
+    }
+  }
 
   return (
     <>
@@ -93,13 +151,29 @@ export default function InstructorScheduleView({
         students={displayStudents}
         onPreviousWeek={() => setWeekOffset((value) => value - 1)}
         onNextWeek={() => setWeekOffset((value) => value + 1)}
-        onSchedule={() => setIsComingSoonToastOpen(true)}
+        onSchedule={(studentId, slot) =>
+          setScheduling({ studentId, slotId: slot.id })
+        }
       />
+
+      <ScheduleFlightModal
+        key={
+          schedulingTarget
+            ? `${schedulingTarget.studentId}-${schedulingTarget.slot.id}`
+            : 'none'
+        }
+        target={schedulingTarget}
+        onClose={() => setScheduling(null)}
+        onConfirm={handleConfirmBooking}
+        instructorName={instructorName}
+        aircraft={aircraft}
+      />
+
       <Toast
-        variant='info'
-        message={t('scheduleComingSoon')}
-        open={isComingSoonToastOpen}
-        onClose={() => setIsComingSoonToastOpen(false)}
+        message={toast?.message ?? ''}
+        open={toast !== null}
+        onClose={() => setToast(null)}
+        variant={toast?.variant ?? 'success'}
       />
     </>
   )

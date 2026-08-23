@@ -4,6 +4,7 @@ import {
   DUMMY_SCHEDULE_REFERENCE_DATE,
   DUMMY_STUDENT_SCHEDULES,
 } from './InstructorScheduleView.data'
+import { DUMMY_SCHEDULE_FLIGHT_AIRCRAFT } from './ScheduleFlightModal.data'
 
 const meta: Meta<typeof InstructorScheduleView> = {
   component: InstructorScheduleView,
@@ -11,6 +12,7 @@ const meta: Meta<typeof InstructorScheduleView> = {
   args: {
     instructorName: 'James Whitfield',
     students: DUMMY_STUDENT_SCHEDULES,
+    aircraft: DUMMY_SCHEDULE_FLIGHT_AIRCRAFT,
     referenceDate: DUMMY_SCHEDULE_REFERENCE_DATE,
   },
 }

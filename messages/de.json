@@ -449,7 +449,30 @@
   },
   "InstructorScheduleView": {
     "weekOf": "Woche vom {date}",
-    "scheduleComingSoon": "Die Flugplanung befindet sich noch in Entwicklung"
+    "bookingCreated": "Flug geplant",
+    "bookingError": "Der Flug konnte nicht geplant werden. Bitte erneut versuchen."
+  },
+  "ScheduleFlightModal": {
+    "title": "Flug planen",
+    "close": "Schließen",
+    "instructorLabel": "Fluglehrer · {name}",
+    "timeLegend": "Uhrzeit",
+    "startTimeLabel": "Startzeit",
+    "endTimeLabel": "Endzeit",
+    "invalidTimeRangeError": "Die Endzeit muss nach der Startzeit liegen und innerhalb des verfügbaren Zeitfensters des Flugschülers",
+    "availableWindowHint": "Flugschüler ist verfügbar {start} – {end}",
+    "aircraftTypeLegend": "Flugzeugtyp",
+    "tailNumberLegend": "Kennzeichen",
+    "lessonTypeLegend": "Unterrichtsart",
+    "lessonTypeDual": "Fluglehrerbegleitung",
+    "lessonTypeSolo": "Betreuter Alleinflug",
+    "lessonTypeCheckride": "Prüfungsvorbereitung",
+    "commentsLegend": "Anmerkungen",
+    "commentsPlaceholder": "Notizen zu dieser Lektion – Manöver, Treffpunkt, was der Flugschüler vorbereiten soll.",
+    "summaryReady": "{student} · {aircraft} · {lessonType} · {start} – {end}",
+    "summaryPrompt": "Uhrzeit, Flugzeug und Unterrichtsart auswählen",
+    "confirm": "Lektion bestätigen",
+    "confirming": "Wird bestätigt…"
   },
   "InstructorPage": {
     "title": "Terminplanung"

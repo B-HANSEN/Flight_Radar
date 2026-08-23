@@ -5,7 +5,11 @@ import {
   DUMMY_SCHEDULE_REFERENCE_DATE,
   DUMMY_STUDENT_SCHEDULES,
 } from './InstructorScheduleView.data'
+import { DUMMY_SCHEDULE_FLIGHT_AIRCRAFT } from './ScheduleFlightModal.data'
+import { fetchApi } from '@/lib/api'
 import enMessages from '@/messages/en.json'
+
+vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
 
 function renderView(
   props: Partial<React.ComponentProps<typeof InstructorScheduleView>> = {},
@@ -15,12 +19,17 @@ function renderView(
       <InstructorScheduleView
         instructorName='James Whitfield'
         students={DUMMY_STUDENT_SCHEDULES}
+        aircraft={DUMMY_SCHEDULE_FLIGHT_AIRCRAFT}
         referenceDate={DUMMY_SCHEDULE_REFERENCE_DATE}
         {...props}
       />
     </NextIntlClientProvider>,
   )
 }
+
+beforeEach(() => {
+  vi.mocked(fetchApi).mockReset()
+})
 
 describe('InstructorScheduleView', () => {
   it('shows the week label and range for the reference date', () => {
@@ -86,7 +95,7 @@ describe('InstructorScheduleView', () => {
     expect(screen.getByText('No students yet')).toBeInTheDocument()
   })
 
-  it('shows a coming-soon toast when a schedule button is clicked', () => {
+  it('opens the schedule-flight modal for the clicked student and slot', () => {
     renderView()
 
     fireEvent.click(screen.getByRole('button', { name: /Alex Moreau/ }))
@@ -97,7 +106,85 @@ describe('InstructorScheduleView', () => {
     )
 
     expect(
-      screen.getByText('Scheduling flights is still under development'),
+      screen.getByRole('dialog', { name: 'Schedule a flight' }),
     ).toBeInTheDocument()
+    expect(screen.getByText('Mon 24 Aug')).toBeInTheDocument()
+  })
+
+  it('books the flight, refetches the schedule, and shows a success toast', async () => {
+    const refreshedSchedules = DUMMY_STUDENT_SCHEDULES.map((student) =>
+      student.id === 'student-1'
+        ? { ...student, slots: student.slots.slice(1) }
+        : student,
+    )
+    vi.mocked(fetchApi)
+      .mockResolvedValueOnce({ id: 'booking-1' })
+      .mockResolvedValueOnce(refreshedSchedules)
+    renderView()
+
+    fireEvent.click(screen.getByRole('button', { name: /Alex Moreau/ }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Schedule a flight with Alex Moreau on Mon 24 at 09:00 - 11:00',
+      }),
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    fireEvent.click(screen.getByRole('button', { name: 'EC-DKN' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Dual instruction' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm lesson' }))
+
+    expect(await screen.findByText('Flight scheduled')).toBeInTheDocument()
+    expect(fetchApi).toHaveBeenNthCalledWith(1, '/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentId: 'student-1',
+        aircraftId: 'ec-dkn',
+        date: '2026-08-24',
+        startTime: '09:00',
+        endTime: '11:00',
+        lessonType: 'Dual instruction',
+        comments: '',
+      }),
+      cache: 'no-store',
+    })
+    expect(fetchApi).toHaveBeenNthCalledWith(2, '/students/schedule', {
+      cache: 'no-store',
+    })
+    expect(
+      screen.queryByRole('dialog', { name: 'Schedule a flight' }),
+    ).not.toBeInTheDocument()
+
+    const panel = screen.getByText('Alex Moreau').closest('li') as HTMLElement
+    expect(within(panel).queryByText('Mon 24')).not.toBeInTheDocument()
+    expect(within(panel).getByText('Wed 26')).toBeInTheDocument()
+  })
+
+  it('still treats the booking as successful when only the post-booking refetch fails', async () => {
+    vi.mocked(fetchApi)
+      .mockResolvedValueOnce({ id: 'booking-1' })
+      .mockRejectedValueOnce(new Error('network error'))
+    renderView()
+
+    fireEvent.click(screen.getByRole('button', { name: /Alex Moreau/ }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Schedule a flight with Alex Moreau on Mon 24 at 09:00 - 11:00',
+      }),
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    fireEvent.click(screen.getByRole('button', { name: 'EC-DKN' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Dual instruction' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm lesson' }))
+
+    expect(await screen.findByText('Flight scheduled')).toBeInTheDocument()
+    expect(
+      screen.queryByText("Couldn't schedule the flight. Try again."),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('dialog', { name: 'Schedule a flight' }),
+    ).not.toBeInTheDocument()
   })
 })
