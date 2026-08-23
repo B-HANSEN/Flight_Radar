@@ -25,215 +25,14 @@ const academy = 'Flight Radar Academy'
 
 const aircraft: Omit<Aircraft, '_id'>[] = [
   {
-    arcid: 'EC-GV8',
-    type: 'Aeroprakt A-22 LS',
-    photoSrc: '/aircraft/aeroprakt-a-22-ls.webp',
-  },
-  {
-    arcid: 'EC-OKE',
-    type: 'Airbus Helicopters AS355',
-    photoSrc: '/aircraft/airbus-helicopters-as355.webp',
-  },
-  { arcid: 'F-CEGG', type: 'Alexander Primary Glider' },
-  {
-    arcid: 'EC-FRB',
-    type: 'Aviat Aircraft Inc Pitts S-2B',
-    photoSrc: '/aircraft/aviat-aircraft-inc-pitts-s-2b.webp',
-  },
-  {
     arcid: 'EC-DKN',
     type: 'Cessna 152',
     photoSrc: '/aircraft/cessna-152.webp',
   },
   {
-    arcid: 'EC-JTJ',
-    type: 'Cessna 172R',
-    photoSrc: '/aircraft/cessna-172r.webp',
-  },
-  {
-    arcid: 'EC-JOB',
-    type: 'Cessna 172S',
-    photoSrc: '/aircraft/cessna-172s.webp',
-  },
-  {
-    arcid: 'EC-KOP',
-    type: 'Cessna 182T',
-    photoSrc: '/aircraft/cessna-182t.webp',
-  },
-  {
-    arcid: 'EC-CZZ',
-    type: 'Cessna FR 172 J',
-    photoSrc: '/aircraft/cessna-fr-172-j.webp',
-  },
-  {
-    arcid: 'EC-HIK',
-    type: 'Cessna 172N',
-    photoSrc: '/aircraft/cessna-172n.webp',
-  },
-  {
-    arcid: 'EC-KLM',
-    type: 'Diamond DA40 NG',
-    photoSrc: '/aircraft/diamond-da40-ng.webp',
-  },
-  {
-    arcid: 'EC-MNO',
-    type: 'Diamond DA42 Twin Star',
-    photoSrc: '/aircraft/diamond-da42-twin-star.webp',
-  },
-  {
-    arcid: 'EC-NOP',
-    type: 'Piper PA-28-161 Warrior III',
-    photoSrc: '/aircraft/piper-pa-28-161-warrior-iii.webp',
-  },
-  {
-    arcid: 'EC-PQR',
-    type: 'Piper PA-28R-201 Arrow III',
-    photoSrc: '/aircraft/piper-pa-28r-201-arrow-iii.webp',
-  },
-  {
-    arcid: 'EC-QRS',
-    type: 'Piper PA-34-220T Seneca',
-    photoSrc: '/aircraft/piper-pa-34-220t-seneca.webp',
-  },
-  {
-    arcid: 'EC-RST',
-    type: 'Robin DR400/140B',
-    photoSrc: '/aircraft/robin-dr400-140b.webp',
-  },
-  {
-    arcid: 'EC-STU',
-    type: 'Robinson R22 Beta II',
-    photoSrc: '/aircraft/robinson-r22-beta-ii.webp',
-  },
-  {
-    arcid: 'EC-TUV',
-    type: 'Robinson R44 Raven II',
-    photoSrc: '/aircraft/robinson-r44-raven-ii.webp',
-  },
-  {
-    arcid: 'EC-UVW',
-    type: 'Tecnam P2002 Sierra',
-    photoSrc: '/aircraft/tecnam-p2002-sierra.webp',
-  },
-  {
-    arcid: 'EC-VWX',
-    type: 'Tecnam P2006T',
-    photoSrc: '/aircraft/tecnam-p2006t.webp',
-  },
-  {
-    arcid: 'EC-WXY',
-    type: 'Tecnam P2008 JC',
-    photoSrc: '/aircraft/tecnam-p2008-jc.webp',
-  },
-  {
-    arcid: 'EC-ABC',
-    type: 'Tecnam P92 Eaglet',
-    photoSrc: '/aircraft/tecnam-p92-eaglet.webp',
-  },
-  {
-    arcid: 'EC-BCD',
-    type: 'Zlin Z 242L',
-    photoSrc: '/aircraft/zlin-z-242l.webp',
-  },
-  {
-    arcid: 'EC-CDE',
-    type: 'Cirrus SR20',
-    photoSrc: '/aircraft/cirrus-sr20.webp',
-  },
-  {
-    arcid: 'EC-DEF',
-    type: 'Cirrus SR22',
-    photoSrc: '/aircraft/cirrus-sr22.webp',
-  },
-  {
-    arcid: 'EC-EFG',
-    type: 'Beechcraft F33A Bonanza',
-    photoSrc: '/aircraft/beechcraft-f33a-bonanza.webp',
-  },
-  {
-    arcid: 'EC-FGH',
-    type: 'Beechcraft A36 Bonanza',
-    photoSrc: '/aircraft/beechcraft-a36-bonanza.webp',
-  },
-  {
-    arcid: 'EC-GHI',
-    type: 'Socata TB-10 Tobago',
-    photoSrc: '/aircraft/socata-tb-10-tobago.webp',
-  },
-  {
-    arcid: 'EC-HIJ',
-    type: 'Socata TB-20 Trinidad',
-    photoSrc: '/aircraft/socata-tb-20-trinidad.webp',
-  },
-  {
-    arcid: 'EC-IJK',
-    type: 'Grob G 103 Twin Astir',
-    photoSrc: '/aircraft/grob-g-103-twin-astir.webp',
-  },
-  {
-    arcid: 'EC-JKL',
-    type: 'Schleicher ASK 21',
-    photoSrc: '/aircraft/schleicher-ask-21.webp',
-  },
-  {
-    arcid: 'EC-KLL',
-    type: 'Schempp-Hirth Discus CS',
-    photoSrc: '/aircraft/schempp-hirth-discus-cs.webp',
-  },
-  {
-    arcid: 'EC-LMM',
-    type: 'Rolladen-Schneider LS4',
-    photoSrc: '/aircraft/rolladen-schneider-ls4.webp',
-  },
-  {
-    arcid: 'EC-MNN',
-    type: 'Robin DR400/180 Regent',
-    photoSrc: '/aircraft/robin-dr400-180-regent.webp',
-  },
-  {
-    arcid: 'EC-NOO',
-    type: 'American Champion Decathlon',
-    photoSrc: '/aircraft/american-champion-8kcab-decathlon.webp',
-  },
-  {
     arcid: 'EC-DMC',
     type: 'Cessna 152',
     photoSrc: '/aircraft/cessna-152.webp',
-  },
-  {
-    arcid: 'EC-JPY',
-    type: 'Cessna 172S',
-    photoSrc: '/aircraft/cessna-172s.webp',
-  },
-  {
-    arcid: 'EC-KOQ',
-    type: 'Cessna 182T',
-    photoSrc: '/aircraft/cessna-182t.webp',
-  },
-  {
-    arcid: 'EC-DAE',
-    type: 'Cessna FR 172 J',
-    photoSrc: '/aircraft/cessna-fr-172-j.webp',
-  },
-  {
-    arcid: 'EC-IJL',
-    type: 'Cessna 172N',
-    photoSrc: '/aircraft/cessna-172n.webp',
-  },
-  {
-    arcid: 'EC-LMN',
-    type: 'Diamond DA40 NG',
-    photoSrc: '/aircraft/diamond-da40-ng.webp',
-  },
-  {
-    arcid: 'EC-OPQ',
-    type: 'Piper PA-28-161 Warrior III',
-    photoSrc: '/aircraft/piper-pa-28-161-warrior-iii.webp',
-  },
-  {
-    arcid: 'EC-XYZ',
-    type: 'Tecnam P2008 JC',
-    photoSrc: '/aircraft/tecnam-p2008-jc.webp',
   },
   {
     arcid: 'EC-DRV',
@@ -259,6 +58,51 @@ const aircraft: Omit<Aircraft, '_id'>[] = [
     arcid: 'EC-GHT',
     type: 'Cessna 152',
     photoSrc: '/aircraft/cessna-152.webp',
+  },
+  {
+    arcid: 'EC-JTJ',
+    type: 'Cessna 172',
+    photoSrc: '/aircraft/cessna-172s.webp',
+  },
+  {
+    arcid: 'EC-JOB',
+    type: 'Cessna 172',
+    photoSrc: '/aircraft/cessna-172s.webp',
+  },
+  {
+    arcid: 'EC-JPY',
+    type: 'Cessna 172',
+    photoSrc: '/aircraft/cessna-172s.webp',
+  },
+  {
+    arcid: 'EC-CZZ',
+    type: 'Cessna 172',
+    photoSrc: '/aircraft/cessna-172s.webp',
+  },
+  {
+    arcid: 'EC-HIK',
+    type: 'Cessna 172',
+    photoSrc: '/aircraft/cessna-172s.webp',
+  },
+  {
+    arcid: 'EC-DAE',
+    type: 'Cessna 172',
+    photoSrc: '/aircraft/cessna-172s.webp',
+  },
+  {
+    arcid: 'EC-IJL',
+    type: 'Cessna 172',
+    photoSrc: '/aircraft/cessna-172s.webp',
+  },
+  {
+    arcid: 'EC-KOP',
+    type: 'Cessna 182',
+    photoSrc: '/aircraft/cessna-182t.webp',
+  },
+  {
+    arcid: 'EC-KOQ',
+    type: 'Cessna 182',
+    photoSrc: '/aircraft/cessna-182t.webp',
   },
 ]
 
