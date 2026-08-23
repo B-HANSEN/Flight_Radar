@@ -33,6 +33,14 @@
   --color-yellow-200: #eab308;
   --color-yellow-300: #854d0e;
 
+  /* Colors — Avatar identity (decorative, per-person distinguishing colors; not semantic UI state) */
+  --color-avatar-blue: #1d4ed8;
+  --color-avatar-pink: #be185d;
+  --color-avatar-sky: #0369a1;
+  --color-avatar-lime: #4d7c0f;
+  --color-avatar-amber: #b45309;
+  --color-avatar-purple: #9333ea;
+
   /* Text sizes */
   --text-xs: 0.8125rem; /* 13px */
   --text-xs--line-height: 1.4;

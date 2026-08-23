@@ -1388,7 +1388,7 @@ const students: Omit<Student, '_id'>[] = [
   {
     name: 'Alex Moreau',
     initials: 'AM',
-    color: '#0369a1',
+    color: 'var(--color-avatar-sky)',
     track: 'PPL',
     course: 'CPL Flight Phase',
     photoSrc: '/students/alex-moreau.webp',
@@ -1396,7 +1396,7 @@ const students: Omit<Student, '_id'>[] = [
   {
     name: 'Jamie Torres',
     initials: 'JT',
-    color: '#4d7c0f',
+    color: 'var(--color-avatar-lime)',
     track: 'PPL',
     course: 'PPL Flight Phase',
     // Reuses the photo already used for her profile card sidebar —
@@ -1406,7 +1406,7 @@ const students: Omit<Student, '_id'>[] = [
   {
     name: 'Priya Shah',
     initials: 'PS',
-    color: '#b45309',
+    color: 'var(--color-avatar-amber)',
     track: 'CPL',
     course: 'PPL Flight Phase',
     photoSrc: '/students/priya-shah.webp',
@@ -1414,7 +1414,7 @@ const students: Omit<Student, '_id'>[] = [
   {
     name: 'Noah Becker',
     initials: 'NB',
-    color: '#9333ea',
+    color: 'var(--color-avatar-purple)',
     track: 'PPL',
     course: 'PPL Flight Phase',
     photoSrc: '/students/noah-becker.webp',
@@ -1431,13 +1431,13 @@ const instructors: Omit<Instructor, '_id'>[] = [
   {
     name: 'James Whitfield',
     initials: 'JW',
-    color: '#1d4ed8',
+    color: 'var(--color-avatar-blue)',
     photoSrc: '/instructors/james-whitfield.webp',
   },
   {
     name: 'Kate Ashford',
     initials: 'KA',
-    color: '#be185d',
+    color: 'var(--color-avatar-pink)',
     photoSrc: '/instructors/kate-ashford.webp',
   },
 ]
