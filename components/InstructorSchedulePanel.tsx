@@ -13,7 +13,7 @@ import { focusRing } from '@/lib/styles'
 import type {
   InstructorScheduleSlot,
   InstructorScheduleStudent,
-} from './InstructorScheduleList.types'
+} from './InstructorSchedulePanel.types'
 
 type Props = {
   instructorName?: string
@@ -49,7 +49,7 @@ function avatarColor(id: string) {
   return AVATAR_COLORS[hash]
 }
 
-export default function InstructorScheduleList({
+export default function InstructorSchedulePanel({
   instructorName,
   weekLabel,
   weekRangeLabel,
@@ -58,17 +58,12 @@ export default function InstructorScheduleList({
   onNextWeek,
   onSchedule,
 }: Props) {
-  const t = useTranslations('InstructorScheduleList')
-  const [openStudentIds, setOpenStudentIds] = useState<Set<string>>(new Set())
+  const t = useTranslations('InstructorSchedulePanel')
+  const [openStudentId, setOpenStudentId] = useState<string | null>(null)
   const headingId = useId()
 
   function toggleStudent(id: string) {
-    setOpenStudentIds((current) => {
-      const next = new Set(current)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+    setOpenStudentId((current) => (current === id ? null : id))
   }
 
   return (
@@ -126,7 +121,7 @@ export default function InstructorScheduleList({
       ) : (
         <ul className='flex list-none flex-col gap-3'>
           {students.map((student) => {
-            const isOpen = openStudentIds.has(student.id)
+            const isOpen = openStudentId === student.id
             const Chevron = isOpen ? ChevronUp : ChevronDown
             const panelId = `instructor-schedule-${student.id}-panel`
 

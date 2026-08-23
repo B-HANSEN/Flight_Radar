@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { AlertCircle, CheckCircle2, Loader2, X } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Info, Loader2, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { focusRing } from '@/lib/styles'
 
@@ -10,8 +10,8 @@ type Props = {
   open: boolean
   onClose: () => void
   durationMs?: number
-  /** 'loading' (default) shows a spinner for an in-progress action; 'success' shows a checkmark for a completed one; 'error' shows an alert icon for a failed one. */
-  variant?: 'loading' | 'success' | 'error'
+  /** 'loading' (default) shows a spinner for an in-progress action; 'success' shows a checkmark for a completed one; 'error' shows an alert icon for a failed one; 'info' shows a neutral notice icon. */
+  variant?: 'loading' | 'success' | 'error' | 'info'
 }
 
 export default function Toast({
@@ -47,6 +47,12 @@ export default function Toast({
         <CheckCircle2
           size={16}
           className='flex-none text-green-300'
+          aria-hidden='true'
+        />
+      ) : variant === 'info' ? (
+        <Info
+          size={16}
+          className='flex-none text-blue-300'
           aria-hidden='true'
         />
       ) : (

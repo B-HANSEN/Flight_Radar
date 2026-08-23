@@ -67,4 +67,11 @@ describe('Toast', () => {
     expect(container.querySelector('.animate-spin')).not.toBeInTheDocument()
     expect(container.querySelector('.text-red-300')).toBeInTheDocument()
   })
+
+  it('shows a neutral notice icon instead of a spinner for the info variant', () => {
+    const { container } = renderToast({ variant: 'info' })
+
+    expect(container.querySelector('.animate-spin')).not.toBeInTheDocument()
+    expect(container.querySelector('.text-blue-300')).toBeInTheDocument()
+  })
 })

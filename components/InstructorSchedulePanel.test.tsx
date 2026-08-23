@@ -1,15 +1,15 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
-import InstructorScheduleList from './InstructorScheduleList'
-import { DUMMY_INSTRUCTOR_STUDENTS } from './InstructorScheduleList.data'
+import InstructorSchedulePanel from './InstructorSchedulePanel'
+import { DUMMY_INSTRUCTOR_STUDENTS } from './InstructorSchedulePanel.data'
 import enMessages from '@/messages/en.json'
 
-function renderList(
-  props: Partial<React.ComponentProps<typeof InstructorScheduleList>> = {},
+function renderPanel(
+  props: Partial<React.ComponentProps<typeof InstructorSchedulePanel>> = {},
 ) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <InstructorScheduleList
+      <InstructorSchedulePanel
         weekLabel='Week of Aug 24'
         weekRangeLabel='24 – 30 August'
         students={DUMMY_INSTRUCTOR_STUDENTS}
@@ -19,30 +19,30 @@ function renderList(
   )
 }
 
-describe('InstructorScheduleList', () => {
+describe('InstructorSchedulePanel', () => {
   it('renders the section heading and, when given, the instructor label', () => {
-    renderList({ instructorName: 'D. Fabri' })
+    renderPanel({ instructorName: 'James Whitfield' })
 
     expect(
       screen.getByRole('region', { name: 'Schedule a flight' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('Instructor · D. Fabri')).toBeInTheDocument()
+    expect(screen.getByText('Instructor · James Whitfield')).toBeInTheDocument()
   })
 
   it('omits the instructor label when no instructor name is given', () => {
-    renderList()
+    renderPanel()
 
     expect(screen.queryByText(/^Instructor/)).not.toBeInTheDocument()
   })
 
   it('renders the empty state when there are no students', () => {
-    renderList({ students: [] })
+    renderPanel({ students: [] })
 
     expect(screen.getByText('No students yet')).toBeInTheDocument()
   })
 
   it('shows the open-slots count, pluralized, per student', () => {
-    renderList()
+    renderPanel()
 
     const jamieRow = screen
       .getByRole('button', { name: /Jamie Torres/ })
@@ -56,7 +56,7 @@ describe('InstructorScheduleList', () => {
   })
 
   it('toggles a student panel open and closed, updating aria-expanded and slot visibility', () => {
-    renderList()
+    renderPanel()
 
     const toggle = screen.getByRole('button', { name: /Alex Moreau/ })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
@@ -71,8 +71,22 @@ describe('InstructorScheduleList', () => {
     expect(screen.getByText('Mon 24')).not.toBeVisible()
   })
 
+  it('closes the previously open student panel when another one is opened', () => {
+    renderPanel()
+
+    const alexToggle = screen.getByRole('button', { name: /Alex Moreau/ })
+    const jamieToggle = screen.getByRole('button', { name: /Jamie Torres/ })
+
+    fireEvent.click(alexToggle)
+    expect(alexToggle).toHaveAttribute('aria-expanded', 'true')
+
+    fireEvent.click(jamieToggle)
+    expect(jamieToggle).toHaveAttribute('aria-expanded', 'true')
+    expect(alexToggle).toHaveAttribute('aria-expanded', 'false')
+  })
+
   it('shows a no-availability message when an expanded student has no slots', () => {
-    renderList({
+    renderPanel({
       students: [
         { id: 'student-9', name: 'Sam Delgado', course: 'PPL', slots: [] },
       ],
@@ -86,7 +100,7 @@ describe('InstructorScheduleList', () => {
 
   it('calls onSchedule with the student id and slot when a schedule button is clicked', () => {
     const onSchedule = vi.fn()
-    renderList({ onSchedule })
+    renderPanel({ onSchedule })
 
     fireEvent.click(screen.getByRole('button', { name: /Alex Moreau/ }))
     const panel = screen.getByText('Mon 24').closest('div') as HTMLElement
@@ -107,7 +121,7 @@ describe('InstructorScheduleList', () => {
   it('calls onPreviousWeek and onNextWeek when the nav buttons are clicked', () => {
     const onPreviousWeek = vi.fn()
     const onNextWeek = vi.fn()
-    renderList({ onPreviousWeek, onNextWeek })
+    renderPanel({ onPreviousWeek, onNextWeek })
 
     fireEvent.click(screen.getByRole('button', { name: 'Previous week' }))
     fireEvent.click(screen.getByRole('button', { name: 'Next week' }))

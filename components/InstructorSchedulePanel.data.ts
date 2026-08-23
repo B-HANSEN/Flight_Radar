@@ -1,4 +1,4 @@
-import type { InstructorScheduleStudent } from './InstructorScheduleList.types'
+import type { InstructorScheduleStudent } from './InstructorSchedulePanel.types'
 
 export const DUMMY_INSTRUCTOR_STUDENTS: InstructorScheduleStudent[] = [
   {

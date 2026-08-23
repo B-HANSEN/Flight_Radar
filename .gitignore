@@ -38,7 +38,7 @@ next-env.d.ts
 # Local scratch files (not part of the app)
 TODO.md
 TODO-BE-setup.md
-TODO-availability-agenda-sync.md
+TODO-instructor-view.md
 .claude/settings.local.json
 /designs
 
