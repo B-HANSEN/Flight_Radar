@@ -11,8 +11,12 @@ import {
   buildOrganizationSchema,
   buildWebSiteSchema,
 } from '@/lib/structuredData'
-import { CURRENT_ROLE_COOKIE, INSTRUCTOR_ROLE_VALUE } from '@/lib/currentRole'
-import type { Student } from '@/components/RoleSwitcher.types'
+import {
+  CURRENT_ROLE_COOKIE,
+  instructorIdFromRoleValue,
+  isInstructorRoleValue,
+} from '@/lib/currentRole'
+import type { Instructor, Student } from '@/components/RoleSwitcher.types'
 import '../globals.css'
 
 export function generateStaticParams() {
@@ -45,13 +49,15 @@ export default async function LocaleLayout({
   setRequestLocale(locale)
   const messages = await getMessages()
   const students = await fetchApi<Student[]>('/students')
+  const instructors = await fetchApi<Instructor[]>('/instructors')
   const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value
   const initialSelectedStudentId =
     roleCookie === undefined
       ? undefined
-      : roleCookie === INSTRUCTOR_ROLE_VALUE
+      : isInstructorRoleValue(roleCookie)
         ? null
         : roleCookie
+  const initialSelectedInstructorId = instructorIdFromRoleValue(roleCookie)
 
   return (
     <html
@@ -65,7 +71,9 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <NavBar
             students={students}
+            instructors={instructors}
             initialSelectedStudentId={initialSelectedStudentId}
+            initialSelectedInstructorId={initialSelectedInstructorId}
           />
           <main className='mx-auto max-w-3xl px-4 py-8'>{children}</main>
         </NextIntlClientProvider>

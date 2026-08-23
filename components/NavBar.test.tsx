@@ -2,7 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ComponentProps, ReactNode } from 'react'
 import NavBar from './NavBar'
-import { DUMMY_STUDENTS } from './RoleSwitcher.data'
+import { DUMMY_INSTRUCTORS, DUMMY_STUDENTS } from './RoleSwitcher.data'
 import enMessages from '@/messages/en.json'
 
 type MockLinkProps = {
@@ -175,7 +175,7 @@ describe('NavBar', () => {
 
   it('shows the Scheduling nav item once switched to the instructor view, and sets the role cookie', () => {
     document.cookie = 'fr-current-role=; expires=Thu, 01 Jan 1970 00:00:00 GMT'
-    renderNavBar({ students: DUMMY_STUDENTS })
+    renderNavBar({ students: DUMMY_STUDENTS, instructors: DUMMY_INSTRUCTORS })
     fireEvent.click(screen.getByRole('button', { name: 'Jamie Torres' }))
     fireEvent.click(
       screen.getByRole('button', { name: 'James Whitfield (Instructor)' }),
@@ -185,7 +185,25 @@ describe('NavBar', () => {
       'href',
       '/instructor',
     )
-    expect(document.cookie).toContain('fr-current-role=instructor')
+    expect(document.cookie).toContain(
+      `fr-current-role=instructor:${DUMMY_INSTRUCTORS[0].id}`,
+    )
+  })
+
+  it('lets picking the second instructor update the trigger and set an instructor-specific cookie', () => {
+    document.cookie = 'fr-current-role=; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    renderNavBar({ students: DUMMY_STUDENTS, instructors: DUMMY_INSTRUCTORS })
+    fireEvent.click(screen.getByRole('button', { name: 'Jamie Torres' }))
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Kate Ashford (Instructor)' }),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Kate Ashford · Instructor' }),
+    ).toBeInTheDocument()
+    expect(document.cookie).toContain(
+      `fr-current-role=instructor:${DUMMY_INSTRUCTORS[1].id}`,
+    )
   })
 
   it('honors an explicit initialSelectedStudentId of null (instructor) even when students are available', () => {

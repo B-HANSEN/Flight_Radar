@@ -15,11 +15,11 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { focusRing } from '@/lib/styles'
-import { CURRENT_ROLE_COOKIE, INSTRUCTOR_ROLE_VALUE } from '@/lib/currentRole'
+import { CURRENT_ROLE_COOKIE, encodeInstructorRole } from '@/lib/currentRole'
 import LanguageSwitcher from './LanguageSwitcher'
 import NavClock from './NavClock'
 import RoleSwitcher from './RoleSwitcher'
-import type { Student } from './RoleSwitcher.types'
+import type { Instructor, Student } from './RoleSwitcher.types'
 
 type NavItemKey =
   'home' | 'me' | 'news' | 'schedule' | 'aircraft' | 'documents' | 'scheduling'
@@ -34,7 +34,9 @@ type Props = {
   activePath?: string
   collapsed?: boolean
   students?: Student[]
+  instructors?: Instructor[]
   initialSelectedStudentId?: string | null
+  initialSelectedInstructorId?: string | null
   onMenuClick?: () => void
   onItemClick?: (href: string) => void
 }
@@ -49,15 +51,25 @@ const items: NavItem[] = [
   { key: 'scheduling', href: '/instructor', icon: GraduationCap },
 ]
 
-// No Users module yet (no auth) — the signed-in instructor is a fixed
-// placeholder, same approach as PLACEHOLDER_PROFILE in app/[locale]/me/layout.tsx.
-const CURRENT_INSTRUCTOR = { name: 'James Whitfield', initials: 'JW' }
+// No Users module yet (no auth) — falls back to this fixed placeholder if
+// the caller doesn't pass real fetched instructors (e.g. in Storybook/tests),
+// same approach as PLACEHOLDER_PROFILE in app/[locale]/me/layout.tsx.
+const FALLBACK_INSTRUCTORS: Instructor[] = [
+  {
+    id: 'fallback-instructor',
+    name: 'James Whitfield',
+    initials: 'JW',
+    color: '#1d4ed8',
+  },
+]
 
 export default function NavBar({
   activePath,
   collapsed = false,
   students = [],
+  instructors = FALLBACK_INSTRUCTORS,
   initialSelectedStudentId,
+  initialSelectedInstructorId,
   onMenuClick,
   onItemClick,
 }: Props) {
@@ -74,6 +86,9 @@ export default function NavBar({
         : (students.find((student) => student.name === 'Jamie Torres')?.id ??
           null),
   )
+  const [selectedInstructorId, setSelectedInstructorId] = useState<
+    string | null
+  >(initialSelectedInstructorId ?? null)
   const visibleItems =
     selectedStudentId === null
       ? items
@@ -147,14 +162,20 @@ export default function NavBar({
 
       <div className='ml-auto flex flex-none items-center gap-4'>
         <RoleSwitcher
-          currentUser={CURRENT_INSTRUCTOR}
+          instructors={instructors}
           students={students}
           selectedStudentId={selectedStudentId}
-          onSelect={(student) => {
-            const nextId = student?.id ?? null
-            setSelectedStudentId(nextId)
+          selectedInstructorId={selectedInstructorId}
+          onSelectStudent={(student) => {
+            setSelectedStudentId(student.id)
             const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365
-            document.cookie = `${CURRENT_ROLE_COOKIE}=${nextId ?? INSTRUCTOR_ROLE_VALUE}; path=/; max-age=${ONE_YEAR_SECONDS}; SameSite=Lax`
+            document.cookie = `${CURRENT_ROLE_COOKIE}=${student.id}; path=/; max-age=${ONE_YEAR_SECONDS}; SameSite=Lax`
+          }}
+          onSelectInstructor={(instructor) => {
+            setSelectedStudentId(null)
+            setSelectedInstructorId(instructor.id)
+            const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365
+            document.cookie = `${CURRENT_ROLE_COOKIE}=${encodeInstructorRole(instructor.id)}; path=/; max-age=${ONE_YEAR_SECONDS}; SameSite=Lax`
           }}
         />
         <NavClock />

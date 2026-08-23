@@ -1,21 +1,19 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { ChevronDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { focusRing } from '@/lib/styles'
-import type { Student } from './RoleSwitcher.types'
-
-type CurrentUser = {
-  name: string
-  initials: string
-}
+import type { Instructor, Student } from './RoleSwitcher.types'
 
 type Props = {
-  currentUser: CurrentUser
+  instructors: Instructor[]
   students: Student[]
   selectedStudentId?: string | null
-  onSelect?: (student: Student | null) => void
+  selectedInstructorId?: string | null
+  onSelectStudent?: (student: Student) => void
+  onSelectInstructor?: (instructor: Instructor) => void
 }
 
 function menuItemClass(isSelected: boolean) {
@@ -24,7 +22,32 @@ function menuItemClass(isSelected: boolean) {
   } ${focusRing}`
 }
 
-function Avatar({ initials, color }: { initials: string; color?: string }) {
+function Avatar({
+  initials,
+  color,
+  photoSrc,
+}: {
+  initials: string
+  color?: string
+  photoSrc?: string
+}) {
+  if (photoSrc) {
+    return (
+      <span
+        aria-hidden='true'
+        className='relative block size-5.5 flex-none overflow-hidden rounded-full'
+      >
+        <Image
+          src={photoSrc}
+          alt=''
+          fill
+          sizes='22px'
+          className='object-cover'
+        />
+      </span>
+    )
+  }
+
   return (
     <span
       aria-hidden='true'
@@ -37,10 +60,12 @@ function Avatar({ initials, color }: { initials: string; color?: string }) {
 }
 
 export default function RoleSwitcher({
-  currentUser,
+  instructors,
   students,
   selectedStudentId = null,
-  onSelect,
+  selectedInstructorId = null,
+  onSelectStudent,
+  onSelectInstructor,
 }: Props) {
   const t = useTranslations('RoleSwitcher')
   const [open, setOpen] = useState(false)
@@ -71,17 +96,28 @@ export default function RoleSwitcher({
     }
   }, [open])
 
-  function handleSelect(student: Student | null) {
-    onSelect?.(student)
+  function handleSelectStudent(student: Student) {
+    onSelectStudent?.(student)
+    setOpen(false)
+  }
+
+  function handleSelectInstructor(instructor: Instructor) {
+    onSelectInstructor?.(instructor)
     setOpen(false)
   }
 
   const isInstructorSelected = selectedStudentId == null
   const selectedStudent =
     students.find((student) => student.id === selectedStudentId) ?? null
+  const activeInstructor =
+    instructors.find((instructor) => instructor.id === selectedInstructorId) ??
+    instructors[0] ??
+    null
   const triggerLabel = selectedStudent
     ? selectedStudent.name
-    : `${currentUser.name} · ${t('instructor')}`
+    : activeInstructor
+      ? `${activeInstructor.name} · ${t('instructor')}`
+      : ''
 
   return (
     <div ref={containerRef} className='relative'>
@@ -96,9 +132,16 @@ export default function RoleSwitcher({
       >
         <Avatar
           initials={
-            selectedStudent ? selectedStudent.initials : currentUser.initials
+            selectedStudent
+              ? selectedStudent.initials
+              : (activeInstructor?.initials ?? '')
           }
-          color={selectedStudent?.color}
+          color={selectedStudent?.color ?? activeInstructor?.color}
+          photoSrc={
+            selectedStudent
+              ? selectedStudent.photoSrc
+              : activeInstructor?.photoSrc
+          }
         />
         <span className='text-xs font-bold whitespace-nowrap text-black-300'>
           {triggerLabel}
@@ -112,21 +155,35 @@ export default function RoleSwitcher({
 
       {open && (
         <div className='absolute top-full right-0 z-10 mt-2 w-72 rounded-lg bg-white p-2 shadow-lg'>
-          <div className='px-2 py-1.5 text-[10px] font-bold tracking-[0.05em] text-black-200 uppercase'>
+          <div className='px-2 py-1.5 text-[10px] font-bold tracking-wider text-black-200 uppercase'>
             {t('switchView')}
           </div>
 
-          <button
-            type='button'
-            onClick={() => handleSelect(null)}
-            aria-current={isInstructorSelected ? 'true' : undefined}
-            className={menuItemClass(isInstructorSelected)}
-          >
-            <Avatar initials={currentUser.initials} />
-            <span className='truncate'>
-              {currentUser.name} ({t('instructor')})
-            </span>
-          </button>
+          <ul className='list-none'>
+            {instructors.map((instructor) => {
+              const isSelected =
+                isInstructorSelected && instructor.id === activeInstructor?.id
+              return (
+                <li key={instructor.id}>
+                  <button
+                    type='button'
+                    onClick={() => handleSelectInstructor(instructor)}
+                    aria-current={isSelected ? 'true' : undefined}
+                    className={menuItemClass(isSelected)}
+                  >
+                    <Avatar
+                      initials={instructor.initials}
+                      color={instructor.color}
+                      photoSrc={instructor.photoSrc}
+                    />
+                    <span className='truncate'>
+                      {instructor.name} ({t('instructor')})
+                    </span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
 
           <ul className='list-none'>
             {students.map((student) => {
@@ -135,11 +192,15 @@ export default function RoleSwitcher({
                 <li key={student.id}>
                   <button
                     type='button'
-                    onClick={() => handleSelect(student)}
+                    onClick={() => handleSelectStudent(student)}
                     aria-current={isSelected ? 'true' : undefined}
                     className={menuItemClass(isSelected)}
                   >
-                    <Avatar initials={student.initials} color={student.color} />
+                    <Avatar
+                      initials={student.initials}
+                      color={student.color}
+                      photoSrc={student.photoSrc}
+                    />
                     <span className='truncate'>
                       {student.name} (
                       {t('studentTrack', { track: student.track })})
