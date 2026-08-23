@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { Link, usePathname } from '@/i18n/navigation'
+import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { focusRing } from '@/lib/styles'
 import { CURRENT_ROLE_COOKIE, encodeInstructorRole } from '@/lib/currentRole'
 import LanguageSwitcher from './LanguageSwitcher'
@@ -52,14 +52,17 @@ const items: NavItem[] = [
 ]
 
 // No Users module yet (no auth) — falls back to this fixed placeholder if
-// the caller doesn't pass real fetched instructors (e.g. in Storybook/tests),
-// same approach as PLACEHOLDER_PROFILE in app/[locale]/me/layout.tsx.
+// the caller doesn't pass real fetched instructors (e.g. in Storybook/tests).
 const FALLBACK_INSTRUCTORS: Instructor[] = [
   {
     id: 'fallback-instructor',
     name: 'James Whitfield',
     initials: 'JW',
     color: 'var(--color-avatar-blue)',
+    email: '',
+    phone: '',
+    birthday: '',
+    info: '',
   },
 ]
 
@@ -74,11 +77,13 @@ export default function NavBar({
   onItemClick,
 }: Props) {
   const t = useTranslations('Nav')
+  const router = useRouter()
   const pathname = usePathname() ?? '/'
   const currentPath = activePath ?? pathname
-  // Jamie Torres is the site's default demo persona (app/[locale]/me/layout.tsx's
-  // PLACEHOLDER_PROFILE) — default the picker to her instead of the instructor,
-  // unless the server already resolved a role from the fr-current-role cookie.
+  // Jamie Torres is the site's default demo persona (see app/[locale]/me/
+  // layout.tsx's own fallback) — default the picker to her instead of the
+  // instructor, unless the server already resolved a role from the
+  // fr-current-role cookie.
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(
     () =>
       initialSelectedStudentId !== undefined
@@ -170,12 +175,16 @@ export default function NavBar({
             setSelectedStudentId(student.id)
             const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365
             document.cookie = `${CURRENT_ROLE_COOKIE}=${student.id}; path=/; max-age=${ONE_YEAR_SECONDS}; SameSite=Lax`
+            // Cookie-dependent server components (the /me profile card, the
+            // instructor gate, ...) only pick up the new value on a refresh.
+            router.refresh()
           }}
           onSelectInstructor={(instructor) => {
             setSelectedStudentId(null)
             setSelectedInstructorId(instructor.id)
             const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365
             document.cookie = `${CURRENT_ROLE_COOKIE}=${encodeInstructorRole(instructor.id)}; path=/; max-age=${ONE_YEAR_SECONDS}; SameSite=Lax`
+            router.refresh()
           }}
         />
         <NavClock />

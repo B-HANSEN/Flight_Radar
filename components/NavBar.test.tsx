@@ -15,6 +15,7 @@ type MockLinkProps = {
 }
 
 const mockUsePathname = vi.fn()
+const mockRouterRefresh = vi.fn()
 
 vi.mock('@/i18n/navigation', () => ({
   Link: ({
@@ -39,6 +40,7 @@ vi.mock('@/i18n/navigation', () => ({
     </a>
   ),
   usePathname: () => mockUsePathname(),
+  useRouter: () => ({ refresh: mockRouterRefresh }),
 }))
 
 function renderNavBar(props: ComponentProps<typeof NavBar> = {}) {
@@ -52,6 +54,7 @@ function renderNavBar(props: ComponentProps<typeof NavBar> = {}) {
 describe('NavBar', () => {
   beforeEach(() => {
     mockUsePathname.mockReturnValue('/')
+    mockRouterRefresh.mockClear()
   })
 
   it('renders the hamburger button, wordmark, and every nav item with translated labels and hrefs', () => {
@@ -172,12 +175,13 @@ describe('NavBar', () => {
     ).toHaveAttribute('aria-current', 'true')
 
     fireEvent.click(
-      within(panel).getByRole('button', { name: 'Alex Moreau (PPL student)' }),
+      within(panel).getByRole('button', { name: 'Alex Moreau (IR student)' }),
     )
 
     expect(
       screen.getByRole('button', { name: 'Alex Moreau' }),
     ).toBeInTheDocument()
+    expect(mockRouterRefresh).toHaveBeenCalledOnce()
   })
 
   it('hides the Scheduling nav item while a student is the current view', () => {
@@ -202,6 +206,7 @@ describe('NavBar', () => {
     expect(document.cookie).toContain(
       `fr-current-role=instructor:${DUMMY_INSTRUCTORS[0].id}`,
     )
+    expect(mockRouterRefresh).toHaveBeenCalledOnce()
   })
 
   it('lets picking the second instructor update the trigger and set an instructor-specific cookie', () => {
