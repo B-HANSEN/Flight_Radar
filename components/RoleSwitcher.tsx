@@ -16,6 +16,14 @@ type Props = {
   onSelectInstructor?: (instructor: Instructor) => void
 }
 
+function abbreviateName(name: string) {
+  const parts = name.trim().split(/\s+/)
+  if (parts.length < 2) return name
+  const firstInitial = parts[0].charAt(0).toUpperCase()
+  const lastName = parts[parts.length - 1]
+  return `${firstInitial}.${lastName}`
+}
+
 function menuItemClass(isSelected: boolean) {
   return `flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs font-semibold text-black-300 ${
     isSelected ? 'bg-black-100' : 'hover:bg-black-100/60'
@@ -118,6 +126,11 @@ export default function RoleSwitcher({
     : activeInstructor
       ? `${activeInstructor.name} · ${t('instructor')}`
       : ''
+  const triggerAbbreviated = selectedStudent
+    ? abbreviateName(selectedStudent.name)
+    : activeInstructor
+      ? abbreviateName(activeInstructor.name)
+      : ''
 
   return (
     <div ref={containerRef} className='relative'>
@@ -144,7 +157,8 @@ export default function RoleSwitcher({
           }
         />
         <span className='text-xs font-bold whitespace-nowrap text-black-300'>
-          {triggerLabel}
+          <span className='md:hidden'>{triggerAbbreviated}</span>
+          <span className='hidden md:inline'>{triggerLabel}</span>
         </span>
         <ChevronDown
           size={14}
@@ -154,7 +168,7 @@ export default function RoleSwitcher({
       </button>
 
       {open && (
-        <div className='absolute top-full right-0 z-10 mt-2 w-72 rounded-lg bg-white p-2 shadow-lg'>
+        <div className='absolute top-full right-0 z-10 mt-2 w-max max-w-[92vw] rounded-lg bg-white p-2 shadow-lg'>
           <div className='px-2 py-1.5 text-[10px] font-bold tracking-wider text-black-200 uppercase'>
             {t('switchView')}
           </div>
@@ -169,6 +183,7 @@ export default function RoleSwitcher({
                     type='button'
                     onClick={() => handleSelectInstructor(instructor)}
                     aria-current={isSelected ? 'true' : undefined}
+                    aria-label={`${instructor.name} (${t('instructor')})`}
                     className={menuItemClass(isSelected)}
                   >
                     <Avatar
@@ -177,7 +192,12 @@ export default function RoleSwitcher({
                       photoSrc={instructor.photoSrc}
                     />
                     <span className='truncate'>
-                      {instructor.name} ({t('instructor')})
+                      <span className='md:hidden'>
+                        {abbreviateName(instructor.name)}
+                      </span>
+                      <span className='hidden md:inline'>
+                        {instructor.name} ({t('instructor')})
+                      </span>
                     </span>
                   </button>
                 </li>
@@ -194,6 +214,7 @@ export default function RoleSwitcher({
                     type='button'
                     onClick={() => handleSelectStudent(student)}
                     aria-current={isSelected ? 'true' : undefined}
+                    aria-label={`${student.name} (${t('studentTrack', { track: student.track })})`}
                     className={menuItemClass(isSelected)}
                   >
                     <Avatar
@@ -202,8 +223,13 @@ export default function RoleSwitcher({
                       photoSrc={student.photoSrc}
                     />
                     <span className='truncate'>
-                      {student.name} (
-                      {t('studentTrack', { track: student.track })})
+                      <span className='md:hidden'>
+                        {abbreviateName(student.name)}
+                      </span>
+                      <span className='hidden md:inline'>
+                        {student.name} (
+                        {t('studentTrack', { track: student.track })})
+                      </span>
                     </span>
                   </button>
                 </li>

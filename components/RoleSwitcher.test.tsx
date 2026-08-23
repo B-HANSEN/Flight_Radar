@@ -190,6 +190,38 @@ describe('RoleSwitcher', () => {
     expect(screen.queryByText('Switch view')).not.toBeInTheDocument()
   })
 
+  it('renders an abbreviated trigger label alongside the full label, keeping the full text as the accessible name', () => {
+    renderRoleSwitcher()
+    const trigger = screen.getByRole('button', {
+      name: 'James Whitfield · Instructor',
+    })
+    expect(
+      within(trigger).getByText('J.Whitfield', { selector: 'span' }),
+    ).toBeInTheDocument()
+    expect(
+      within(trigger).getByText('James Whitfield · Instructor', {
+        selector: 'span',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('renders an abbreviated name alongside the full name/role text for each row, for narrow viewports', () => {
+    renderRoleSwitcher()
+    fireEvent.click(
+      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+    )
+
+    const panel = getPanel()
+    expect(
+      within(panel).getByText('J.Whitfield', { selector: 'span' }),
+    ).toBeInTheDocument()
+    expect(
+      within(panel).getByText(studentRowName(DUMMY_STUDENTS[0]), {
+        selector: 'span',
+      }),
+    ).toBeInTheDocument()
+  })
+
   it("renders an instructor's photo instead of initials when one is given", () => {
     renderRoleSwitcher()
     const trigger = screen.getByRole('button', {

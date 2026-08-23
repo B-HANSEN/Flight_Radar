@@ -59,7 +59,7 @@ const FALLBACK_INSTRUCTORS: Instructor[] = [
     id: 'fallback-instructor',
     name: 'James Whitfield',
     initials: 'JW',
-    color: '#1d4ed8',
+    color: 'var(--color-avatar-blue)',
   },
 ]
 
@@ -103,7 +103,7 @@ export default function NavBar({
         type='button'
         aria-label={t('menu')}
         onClick={onMenuClick}
-        className={`flex size-6 flex-none items-center justify-center ${focusRing}`}
+        className={`flex size-6 flex-none items-center justify-center ${collapsed ? '' : 'md:hidden'} ${focusRing}`}
       >
         <span className='flex h-4.5 w-6 flex-col justify-between'>
           <span className='h-[2.5px] rounded-xs bg-black-300' />

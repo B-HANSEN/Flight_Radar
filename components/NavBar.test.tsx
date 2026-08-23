@@ -119,6 +119,20 @@ describe('NavBar', () => {
     expect(list).not.toHaveClass('md:flex')
   })
 
+  it('hides the hamburger button at md and up when not collapsed', () => {
+    renderNavBar()
+    expect(screen.getByRole('button', { name: 'Menu' })).toHaveClass(
+      'md:hidden',
+    )
+  })
+
+  it('keeps the hamburger button visible at every breakpoint when collapsed', () => {
+    renderNavBar({ collapsed: true })
+    expect(screen.getByRole('button', { name: 'Menu' })).not.toHaveClass(
+      'md:hidden',
+    )
+  })
+
   it('calls onMenuClick when the hamburger button is clicked', () => {
     const onMenuClick = vi.fn()
     renderNavBar({ onMenuClick })
