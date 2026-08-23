@@ -23,10 +23,11 @@ export class EmergencyContact {
   @Prop({ required: true })
   phone!: string
 
-  // No Users module yet (no auth) — plain id for now, becomes a real
+  // A student or an instructor (previewing their own profile) — no Users
+  // module yet (no auth), so this is a plain id for now, becomes a real
   // ObjectId ref once the Users module exists.
   @Prop({ required: true })
-  studentId!: string
+  personId!: string
 }
 
 export const EmergencyContactSchema =

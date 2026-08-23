@@ -25,6 +25,18 @@ export class Instructor {
 
   @Prop({ required: true })
   photoSrc!: string
+
+  @Prop({ required: true })
+  email!: string
+
+  @Prop({ required: true })
+  phone!: string
+
+  @Prop({ required: true })
+  birthday!: string
+
+  @Prop({ required: true })
+  info!: string
 }
 
 export const InstructorSchema = SchemaFactory.createForClass(Instructor)

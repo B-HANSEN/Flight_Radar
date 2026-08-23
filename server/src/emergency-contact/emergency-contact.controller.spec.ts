@@ -9,16 +9,16 @@ describe('EmergencyContactController', () => {
     name: 'Jane Doe',
     relation: 'Sister',
     phone: '+34 600 987 654',
-    studentId: 'student-1',
+    personId: 'student-1',
   }
   const clearedEmergencyContact: EmergencyContact = {
     name: '',
     relation: '',
     phone: '',
-    studentId: 'student-1',
+    personId: 'student-1',
   }
   const emergencyContactService = {
-    findOne: jest.fn().mockResolvedValue(emergencyContact),
+    findByPerson: jest.fn().mockResolvedValue(emergencyContact),
     update: jest.fn().mockResolvedValue(emergencyContact),
     clear: jest.fn().mockResolvedValue(clearedEmergencyContact),
   }
@@ -34,23 +34,34 @@ describe('EmergencyContactController', () => {
     controller = app.get<EmergencyContactController>(EmergencyContactController)
   })
 
-  it('returns the emergency contact from the service', async () => {
-    await expect(controller.findOne()).resolves.toBe(emergencyContact)
-    expect(emergencyContactService.findOne).toHaveBeenCalled()
+  it('returns the emergency contact for the given person from the service', async () => {
+    await expect(controller.findOne('student-1')).resolves.toBe(
+      emergencyContact,
+    )
+    expect(emergencyContactService.findByPerson).toHaveBeenCalledWith(
+      'student-1',
+    )
   })
 
-  it('updates the emergency contact via the service', async () => {
+  it('updates the emergency contact for the given person via the service', async () => {
     const input = {
       name: 'Jane Doe',
       relation: 'Sister',
       phone: '+34 600 987 654',
     }
-    await expect(controller.update(input)).resolves.toBe(emergencyContact)
-    expect(emergencyContactService.update).toHaveBeenCalledWith(input)
+    await expect(controller.update('student-1', input)).resolves.toBe(
+      emergencyContact,
+    )
+    expect(emergencyContactService.update).toHaveBeenCalledWith(
+      'student-1',
+      input,
+    )
   })
 
-  it('clears the emergency contact via the service', async () => {
-    await expect(controller.clear()).resolves.toBe(clearedEmergencyContact)
-    expect(emergencyContactService.clear).toHaveBeenCalled()
+  it('clears the emergency contact for the given person via the service', async () => {
+    await expect(controller.clear('student-1')).resolves.toBe(
+      clearedEmergencyContact,
+    )
+    expect(emergencyContactService.clear).toHaveBeenCalledWith('student-1')
   })
 })

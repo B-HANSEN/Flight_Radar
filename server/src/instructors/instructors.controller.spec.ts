@@ -11,6 +11,10 @@ describe('InstructorsController', () => {
       initials: 'JW',
       color: '#0ea5e9',
       photoSrc: '/instructors/james-whitfield.webp',
+      email: 'james.whitfield@example.com',
+      phone: '+34 600 111 222',
+      birthday: '8 September 1985',
+      info: 'CFI · Since 2015',
     },
   ]
   const instructorsService = {

@@ -1233,8 +1233,12 @@ const students: Omit<Student, '_id'>[] = [
     name: 'Alex Moreau',
     initials: 'AM',
     color: 'var(--color-avatar-sky)',
-    track: 'PPL',
-    course: 'CPL Flight Phase',
+    track: 'IR',
+    course: 'IR Flight Phase',
+    email: 'alex.moreau@example.com',
+    phone: '+34 600 234 567',
+    birthday: '22 June 1998',
+    info: 'IR online · Q3 2025',
     photoSrc: '/students/alex-moreau.webp',
   },
   {
@@ -1243,8 +1247,12 @@ const students: Omit<Student, '_id'>[] = [
     color: 'var(--color-avatar-lime)',
     track: 'PPL',
     course: 'PPL Flight Phase',
+    email: 'jamie.torres@example.com',
+    phone: '+34 600 123 456',
+    birthday: '14 March 1994',
+    info: 'PPL online · Q1 2025',
     // Reuses the photo already used for her profile card sidebar —
-    // app/[locale]/me/layout.tsx's PLACEHOLDER_PROFILE.avatarSrc.
+    // app/[locale]/me/layout.tsx's default persona.
     photoSrc: '/me/jamie-torres.webp',
   },
   {
@@ -1253,6 +1261,10 @@ const students: Omit<Student, '_id'>[] = [
     color: 'var(--color-avatar-amber)',
     track: 'CPL',
     course: 'PPL Flight Phase',
+    email: 'priya.shah@example.com',
+    phone: '+34 600 345 678',
+    birthday: '5 November 1996',
+    info: 'CPL online · Q2 2025',
     photoSrc: '/students/priya-shah.webp',
   },
   {
@@ -1261,6 +1273,10 @@ const students: Omit<Student, '_id'>[] = [
     color: 'var(--color-avatar-purple)',
     track: 'PPL',
     course: 'PPL Flight Phase',
+    email: 'noah.becker@example.com',
+    phone: '+34 600 456 789',
+    birthday: '30 January 2000',
+    info: 'PPL online · Q4 2025',
     photoSrc: '/students/noah-becker.webp',
   },
 ]
@@ -1277,12 +1293,20 @@ const instructors: Omit<Instructor, '_id'>[] = [
     initials: 'JW',
     color: 'var(--color-avatar-blue)',
     photoSrc: '/instructors/james-whitfield.webp',
+    email: 'james.whitfield@example.com',
+    phone: '+34 600 111 222',
+    birthday: '8 September 1985',
+    info: 'CFI · Since 2015',
   },
   {
     name: 'Kate Ashford',
     initials: 'KA',
     color: 'var(--color-avatar-pink)',
     photoSrc: '/instructors/kate-ashford.webp',
+    email: 'kate.ashford@example.com',
+    phone: '+34 600 222 333',
+    birthday: '19 April 1990',
+    info: 'CFI · Since 2019',
   },
 ]
 
@@ -1553,11 +1577,66 @@ const courseProgress: Omit<CourseProgress, '_id'> = {
   studentId,
 }
 
-const emergencyContact: Omit<EmergencyContact, '_id'> = {
-  name: 'Jane Doe',
-  relation: 'Sister',
-  phone: '+34 600 987 654',
-  studentId,
+type PersonEmergencyContactSeed = {
+  personName: string
+  name: string
+  relation: string
+  phone: string
+}
+
+// One entry per student AND per instructor — the role switcher can preview
+// either, and /me's profile card shows whoever is currently active.
+const EMERGENCY_CONTACTS_BY_PERSON: PersonEmergencyContactSeed[] = [
+  {
+    personName: 'Alex Moreau',
+    name: 'Camille Moreau',
+    relation: 'Mother',
+    phone: '+34 600 876 543',
+  },
+  {
+    personName: 'Jamie Torres',
+    name: 'Jane Doe',
+    relation: 'Sister',
+    phone: '+34 600 987 654',
+  },
+  {
+    personName: 'Priya Shah',
+    name: 'Raj Shah',
+    relation: 'Father',
+    phone: '+34 600 765 432',
+  },
+  {
+    personName: 'Noah Becker',
+    name: 'Lena Becker',
+    relation: 'Sister',
+    phone: '+34 600 654 321',
+  },
+  {
+    personName: 'James Whitfield',
+    name: 'Susan Whitfield',
+    relation: 'Spouse',
+    phone: '+34 600 543 210',
+  },
+  {
+    personName: 'Kate Ashford',
+    name: 'Liam Ashford',
+    relation: 'Brother',
+    phone: '+34 600 432 109',
+  },
+]
+
+// Keyed to each student/instructor's real seeded _id (see personIdByName,
+// resolved after students and instructors are inserted) — replaces the old
+// single hardcoded-studentId placeholder now that /me profiles are wired to
+// whichever student or instructor is active in the role switcher, not just
+// one fixed demo persona.
+function buildEmergencyContacts(
+  personIdByName: Record<string, string>,
+): Omit<EmergencyContact, '_id'>[] {
+  return EMERGENCY_CONTACTS_BY_PERSON.map(({ personName, ...contact }) => ({
+    ...contact,
+    personId: personIdByName[personName],
+  }))
 }
 
 const calendarEvents: Omit<CalendarEvent, '_id'>[] = [
@@ -1870,15 +1949,26 @@ async function seed() {
 
   await seedMany(documentFolderModel, documentFolders, 'document folders')
 
-  if (onlyIfEmpty && (await emergencyContactModel.countDocuments()) > 0) {
-    console.log('Skipped emergency contact (already has data)')
+  let instructorDocs: { name: string; _id: { toString(): string } }[]
+  if (onlyIfEmpty && (await instructorModel.countDocuments()) > 0) {
+    console.log('Skipped instructors (already has data)')
+    instructorDocs = await instructorModel.find()
   } else {
-    await emergencyContactModel.deleteMany({})
-    await emergencyContactModel.insertOne(emergencyContact)
-    console.log('Seeded emergency contact')
+    await instructorModel.deleteMany({})
+    instructorDocs = await instructorModel.insertMany(instructors)
+    console.log(`Seeded ${instructors.length} instructors`)
   }
+
+  const instructorIdByName = Object.fromEntries(
+    instructorDocs.map((doc) => [doc.name, doc._id.toString()]),
+  )
+
+  const emergencyContacts = buildEmergencyContacts({
+    ...studentIdByName,
+    ...instructorIdByName,
+  })
+  await seedMany(emergencyContactModel, emergencyContacts, 'emergency contacts')
   await seedMany(flightEvaluationModel, flightEvaluations, 'flight evaluations')
-  await seedMany(instructorModel, instructors, 'instructors')
   await seedMany(logbookEntryModel, logbookEntries, 'logbook entries')
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
   await seedMany(bookingModel, bookings, 'bookings')

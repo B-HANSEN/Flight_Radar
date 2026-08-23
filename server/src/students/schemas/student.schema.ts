@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose'
 
 export type StudentDocument = HydratedDocument<Student>
 
-export type StudentTrack = 'PPL' | 'CPL'
+export type StudentTrack = 'PPL' | 'CPL' | 'IR'
 
 @Schema({
   toJSON: {
@@ -25,11 +25,23 @@ export class Student {
   @Prop({ required: true })
   color!: string
 
-  @Prop({ required: true, enum: ['PPL', 'CPL'] })
+  @Prop({ required: true, enum: ['PPL', 'CPL', 'IR'] })
   track!: StudentTrack
 
   @Prop({ required: true })
   course!: string
+
+  @Prop({ required: true })
+  email!: string
+
+  @Prop({ required: true })
+  phone!: string
+
+  @Prop({ required: true })
+  birthday!: string
+
+  @Prop({ required: true })
+  info!: string
 
   @Prop()
   photoSrc?: string

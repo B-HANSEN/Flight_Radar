@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Put } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Put, Query } from '@nestjs/common'
 import { EmergencyContactService } from './emergency-contact.service'
 import type { EmergencyContactInput } from './emergency-contact.service'
 
@@ -9,17 +9,20 @@ export class EmergencyContactController {
   ) {}
 
   @Get()
-  findOne() {
-    return this.emergencyContactService.findOne()
+  findOne(@Query('personId') personId: string) {
+    return this.emergencyContactService.findByPerson(personId)
   }
 
   @Put()
-  update(@Body() body: EmergencyContactInput) {
-    return this.emergencyContactService.update(body)
+  update(
+    @Query('personId') personId: string,
+    @Body() body: EmergencyContactInput,
+  ) {
+    return this.emergencyContactService.update(personId, body)
   }
 
   @Delete()
-  clear() {
-    return this.emergencyContactService.clear()
+  clear(@Query('personId') personId: string) {
+    return this.emergencyContactService.clear(personId)
   }
 }

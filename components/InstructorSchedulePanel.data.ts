@@ -4,7 +4,7 @@ export const DUMMY_INSTRUCTOR_STUDENTS: InstructorScheduleStudent[] = [
   {
     id: 'student-1',
     name: 'Alex Moreau',
-    course: 'CPL Flight Phase',
+    course: 'IR Flight Phase',
     slots: [
       { id: 'slot-1', day: 'Mon 24', time: '09:00 - 11:00' },
       { id: 'slot-2', day: 'Wed 26', time: '14:00 - 16:00' },

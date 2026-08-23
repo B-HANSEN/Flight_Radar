@@ -12,6 +12,10 @@ describe('StudentsController', () => {
       color: '#0ea5e9',
       track: 'PPL',
       course: 'CPL Flight Phase',
+      email: 'alex.moreau@example.com',
+      phone: '+34 600 234 567',
+      birthday: '22 June 1998',
+      info: 'CPL online · Q3 2025',
     },
   ]
   const schedule = [

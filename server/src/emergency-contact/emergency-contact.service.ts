@@ -19,33 +19,35 @@ export class EmergencyContactService {
     private readonly emergencyContactModel: Model<EmergencyContactDocument>,
   ) {}
 
-  findOne() {
-    return this.emergencyContactModel.findOne().exec()
-  }
-
-  async update(input: EmergencyContactInput) {
+  async findByPerson(personId: string) {
     const emergencyContact = await this.emergencyContactModel
-      .findOneAndUpdate({}, input, { new: true })
+      .findOne({ personId })
       .exec()
 
-    if (!emergencyContact) {
-      throw new NotFoundException('Emergency contact not found')
-    }
-
-    return emergencyContact
+    return emergencyContact ?? { name: '', relation: '', phone: '', personId }
   }
 
-  async clear() {
+  async update(personId: string, input: EmergencyContactInput) {
+    return this.emergencyContactModel
+      .findOneAndUpdate(
+        { personId },
+        { ...input, personId },
+        { new: true, upsert: true },
+      )
+      .exec()
+  }
+
+  async clear(personId: string) {
     const emergencyContact = await this.emergencyContactModel
       .findOneAndUpdate(
-        {},
+        { personId },
         { name: '', relation: '', phone: '' },
         { new: true },
       )
       .exec()
 
     if (!emergencyContact) {
-      throw new NotFoundException('Emergency contact not found')
+      throw new NotFoundException(`Emergency contact for ${personId} not found`)
     }
 
     return emergencyContact

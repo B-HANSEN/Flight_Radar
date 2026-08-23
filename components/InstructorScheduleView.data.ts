@@ -8,7 +8,7 @@ export const DUMMY_STUDENT_SCHEDULES: RawStudentSchedule[] = [
   {
     id: 'student-1',
     name: 'Alex Moreau',
-    course: 'CPL Flight Phase',
+    course: 'IR Flight Phase',
     slots: [
       {
         id: 'slot-1',
