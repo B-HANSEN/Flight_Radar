@@ -185,10 +185,12 @@
     "title": "Certificados"
   },
   "CertificateList": {
-    "current": "Certificados vigentes",
-    "archived": "Certificados archivados",
-    "noCurrent": "No hay certificados vigentes",
-    "noArchived": "No hay certificados archivados",
+    "licencesAndRatings": "Licencias y habilitaciones",
+    "noLicencesAndRatings": "No hay licencias ni habilitaciones",
+    "medical": "Certificados médicos",
+    "noMedical": "No hay certificados médicos",
+    "other": "Otros certificados",
+    "noOther": "No hay otros certificados",
     "issued": "Emitido",
     "renewed": "Renovado",
     "expiration": "Vencimiento",

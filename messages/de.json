@@ -185,10 +185,12 @@
     "title": "Zertifikate"
   },
   "CertificateList": {
-    "current": "Aktuelle Zertifikate",
-    "archived": "Archivierte Zertifikate",
-    "noCurrent": "Keine aktuellen Zertifikate",
-    "noArchived": "Keine archivierten Zertifikate",
+    "licencesAndRatings": "Lizenzen & Berechtigungen",
+    "noLicencesAndRatings": "Keine Lizenzen oder Berechtigungen",
+    "medical": "Medizinische Zertifikate",
+    "noMedical": "Keine medizinischen Zertifikate",
+    "other": "Sonstige Zertifikate",
+    "noOther": "Keine sonstigen Zertifikate",
     "issued": "Ausgestellt",
     "renewed": "Erneuert",
     "expiration": "Ablauf",

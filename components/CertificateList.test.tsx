@@ -7,14 +7,30 @@ import enMessages from '@/messages/en.json'
 const certificates: Certificate[] = [
   {
     id: 'cert-1',
-    name: 'Medical certificate class 2',
-    category: 'Certificates',
+    name: 'Private Pilot Licence (PPL)',
+    category: 'Licences',
     status: 'current',
-    issued: '12/03/2025',
-    expiration: '06/03/2027',
+    issued: '02/06/2024',
+    expiration: '—',
   },
   {
     id: 'cert-2',
+    name: 'Medical certificate class 2',
+    category: 'Medical',
+    status: 'current',
+    issued: '12/03/2025',
+    expiration: '12/03/2030',
+  },
+  {
+    id: 'cert-3',
+    name: 'Old medical certificate',
+    category: 'Medical',
+    status: 'archived',
+    issued: '10/03/2020',
+    expiration: '10/03/2025',
+  },
+  {
+    id: 'cert-4',
     name: 'Radiotelephony Certificate',
     category: 'Certificates',
     status: 'current',
@@ -22,14 +38,6 @@ const certificates: Certificate[] = [
     renewed: '18/09/2025',
     expiration: '18/09/2028',
     comment: 'Awaiting renewal confirmation',
-  },
-  {
-    id: 'cert-3',
-    name: 'Old medical certificate',
-    category: 'Certificates',
-    status: 'archived',
-    issued: '10/03/2023',
-    expiration: '06/03/2025',
   },
 ]
 
@@ -44,42 +52,47 @@ function renderList(
 }
 
 describe('CertificateList', () => {
-  it('groups certificates under current/archived headings and renders their details', () => {
+  it('groups certificates under licences/medical/other headings and renders their details', () => {
     renderList({ certificates })
 
-    const currentSection = screen
-      .getByRole('heading', { name: 'Current certificates' })
+    const licencesSection = screen
+      .getByRole('heading', { name: 'Licences & ratings' })
       .closest('section') as HTMLElement
-    const archivedSection = screen
-      .getByRole('heading', { name: 'Archived certificates' })
+    const medicalSection = screen
+      .getByRole('heading', { name: 'Medical certificates' })
+      .closest('section') as HTMLElement
+    const otherSection = screen
+      .getByRole('heading', { name: 'Other certificates' })
       .closest('section') as HTMLElement
 
     expect(
-      within(currentSection).getByText('Medical certificate class 2'),
+      within(licencesSection).getByText('Private Pilot Licence (PPL)'),
     ).toBeInTheDocument()
     expect(
-      within(currentSection).getByText('Radiotelephony Certificate'),
+      within(medicalSection).getByText('Medical certificate class 2'),
     ).toBeInTheDocument()
     expect(
-      within(archivedSection).getByText('Old medical certificate'),
+      within(medicalSection).getByText('Old medical certificate'),
     ).toBeInTheDocument()
     expect(
-      within(currentSection).queryByText('Old medical certificate'),
-    ).not.toBeInTheDocument()
+      within(otherSection).getByText('Radiotelephony Certificate'),
+    ).toBeInTheDocument()
 
-    expect(within(currentSection).getByText('18/09/2025')).toBeInTheDocument()
-    expect(within(currentSection).getAllByText('—').length).toBe(1)
+    expect(within(otherSection).getByText('18/09/2025')).toBeInTheDocument()
+    // Renewed + expiration both fall back to '—' for the PPL row.
+    expect(within(licencesSection).getAllByText('—').length).toBe(2)
 
     expect(
       screen.getByText('Awaiting renewal confirmation'),
     ).toBeInTheDocument()
   })
 
-  it('shows empty-state messages for both sections when no certificates are given', () => {
+  it('shows empty-state messages for all sections when no certificates are given', () => {
     renderList()
 
-    expect(screen.getByText('No current certificates')).toBeInTheDocument()
-    expect(screen.getByText('No archived certificates')).toBeInTheDocument()
+    expect(screen.getByText('No licences or ratings')).toBeInTheDocument()
+    expect(screen.getByText('No medical certificates')).toBeInTheDocument()
+    expect(screen.getByText('No other certificates')).toBeInTheDocument()
     expect(
       screen.queryByText('Awaiting renewal confirmation'),
     ).not.toBeInTheDocument()

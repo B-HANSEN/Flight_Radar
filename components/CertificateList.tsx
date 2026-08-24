@@ -26,14 +26,13 @@ function LabelValue({ label, value }: { label: string; value: string }) {
 
 function CertificateRow({
   certificate,
-  archived,
   onViewDocument,
 }: {
   certificate: Certificate
-  archived?: boolean
   onViewDocument: (certificate: Certificate) => void
 }) {
   const t = useTranslations('CertificateList')
+  const archived = certificate.status === 'archived'
   const Icon = archived ? Archive : Check
 
   return (
@@ -87,14 +86,12 @@ function CertificateSection({
   heading,
   emptyLabel,
   certificates,
-  archived,
   onViewDocument,
 }: {
   headingId: string
   heading: string
   emptyLabel: string
   certificates: Certificate[]
-  archived?: boolean
   onViewDocument: (certificate: Certificate) => void
 }) {
   return (
@@ -117,7 +114,6 @@ function CertificateSection({
               <CertificateRow
                 key={certificate.id}
                 certificate={certificate}
-                archived={archived}
                 onViewDocument={onViewDocument}
               />
             ))}
@@ -128,28 +124,46 @@ function CertificateSection({
   )
 }
 
+// Ratings (IR, ME, ...) are endorsements on a licence, so they're grouped
+// with Licences rather than with Certificates (medical, radiotelephony, FI).
+const LICENCE_OR_RATING_CATEGORIES = new Set(['Licences', 'Ratings'])
+
 export default function CertificateList({ certificates = [] }: Props) {
   const t = useTranslations('CertificateList')
   const [selectedCertificate, setSelectedCertificate] =
     useState<Certificate | null>(null)
-  const current = certificates.filter((cert) => cert.status === 'current')
-  const archived = certificates.filter((cert) => cert.status === 'archived')
+
+  const licencesAndRatings = certificates.filter((cert) =>
+    LICENCE_OR_RATING_CATEGORIES.has(cert.category),
+  )
+  const medical = certificates.filter((cert) => cert.category === 'Medical')
+  const other = certificates.filter(
+    (cert) =>
+      !LICENCE_OR_RATING_CATEGORIES.has(cert.category) &&
+      cert.category !== 'Medical',
+  )
 
   return (
     <div className='flex flex-col gap-9'>
       <CertificateSection
-        headingId='certificate-list-current-heading'
-        heading={t('current')}
-        emptyLabel={t('noCurrent')}
-        certificates={current}
+        headingId='certificate-list-licences-heading'
+        heading={t('licencesAndRatings')}
+        emptyLabel={t('noLicencesAndRatings')}
+        certificates={licencesAndRatings}
         onViewDocument={setSelectedCertificate}
       />
       <CertificateSection
-        headingId='certificate-list-archived-heading'
-        heading={t('archived')}
-        emptyLabel={t('noArchived')}
-        certificates={archived}
-        archived
+        headingId='certificate-list-medical-heading'
+        heading={t('medical')}
+        emptyLabel={t('noMedical')}
+        certificates={medical}
+        onViewDocument={setSelectedCertificate}
+      />
+      <CertificateSection
+        headingId='certificate-list-other-heading'
+        heading={t('other')}
+        emptyLabel={t('noOther')}
+        certificates={other}
         onViewDocument={setSelectedCertificate}
       />
       <CertificateDocumentModal
