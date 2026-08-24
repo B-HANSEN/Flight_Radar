@@ -12,11 +12,11 @@ describe('CertificatesController', () => {
       status: 'current',
       issued: '12/03/2025',
       expiration: '06/03/2027',
-      studentId: 'student-1',
+      personId: 'student-1',
     },
   ]
   const certificatesService = {
-    findAll: jest.fn().mockResolvedValue(certificates),
+    findByPerson: jest.fn().mockResolvedValue(certificates),
   }
 
   beforeEach(async () => {
@@ -31,7 +31,9 @@ describe('CertificatesController', () => {
   })
 
   it('returns the certificates from the service', async () => {
-    await expect(controller.findAll()).resolves.toBe(certificates)
-    expect(certificatesService.findAll).toHaveBeenCalled()
+    await expect(controller.findByPerson('student-1')).resolves.toBe(
+      certificates,
+    )
+    expect(certificatesService.findByPerson).toHaveBeenCalledWith('student-1')
   })
 })

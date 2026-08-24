@@ -10,7 +10,7 @@ export class CertificatesService {
     private readonly certificateModel: Model<CertificateDocument>,
   ) {}
 
-  findAll() {
-    return this.certificateModel.find().exec()
+  findByPerson(personId: string) {
+    return this.certificateModel.find({ personId }).exec()
   }
 }
