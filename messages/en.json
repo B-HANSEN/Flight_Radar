@@ -335,8 +335,7 @@
     "aircraft": "Aircraft",
     "fileCount": "{count, plural, one {# file} other {# files}}",
     "noFolders": "No folders available.",
-    "noFiles": "No files in this folder.",
-    "downloadLabel": "Download {file}"
+    "noFiles": "No files in this folder."
   },
   "AvailabilityPage": {
     "title": "Availability"

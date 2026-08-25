@@ -65,19 +65,6 @@ describe('DocumentsBrowser', () => {
     expect(screen.getByText('EC-ERV')).toHaveAttribute('aria-current', 'page')
   })
 
-  it('links each file to its download endpoint', () => {
-    renderBrowser()
-
-    fireEvent.click(screen.getByRole('button', { name: /EC-ERV/ }))
-
-    const link = screen.getByRole('link', { name: 'Download Checklist.pdf' })
-    expect(link).toHaveAttribute(
-      'href',
-      expect.stringContaining('/documents/ec-erv/files/Checklist.pdf'),
-    )
-    expect(link).toHaveAttribute('download', 'Checklist.pdf')
-  })
-
   it('shows an empty-state message for a folder with no files', () => {
     renderBrowser()
 

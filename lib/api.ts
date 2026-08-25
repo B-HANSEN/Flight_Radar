@@ -24,17 +24,15 @@ async function fetchWithRetry(
   }
 }
 
-// Builds a full API URL for cases that need the raw address rather than a
-// fetchApi() JSON round-trip — e.g. a direct <a href> download link.
-export function apiUrl(path: string): string {
-  return `${process.env.NEXT_PUBLIC_API_URL}${path}`
-}
-
 export async function fetchApi<T>(
   path: string,
   options: RequestInit = { cache: 'no-store' },
 ): Promise<T> {
-  const res = await fetchWithRetry(apiUrl(path), options, MAX_ATTEMPTS)
+  const res = await fetchWithRetry(
+    `${process.env.NEXT_PUBLIC_API_URL}${path}`,
+    options,
+    MAX_ATTEMPTS,
+  )
 
   if (!res.ok) {
     throw new Error(`API request to ${path} failed with status ${res.status}`)

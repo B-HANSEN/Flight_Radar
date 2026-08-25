@@ -17,7 +17,6 @@ import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
 import { NewsItem } from '../news/schemas/news-item.schema'
 import { ScheduleBlock } from '../schedule/schemas/schedule-block.schema'
 import { Student } from '../students/schemas/student.schema'
-import { DocumentKind, generateDocumentFile } from './document-files'
 
 // Single demo student — no Users module / auth yet, see TODO-BE-setup.md.
 const studentId = 'student-1'
@@ -1769,92 +1768,54 @@ function buildInstructorAvailabilityEntries(
   }))
 }
 
-// Filename + extension + kind — generateDocumentFile (in document-files.ts)
-// fills in real PDF/XLSX bytes matching each at seed time.
-const documentFolderTemplates: {
-  name: string
-  files: { name: string; ext: 'PDF' | 'XLSX'; kind: DocumentKind }[]
-}[] = [
+const documentFolders: Omit<DocumentFolder, '_id'>[] = [
   {
     name: 'EC-ERV',
     files: [
-      { name: 'Weight and Balance.pdf', ext: 'PDF', kind: 'weight-balance' },
-      { name: 'Weight and Balance.xlsx', ext: 'XLSX', kind: 'weight-balance' },
-      { name: 'Normal Checklist.pdf', ext: 'PDF', kind: 'checklist' },
+      { name: '11_CARGA Y CENTRADO C152 EC-ERV v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado C152 EC-ERV v1.0.xlsx', ext: 'XLSX' },
+      { name: '12_WEIGHT AND BALANCE C152 EC-ERV v.2.pdf', ext: 'PDF' },
+      { name: '12_Weight and balance C152 EC-ERV v1.0.xlsx', ext: 'XLSX' },
+      { name: '21_CHECKLIST C152 v1.6 ESP EC-ERV A5.pdf', ext: 'PDF' },
       {
-        name: 'Emergency Checklist.pdf',
+        name: '22_CHECKLIST EMERGENCIA C152 E v1.4 ESP EC-ERV A5.pdf',
         ext: 'PDF',
-        kind: 'emergency-checklist',
       },
+      { name: '23_CHECKLIST C152 v1.6 ENG EC-ERV A5.pdf', ext: 'PDF' },
     ],
   },
   {
     name: 'EC-EXL',
     files: [
-      { name: 'Weight and Balance.pdf', ext: 'PDF', kind: 'weight-balance' },
-      { name: 'Weight and Balance.xlsx', ext: 'XLSX', kind: 'weight-balance' },
-      { name: 'Normal Checklist.pdf', ext: 'PDF', kind: 'checklist' },
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado v1.0.xlsx', ext: 'XLSX' },
+      { name: '21_CHECKLIST v1.6 ESP A5.pdf', ext: 'PDF' },
     ],
   },
   {
     name: 'EC-FED',
     files: [
-      { name: 'Weight and Balance.pdf', ext: 'PDF', kind: 'weight-balance' },
-      { name: 'Weight and Balance.xlsx', ext: 'XLSX', kind: 'weight-balance' },
-      { name: 'Normal Checklist.pdf', ext: 'PDF', kind: 'checklist' },
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado v1.0.xlsx', ext: 'XLSX' },
+      { name: '21_CHECKLIST v1.6 ESP A5.pdf', ext: 'PDF' },
     ],
   },
   {
     name: 'EC-DNX',
     files: [
-      { name: 'Weight and Balance.pdf', ext: 'PDF', kind: 'weight-balance' },
-      { name: 'Weight and Balance.xlsx', ext: 'XLSX', kind: 'weight-balance' },
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '11_Carga y centrado v1.0.xlsx', ext: 'XLSX' },
     ],
   },
   {
     name: 'EC-FGI',
     files: [
-      { name: 'Weight and Balance.pdf', ext: 'PDF', kind: 'weight-balance' },
-      { name: 'Normal Checklist.pdf', ext: 'PDF', kind: 'checklist' },
-      {
-        name: 'Emergency Checklist.pdf',
-        ext: 'PDF',
-        kind: 'emergency-checklist',
-      },
+      { name: '11_CARGA Y CENTRADO v.2.pdf', ext: 'PDF' },
+      { name: '21_CHECKLIST v1.6 ESP A5.pdf', ext: 'PDF' },
+      { name: '22_CHECKLIST EMERGENCIA v1.4 ESP A5.pdf', ext: 'PDF' },
     ],
   },
 ]
-
-// A couple of the folders above (EC-DNX, EC-FGI) reference tails outside
-// the seeded fleet — default those to the school's most common trainer.
-const DEFAULT_DOCUMENT_AIRCRAFT_TYPE = 'Cessna 152'
-
-async function buildDocumentFolders(): Promise<Omit<DocumentFolder, '_id'>[]> {
-  const aircraftTypeByArcid = Object.fromEntries(
-    aircraft.map((ac) => [ac.arcid, ac.type]),
-  )
-
-  return Promise.all(
-    documentFolderTemplates.map(async (folder) => ({
-      name: folder.name,
-      files: await Promise.all(
-        folder.files.map((file) =>
-          generateDocumentFile(
-            folder.name,
-            aircraftTypeByArcid[folder.name] ?? DEFAULT_DOCUMENT_AIRCRAFT_TYPE,
-            file.kind,
-            file.ext,
-          ).then((generated) => ({
-            name: file.name,
-            ext: file.ext,
-            mimeType: generated.mimeType,
-            data: generated.data,
-          })),
-        ),
-      ),
-    })),
-  )
-}
 
 const courseProgress: Omit<CourseProgress, '_id'> = {
   overallActualHours: '26:02',
@@ -2331,7 +2292,6 @@ async function seed() {
     console.log('Seeded course progress')
   }
 
-  const documentFolders = await buildDocumentFolders()
   await seedMany(documentFolderModel, documentFolders, 'document folders')
 
   let instructorDocs: { name: string; _id: { toString(): string } }[]

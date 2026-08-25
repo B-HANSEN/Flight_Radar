@@ -335,8 +335,7 @@
     "aircraft": "Aeronaves",
     "fileCount": "{count, plural, one {# archivo} other {# archivos}}",
     "noFolders": "No hay carpetas disponibles.",
-    "noFiles": "No hay archivos en esta carpeta.",
-    "downloadLabel": "Descargar {file}"
+    "noFiles": "No hay archivos en esta carpeta."
   },
   "AvailabilityPage": {
     "title": "Disponibilidad"

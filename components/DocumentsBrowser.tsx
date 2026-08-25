@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { ChevronRight, Folder } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { focusRing } from '@/lib/styles'
-import { apiUrl } from '@/lib/api'
 import type { DocumentFolder } from './DocumentsBrowser.types'
 
 type Props = {
@@ -89,27 +88,18 @@ export default function DocumentsBrowser({ folders = [] }: Props) {
             openFolder.files.map((file) => (
               <li
                 key={file.name}
-                className='border-b border-black-200 last:border-b-0'
+                className='flex cursor-pointer items-center gap-3.5 border-b border-black-200 px-6 py-3 last:border-b-0'
               >
-                <a
-                  href={apiUrl(
-                    `/documents/${openFolder.id}/files/${encodeURIComponent(file.name)}`,
-                  )}
-                  download={file.name}
-                  aria-label={t('downloadLabel', { file: file.name })}
-                  className={`flex items-center gap-3.5 px-6 py-3 hover:bg-black-100/20 ${focusRing}`}
+                <span
+                  className={`flex size-8 flex-none items-center justify-center rounded-md ${EXT_COLORS[file.ext] ?? 'bg-black-200'}`}
                 >
-                  <span
-                    className={`flex size-8 flex-none items-center justify-center rounded-md ${EXT_COLORS[file.ext] ?? 'bg-black-200'}`}
-                  >
-                    <span className='font-primary text-[9px] font-bold tracking-wide text-white'>
-                      {file.ext}
-                    </span>
+                  <span className='font-primary text-[9px] font-bold tracking-wide text-white'>
+                    {file.ext}
                   </span>
-                  <span className='font-secondary text-sm text-black-300'>
-                    {file.name}
-                  </span>
-                </a>
+                </span>
+                <span className='font-secondary text-sm text-black-300'>
+                  {file.name}
+                </span>
               </li>
             ))
           )}
