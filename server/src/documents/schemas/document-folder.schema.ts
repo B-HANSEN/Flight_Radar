@@ -10,6 +10,15 @@ export class DocumentFile {
 
   @Prop({ required: true })
   ext!: string
+
+  @Prop({ required: true })
+  mimeType!: string
+
+  // The file's raw bytes. Excluded from the folder-listing query
+  // (DocumentsService.findAll) so /documents stays light — only fetched
+  // when a specific file is downloaded.
+  @Prop({ required: true })
+  data!: Buffer
 }
 
 const DocumentFileSchema = SchemaFactory.createForClass(DocumentFile)
