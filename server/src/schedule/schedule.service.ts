@@ -4,6 +4,7 @@ import { Model } from 'mongoose'
 import {
   ScheduleBlock,
   ScheduleBlockDocument,
+  ScheduleBlockKind,
 } from './schemas/schedule-block.schema'
 import { Booking, BookingDocument } from '../bookings/schemas/booking.schema'
 import { Aircraft, AircraftDocument } from '../aircraft/schemas/aircraft.schema'
@@ -20,6 +21,19 @@ export type BookingScheduleBlock = {
   start: number
   end: number
   date: string
+}
+
+export type BusyAircraft = {
+  aircraftId: string
+  kind: ScheduleBlockKind
+  label: string
+}
+
+// Booking/availability form times are "HH:MM"; returns fractional
+// hours-of-day, comparable against a block's start/end.
+function parseHours(time: string): number {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours + minutes / 60
 }
 
 const DMY_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/
@@ -43,11 +57,7 @@ function parseTimeRange(time: string): { start: number; end: number } | null {
   const [startStr, endStr] = time.split(' - ')
   if (!startStr || !endStr) return null
 
-  const toHours = (value: string) => {
-    const [hours, minutes] = value.split(':').map(Number)
-    return hours + minutes / 60
-  }
-  return { start: toHours(startStr), end: toHours(endStr) }
+  return { start: parseHours(startStr), end: parseHours(endStr) }
 }
 
 @Injectable()
@@ -111,5 +121,39 @@ export class ScheduleService {
     }
 
     return [...blocks, ...bookingBlocks]
+  }
+
+  // Aircraft that are unavailable for a given date/time window — covers both
+  // real bookings (dated) and the seeded maintenance/hold/reserved demo
+  // blocks (undated, recurring every day), reusing findAll()'s merged data
+  // instead of re-deriving the overlap math. Only 'day' period blocks are
+  // considered: 'week' period blocks are the same data duplicated across
+  // every weekday purely for the week-view UI (see seed.ts).
+  async findBusyAircraft(
+    date: string,
+    startTime: string,
+    endTime: string,
+  ): Promise<BusyAircraft[]> {
+    const blocks = await this.findAll()
+    const startHour = parseHours(startTime)
+    const endHour = parseHours(endTime)
+
+    const busyByAircraftId = new Map<string, BusyAircraft>()
+    for (const block of blocks) {
+      if (block.period !== 'day') continue
+      const blockDate = 'date' in block ? block.date : undefined
+      if (blockDate !== undefined && blockDate !== date) continue
+      if (!(startHour < block.end && block.start < endHour)) continue
+
+      if (!busyByAircraftId.has(block.aircraftId)) {
+        busyByAircraftId.set(block.aircraftId, {
+          aircraftId: block.aircraftId,
+          kind: block.kind,
+          label: block.label,
+        })
+      }
+    }
+
+    return [...busyByAircraftId.values()]
   }
 }

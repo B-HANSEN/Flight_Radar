@@ -1,11 +1,18 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import ScheduleFlightModal from './ScheduleFlightModal'
 import {
   DUMMY_SCHEDULE_FLIGHT_AIRCRAFT,
   DUMMY_SCHEDULE_FLIGHT_TARGET,
 } from './ScheduleFlightModal.data'
+import { fetchApi } from '@/lib/api'
 import enMessages from '@/messages/en.json'
+
+vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
+
+beforeEach(() => {
+  vi.mocked(fetchApi).mockReset().mockResolvedValue([])
+})
 
 function renderModal(
   props: Partial<React.ComponentProps<typeof ScheduleFlightModal>> = {},
@@ -165,6 +172,69 @@ describe('ScheduleFlightModal', () => {
       lessonType: 'Dual instruction',
       comments: 'Cover steep turns',
     })
+  })
+
+  it('fetches busy aircraft for the target date and time window', async () => {
+    renderModal()
+
+    await waitFor(() =>
+      expect(fetchApi).toHaveBeenCalledWith(
+        '/schedule/availability?date=2026-08-24&startTime=09%3A00&endTime=11%3A00',
+      ),
+    )
+  })
+
+  it('greys out a busy tail with a reason and blocks selecting it', async () => {
+    vi.mocked(fetchApi).mockResolvedValue([
+      { aircraftId: 'ec-dkn', kind: 'reserved', label: 'Reserved 09:00–12:00' },
+    ])
+    renderModal()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    const busyTail = await screen.findByRole('button', { name: 'EC-DKN' })
+
+    expect(busyTail).toHaveAttribute('aria-disabled', 'true')
+    expect(busyTail).toHaveAttribute(
+      'title',
+      'Unavailable — Reserved 09:00–12:00',
+    )
+    const describedById = busyTail.getAttribute('aria-describedby')
+    expect(describedById).toBeTruthy()
+    expect(document.getElementById(describedById as string)).toHaveTextContent(
+      'Unavailable — Reserved 09:00–12:00',
+    )
+
+    fireEvent.click(busyTail)
+    expect(busyTail).toHaveAttribute('aria-pressed', 'false')
+    expect(
+      screen.getByText('Pick a time, an aircraft and a lesson type'),
+    ).toBeInTheDocument()
+  })
+
+  it('deselects a tail that becomes busy after the time window is narrowed', async () => {
+    vi.mocked(fetchApi).mockResolvedValue([])
+    renderModal()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    const tail = await screen.findByRole('button', { name: 'EC-DKN' })
+    fireEvent.click(tail)
+    fireEvent.click(screen.getByRole('button', { name: 'Dual instruction' }))
+    expect(screen.getByRole('button', { name: 'Confirm lesson' })).toBeEnabled()
+
+    vi.mocked(fetchApi).mockResolvedValue([
+      { aircraftId: 'ec-dkn', kind: 'reserved', label: 'Reserved' },
+    ])
+    fireEvent.click(screen.getByRole('button', { name: 'Start time: 09:00' }))
+    pickTime("9 o'clock", '30 minutes')
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Confirm lesson' }),
+      ).toBeDisabled(),
+    )
+    expect(
+      screen.getByText('Pick a time, an aircraft and a lesson type'),
+    ).toBeInTheDocument()
   })
 
   it('calls onClose when the close button is clicked', () => {

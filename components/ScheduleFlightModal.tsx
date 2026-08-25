@@ -1,13 +1,15 @@
 'use client'
 
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Clock } from 'lucide-react'
 import Modal from './Modal'
 import TimePickerModal from './TimePickerModal'
 import { focusRing } from '@/lib/styles'
+import { fetchApi } from '@/lib/api'
 import type { ScheduleAircraft } from './ScheduleBoard.types'
 import type {
+  AircraftAvailability,
   ScheduleFlightConfirmInput,
   ScheduleFlightTarget,
 } from './ScheduleFlightModal.types'
@@ -31,11 +33,19 @@ const LESSON_TYPE_KEYS = [
 const timeTriggerClassName =
   'flex cursor-pointer items-center gap-1.5 rounded-lg border border-black-200 px-3 py-2'
 
-const pillClassName = (active: boolean) =>
-  `cursor-pointer rounded-full border px-3.5 py-2 font-primary text-xs font-bold ${focusRing} ${
-    active
-      ? 'border-black-300 bg-black-300 text-white'
-      : 'border-black-100 bg-white text-black-200'
+const pillClassName = (active: boolean, disabled = false) =>
+  `rounded-full border px-3.5 py-2 font-primary text-xs font-bold ${focusRing} ${
+    disabled
+      ? // Solid black-100/black-300 (not a translucent tint) to keep text
+        // contrast at ~10:1 — the same pairing ScheduleBoard uses for its
+        // 'reserved' blocks — rather than the ~2.6:1 a translucent grey-on-grey
+        // tint would give.
+        'cursor-not-allowed border-black-100 bg-black-100 text-black-300'
+      : `cursor-pointer ${
+          active
+            ? 'border-black-300 bg-black-300 text-white'
+            : 'border-black-100 bg-white text-black-200'
+        }`
   }`
 
 function uniqueAircraftTypes(aircraft: ScheduleAircraft[]): string[] {
@@ -71,12 +81,54 @@ export default function ScheduleFlightModal({
   const [endTime, setEndTime] = useState(target?.slot.endTime ?? '')
   const [timePickerTarget, setTimePickerTarget] = useState<TimeTarget>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [fetchedBusyAircraft, setFetchedBusyAircraft] = useState<
+    AircraftAvailability[]
+  >([])
+
+  const targetDate = target?.slot.date
+  const isValidWindow = targetDate !== undefined && startTime < endTime
+  // Stale results from an invalid (e.g. mid-edit) window are never shown,
+  // without needing an effect to reset state back to empty.
+  const busyAircraft = isValidWindow ? fetchedBusyAircraft : []
+
+  // Refetch whenever the date or the (possibly narrowed) time window
+  // changes, so busy tails stay accurate as the instructor adjusts the slot.
+  useEffect(() => {
+    if (!isValidWindow) return
+
+    let cancelled = false
+    const params = new URLSearchParams({
+      date: targetDate,
+      startTime,
+      endTime,
+    })
+
+    fetchApi<AircraftAvailability[]>(`/schedule/availability?${params}`)
+      .then((busy) => {
+        if (!cancelled) setFetchedBusyAircraft(Array.isArray(busy) ? busy : [])
+      })
+      .catch(() => {
+        if (!cancelled) setFetchedBusyAircraft([])
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isValidWindow, targetDate, startTime, endTime])
 
   const aircraftTypes = uniqueAircraftTypes(aircraft)
   const tailsForSelectedType = aircraft.filter(
     (ac) => ac.type === selectedAircraftType,
   )
-  const selectedAircraft = aircraft.find((a) => a.id === selectedAircraftId)
+  const busyAircraftById = new Map(
+    busyAircraft.map((busy) => [busy.aircraftId, busy]),
+  )
+  // A tail the instructor already picked can turn busy under them if they
+  // then narrow the time window — treat it as unselected rather than
+  // leaving a conflicting tail silently selected.
+  const selectedAircraft = busyAircraftById.has(selectedAircraftId)
+    ? undefined
+    : aircraft.find((a) => a.id === selectedAircraftId)
   const selectedLessonTypeKey = LESSON_TYPE_KEYS.find(
     ([value]) => value === selectedLessonType,
   )?.[1]
@@ -264,17 +316,43 @@ export default function ScheduleFlightModal({
                 {t('tailNumberLegend')}
               </legend>
               <div className='flex flex-wrap gap-2'>
-                {tailsForSelectedType.map((option) => (
-                  <button
-                    key={option.id}
-                    type='button'
-                    onClick={() => setSelectedAircraftId(option.id)}
-                    aria-pressed={selectedAircraftId === option.id}
-                    className={pillClassName(selectedAircraftId === option.id)}
-                  >
-                    {option.arcid}
-                  </button>
-                ))}
+                {tailsForSelectedType.map((option) => {
+                  const busy = busyAircraftById.get(option.id)
+                  const isSelected = selectedAircraft?.id === option.id
+                  const reasonId = `${formId}-tail-${option.id}-reason`
+                  return (
+                    <div key={option.id} className='contents'>
+                      <button
+                        type='button'
+                        onClick={() => {
+                          if (!busy) setSelectedAircraftId(option.id)
+                        }}
+                        aria-pressed={isSelected}
+                        aria-disabled={busy !== undefined}
+                        aria-describedby={busy ? reasonId : undefined}
+                        title={
+                          busy
+                            ? t('tailUnavailableReason', { reason: busy.label })
+                            : undefined
+                        }
+                        className={pillClassName(
+                          isSelected,
+                          busy !== undefined,
+                        )}
+                      >
+                        {option.arcid}
+                      </button>
+                      {busy && (
+                        // title alone isn't reliably exposed to assistive
+                        // tech or touch users — this is the reason a screen
+                        // reader actually announces on focus.
+                        <span id={reasonId} className='sr-only'>
+                          {t('tailUnavailableReason', { reason: busy.label })}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </fieldset>
           )}

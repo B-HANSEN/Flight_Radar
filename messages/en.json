@@ -467,6 +467,7 @@
     "availableWindowHint": "Student is available {start} – {end}",
     "aircraftTypeLegend": "Aircraft type",
     "tailNumberLegend": "Tail number",
+    "tailUnavailableReason": "Unavailable — {reason}",
     "lessonTypeLegend": "Lesson type",
     "lessonTypeDual": "Dual instruction",
     "lessonTypeSolo": "Solo supervised",

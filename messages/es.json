@@ -467,6 +467,7 @@
     "availableWindowHint": "El alumno está disponible {start} – {end}",
     "aircraftTypeLegend": "Tipo de avión",
     "tailNumberLegend": "Matrícula",
+    "tailUnavailableReason": "No disponible — {reason}",
     "lessonTypeLegend": "Tipo de lección",
     "lessonTypeDual": "Instrucción dual",
     "lessonTypeSolo": "Solo supervisado",

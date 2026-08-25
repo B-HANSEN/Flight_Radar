@@ -28,7 +28,7 @@ function renderView(
 }
 
 beforeEach(() => {
-  vi.mocked(fetchApi).mockReset()
+  vi.mocked(fetchApi).mockReset().mockResolvedValue([])
 })
 
 describe('InstructorScheduleView', () => {
@@ -117,9 +117,11 @@ describe('InstructorScheduleView', () => {
         ? { ...student, slots: student.slots.slice(1) }
         : student,
     )
-    vi.mocked(fetchApi)
-      .mockResolvedValueOnce({ id: 'booking-1' })
-      .mockResolvedValueOnce(refreshedSchedules)
+    vi.mocked(fetchApi).mockImplementation(async (path) => {
+      if (path === '/bookings') return { id: 'booking-1' }
+      if (path === '/students/schedule') return refreshedSchedules
+      return []
+    })
     renderView()
 
     fireEvent.click(screen.getByRole('button', { name: /Alex Moreau/ }))
@@ -135,7 +137,7 @@ describe('InstructorScheduleView', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirm lesson' }))
 
     expect(await screen.findByText('Flight scheduled')).toBeInTheDocument()
-    expect(fetchApi).toHaveBeenNthCalledWith(1, '/bookings', {
+    expect(fetchApi).toHaveBeenCalledWith('/bookings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -149,7 +151,7 @@ describe('InstructorScheduleView', () => {
       }),
       cache: 'no-store',
     })
-    expect(fetchApi).toHaveBeenNthCalledWith(2, '/students/schedule', {
+    expect(fetchApi).toHaveBeenCalledWith('/students/schedule', {
       cache: 'no-store',
     })
     expect(
@@ -162,9 +164,11 @@ describe('InstructorScheduleView', () => {
   })
 
   it('still treats the booking as successful when only the post-booking refetch fails', async () => {
-    vi.mocked(fetchApi)
-      .mockResolvedValueOnce({ id: 'booking-1' })
-      .mockRejectedValueOnce(new Error('network error'))
+    vi.mocked(fetchApi).mockImplementation(async (path) => {
+      if (path === '/bookings') return { id: 'booking-1' }
+      if (path === '/students/schedule') throw new Error('network error')
+      return []
+    })
     renderView()
 
     fireEvent.click(screen.getByRole('button', { name: /Alex Moreau/ }))

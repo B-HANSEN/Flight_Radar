@@ -467,6 +467,7 @@
     "availableWindowHint": "Flugschüler ist verfügbar {start} – {end}",
     "aircraftTypeLegend": "Flugzeugtyp",
     "tailNumberLegend": "Kennzeichen",
+    "tailUnavailableReason": "Nicht verfügbar — {reason}",
     "lessonTypeLegend": "Unterrichtsart",
     "lessonTypeDual": "Fluglehrerbegleitung",
     "lessonTypeSolo": "Betreuter Alleinflug",

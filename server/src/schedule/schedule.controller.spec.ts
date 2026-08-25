@@ -15,7 +15,17 @@ describe('ScheduleController', () => {
       end: 12,
     },
   ]
-  const scheduleService = { findAll: jest.fn().mockResolvedValue(blocks) }
+  const busyAircraft = [
+    {
+      aircraftId: '64f0000000000000000000a1',
+      kind: 'reserved',
+      label: 'Reserved 09:00–12:00',
+    },
+  ]
+  const scheduleService = {
+    findAll: jest.fn().mockResolvedValue(blocks),
+    findBusyAircraft: jest.fn().mockResolvedValue(busyAircraft),
+  }
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -29,5 +39,16 @@ describe('ScheduleController', () => {
   it('returns the schedule blocks from the service', async () => {
     await expect(controller.findAll()).resolves.toBe(blocks)
     expect(scheduleService.findAll).toHaveBeenCalled()
+  })
+
+  it('returns busy aircraft for a date/time window from the service', async () => {
+    await expect(
+      controller.findAvailability('2026-08-24', '09:00', '11:00'),
+    ).resolves.toBe(busyAircraft)
+    expect(scheduleService.findBusyAircraft).toHaveBeenCalledWith(
+      '2026-08-24',
+      '09:00',
+      '11:00',
+    )
   })
 })

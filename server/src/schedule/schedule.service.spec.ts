@@ -96,6 +96,70 @@ describe('ScheduleService', () => {
     })
   })
 
+  describe('findBusyAircraft', () => {
+    it('flags an aircraft with a recurring demo block overlapping the window', async () => {
+      const result = await service.findBusyAircraft(
+        '2026-08-24',
+        '10:00',
+        '11:00',
+      )
+
+      expect(result).toEqual([
+        {
+          aircraftId: 'aircraft-1',
+          kind: 'unavailable',
+          label: 'Not available',
+        },
+      ])
+    })
+
+    it('ignores a demo block that does not overlap the requested time', async () => {
+      const result = await service.findBusyAircraft(
+        '2026-08-24',
+        '15:00',
+        '16:00',
+      )
+
+      expect(result).toEqual([])
+    })
+
+    it('flags an aircraft with a real booking only on the booked date', async () => {
+      bookingModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([
+          {
+            _id: { toString: () => 'booking-1' },
+            type: 'Dual instruction',
+            date: '24/08/2026',
+            tail: 'EC-DKN',
+            person: 'Alex Moreau',
+            time: '13:00 - 14:30',
+            studentId: 'student-1',
+          },
+        ]),
+      })
+
+      const onDate = await service.findBusyAircraft(
+        '2026-08-24',
+        '13:30',
+        '14:00',
+      )
+      expect(onDate).toContainEqual({
+        aircraftId: 'aircraft-2',
+        kind: 'reserved',
+        label: 'Dual instruction · Alex Moreau',
+      })
+
+      const otherDate = await service.findBusyAircraft(
+        '2026-08-25',
+        '13:30',
+        '14:00',
+      )
+      expect(otherDate).not.toContainEqual(
+        expect.objectContaining({ aircraftId: 'aircraft-2' }),
+      )
+    })
+  })
+
   it('skips a booking whose aircraft tail is not in the fleet', async () => {
     bookingModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue([
