@@ -2286,7 +2286,7 @@ async function seed() {
   const studentModel = app.get<Model<Student>>(getModelToken(Student.name))
   await seedMany(calendarEventModel, calendarEvents, 'calendar events')
 
-  let aircraftDocs
+  let aircraftDocs: { arcid: string; _id: { toString(): string } }[]
   if (onlyIfEmpty && (await aircraftModel.countDocuments()) > 0) {
     console.log('Skipped aircraft (already has data)')
     aircraftDocs = await aircraftModel.find()
