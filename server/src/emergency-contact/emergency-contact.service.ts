@@ -32,7 +32,7 @@ export class EmergencyContactService {
       .findOneAndUpdate(
         { personId },
         { ...input, personId },
-        { new: true, upsert: true },
+        { returnDocument: 'after', upsert: true },
       )
       .exec()
   }
@@ -42,7 +42,7 @@ export class EmergencyContactService {
       .findOneAndUpdate(
         { personId },
         { name: '', relation: '', phone: '' },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .exec()
 

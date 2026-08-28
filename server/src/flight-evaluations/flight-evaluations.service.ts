@@ -19,7 +19,7 @@ export class FlightEvaluationsService {
 
   async sign(id: string) {
     const evaluation = await this.flightEvaluationModel
-      .findByIdAndUpdate(id, { signed: true }, { new: true })
+      .findByIdAndUpdate(id, { signed: true }, { returnDocument: 'after' })
       .exec()
 
     if (!evaluation) {

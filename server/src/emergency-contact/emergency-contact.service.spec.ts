@@ -77,7 +77,7 @@ describe('EmergencyContactService', () => {
     expect(emergencyContactModel.findOneAndUpdate).toHaveBeenCalledWith(
       { personId: 'student-1' },
       { ...input, personId: 'student-1' },
-      { new: true, upsert: true },
+      { returnDocument: 'after', upsert: true },
     )
   })
 
@@ -96,7 +96,7 @@ describe('EmergencyContactService', () => {
     expect(emergencyContactModel.findOneAndUpdate).toHaveBeenCalledWith(
       { personId: 'student-1' },
       { name: '', relation: '', phone: '' },
-      { new: true },
+      { returnDocument: 'after' },
     )
   })
 

@@ -49,7 +49,7 @@ export class AvailabilityService {
 
   async update(id: string, input: UpdateAvailabilityEntryInput) {
     const entry = await this.availabilityEntryModel
-      .findByIdAndUpdate(id, input, { new: true })
+      .findByIdAndUpdate(id, input, { returnDocument: 'after' })
       .exec()
 
     if (!entry) {
