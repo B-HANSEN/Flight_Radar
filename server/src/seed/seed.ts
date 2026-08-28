@@ -17,6 +17,7 @@ import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
 import { NewsItem } from '../news/schemas/news-item.schema'
 import { ScheduleBlock } from '../schedule/schemas/schedule-block.schema'
 import { Student } from '../students/schemas/student.schema'
+import { toDisplayDate } from '../common/date'
 import { DocumentKind, generateDocumentFile } from './document-files'
 
 // Single demo student — no Users module / auth yet, see TODO-BE-setup.md.
@@ -1016,7 +1017,15 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
   },
 ]
 
-const bookings: Omit<Booking, '_id'>[] = [
+// `person` here already holds the instructor's abbreviated name (a
+// pre-existing quirk of this legacy demo data — BookingsService.create
+// stores the student's name there instead, see toDisplayDate's callers);
+// `instructorName` is the full name needed to resolve a real instructorId.
+type LegacyBookingSeed = Omit<Booking, '_id' | 'instructorId'> & {
+  instructorName: string
+}
+
+const bookings: LegacyBookingSeed[] = [
   {
     type: 'Instruction',
     date: '15/08/2026',
@@ -1024,6 +1033,7 @@ const bookings: Omit<Booking, '_id'>[] = [
     person: 'J. Whitfield',
     time: '10:00 - 11:30',
     studentId,
+    instructorName: 'James Whitfield',
   },
   {
     type: 'Instruction',
@@ -1032,6 +1042,7 @@ const bookings: Omit<Booking, '_id'>[] = [
     person: 'K. Ashford',
     time: '15:00 - 17:00',
     studentId,
+    instructorName: 'Kate Ashford',
   },
   {
     type: 'Instruction',
@@ -1040,6 +1051,7 @@ const bookings: Omit<Booking, '_id'>[] = [
     person: 'J. Whitfield',
     time: '09:00 - 10:30',
     studentId,
+    instructorName: 'James Whitfield',
   },
   {
     type: 'Instruction',
@@ -1048,8 +1060,19 @@ const bookings: Omit<Booking, '_id'>[] = [
     person: 'J. Whitfield',
     time: '13:00 - 14:30',
     studentId,
+    instructorName: 'James Whitfield',
   },
 ]
+
+function withInstructorId(
+  entries: LegacyBookingSeed[],
+  instructorIdByName: Record<string, string>,
+): Omit<Booking, '_id'>[] {
+  return entries.map(({ instructorName, ...entry }) => ({
+    ...entry,
+    instructorId: instructorIdByName[instructorName],
+  }))
+}
 
 // Flight evaluations double as the source of the "missing signatures"
 // shown on the homepage: 3847780, 3956214 and 4041369 are unsigned, and
@@ -1644,7 +1667,8 @@ const instructors: Omit<Instructor, '_id'>[] = [
     email: 'james.whitfield@example.com',
     phone: '+34 600 111 222',
     birthday: '8 September 1985',
-    info: 'CFI · Since 2015',
+    info: 'Chief Flight Instructor · Since 2015',
+    isChief: true,
   },
   {
     name: 'Kate Ashford',
@@ -1654,7 +1678,7 @@ const instructors: Omit<Instructor, '_id'>[] = [
     email: 'kate.ashford@example.com',
     phone: '+34 600 222 333',
     birthday: '19 April 1990',
-    info: 'CFI · Since 2019',
+    info: 'Deputy Chief Flight Instructor · Since 2019',
   },
 ]
 
@@ -1750,6 +1774,66 @@ const INSTRUCTOR_AVAILABILITY_SLOTS: InstructorAvailabilitySlot[] = [
     startTime: '14:00',
     endTime: '17:00',
   },
+
+  // Further into September, so the instructor view has open slots to
+  // schedule against for the rest of the month too, not just its first
+  // week. Priya still has none — see the comment above.
+  {
+    studentName: 'Alex Moreau',
+    onDate: '09/09/2026',
+    startTime: '09:00',
+    endTime: '11:00',
+  },
+  {
+    studentName: 'Alex Moreau',
+    onDate: '16/09/2026',
+    startTime: '13:00',
+    endTime: '16:00',
+  },
+  {
+    studentName: 'Alex Moreau',
+    onDate: '23/09/2026',
+    startTime: '10:00',
+    endTime: '12:00',
+  },
+
+  {
+    studentName: 'Jamie Torres',
+    onDate: '10/09/2026',
+    startTime: '08:00',
+    endTime: '10:00',
+  },
+  {
+    studentName: 'Jamie Torres',
+    onDate: '17/09/2026',
+    startTime: '14:00',
+    endTime: '16:00',
+  },
+  {
+    studentName: 'Jamie Torres',
+    onDate: '24/09/2026',
+    startTime: '09:00',
+    endTime: '11:00',
+  },
+
+  {
+    studentName: 'Noah Becker',
+    onDate: '11/09/2026',
+    startTime: '09:00',
+    endTime: '10:00',
+  },
+  {
+    studentName: 'Noah Becker',
+    onDate: '18/09/2026',
+    startTime: '15:00',
+    endTime: '17:00',
+  },
+  {
+    studentName: 'Noah Becker',
+    onDate: '26/09/2026',
+    startTime: '10:00',
+    endTime: '13:00',
+  },
 ]
 
 function buildInstructorAvailabilityEntries(
@@ -1767,6 +1851,203 @@ function buildInstructorAvailabilityEntries(
     recurrenceMode: 'everyday',
     studentId: studentIdByName[slot.studentName],
   }))
+}
+
+// Real per-student September bookings — distinct from the `bookings`/
+// `calendarEvents` arrays above (which are all keyed to the hardcoded
+// single-demo-persona placeholder `studentId`, see line 23) — these feed
+// the scheduling modal's "already scheduled that day" list and buffer check
+// (GET /schedule/student-flights), which need a real per-student id to
+// query against. Kept clear of each other by at least the 90 min buffer
+// BookingsService.create now enforces.
+type StudentFlightSeed = {
+  studentName: string
+  instructorName: string
+  date: string // ISO, matches CalendarEvent.date
+  startTime: string
+  endTime: string
+  tail: string
+  lessonType: string
+}
+
+const SEPTEMBER_STUDENT_FLIGHTS: StudentFlightSeed[] = [
+  {
+    studentName: 'Alex Moreau',
+    instructorName: 'James Whitfield',
+    date: '2026-09-03',
+    startTime: '09:00',
+    endTime: '11:00',
+    tail: 'EC-ERV',
+    lessonType: 'Dual instruction',
+  },
+  {
+    studentName: 'Alex Moreau',
+    instructorName: 'James Whitfield',
+    date: '2026-09-03',
+    startTime: '13:00',
+    endTime: '14:30',
+    tail: 'EC-DMC',
+    lessonType: 'Checkride prep',
+  },
+  {
+    studentName: 'Alex Moreau',
+    instructorName: 'James Whitfield',
+    date: '2026-09-10',
+    startTime: '10:00',
+    endTime: '12:00',
+    tail: 'EC-ERV',
+    lessonType: 'Dual instruction',
+  },
+  {
+    studentName: 'Alex Moreau',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-17',
+    startTime: '08:00',
+    endTime: '10:00',
+    tail: 'EC-DRV',
+    lessonType: 'Solo supervised',
+  },
+  {
+    studentName: 'Alex Moreau',
+    instructorName: 'James Whitfield',
+    date: '2026-09-24',
+    startTime: '14:00',
+    endTime: '16:00',
+    tail: 'EC-ERV',
+    lessonType: 'Dual instruction',
+  },
+
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-04',
+    startTime: '08:00',
+    endTime: '09:30',
+    tail: 'EC-JTJ',
+    lessonType: 'Dual instruction',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-11',
+    startTime: '09:00',
+    endTime: '10:00',
+    tail: 'EC-JOB',
+    lessonType: 'Solo supervised',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-11',
+    startTime: '13:00',
+    endTime: '14:00',
+    tail: 'EC-JTJ',
+    lessonType: 'Checkride prep',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-18',
+    startTime: '15:00',
+    endTime: '16:30',
+    tail: 'EC-JOB',
+    lessonType: 'Dual instruction',
+  },
+
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'James Whitfield',
+    date: '2026-09-08',
+    startTime: '09:00',
+    endTime: '11:30',
+    tail: 'EC-KOP',
+    lessonType: 'Dual instruction',
+  },
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'James Whitfield',
+    date: '2026-09-15',
+    startTime: '13:00',
+    endTime: '15:00',
+    tail: 'EC-KOQ',
+    lessonType: 'Checkride prep',
+  },
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-22',
+    startTime: '10:00',
+    endTime: '12:00',
+    tail: 'EC-KOP',
+    lessonType: 'Solo supervised',
+  },
+
+  {
+    studentName: 'Noah Becker',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-05',
+    startTime: '11:00',
+    endTime: '12:30',
+    tail: 'EC-JPY',
+    lessonType: 'Dual instruction',
+  },
+  {
+    studentName: 'Noah Becker',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-12',
+    startTime: '09:00',
+    endTime: '10:00',
+    tail: 'EC-CZZ',
+    lessonType: 'Solo supervised',
+  },
+  {
+    studentName: 'Noah Becker',
+    instructorName: 'James Whitfield',
+    date: '2026-09-19',
+    startTime: '14:00',
+    endTime: '15:30',
+    tail: 'EC-JPY',
+    lessonType: 'Dual instruction',
+  },
+]
+
+function buildSeptemberStudentFlights(
+  studentIdByName: Record<string, string>,
+  instructorIdByName: Record<string, string>,
+): {
+  bookings: Omit<Booking, '_id'>[]
+  calendarEvents: Omit<CalendarEvent, '_id'>[]
+} {
+  const bookings: Omit<Booking, '_id'>[] = []
+  const calendarEvents: Omit<CalendarEvent, '_id'>[] = []
+
+  for (const flight of SEPTEMBER_STUDENT_FLIGHTS) {
+    const flightStudentId = studentIdByName[flight.studentName]
+    const flightInstructorId = instructorIdByName[flight.instructorName]
+    if (!flightStudentId || !flightInstructorId) continue
+    const time = `${flight.startTime} - ${flight.endTime}`
+
+    bookings.push({
+      type: flight.lessonType,
+      date: toDisplayDate(flight.date),
+      tail: flight.tail,
+      person: flight.studentName,
+      time,
+      studentId: flightStudentId,
+      instructorId: flightInstructorId,
+    })
+
+    calendarEvents.push({
+      type: 'booking',
+      date: flight.date,
+      time,
+      tailNumber: flight.tail,
+      flightLines: [`${flight.lessonType} · ${flight.tail}`],
+      studentId: flightStudentId,
+    })
+  }
+
+  return { bookings, calendarEvents }
 }
 
 // Filename + extension + kind — generateDocumentFile (in document-files.ts)
@@ -2284,7 +2565,6 @@ async function seed() {
     getModelToken(ScheduleBlock.name),
   )
   const studentModel = app.get<Model<Student>>(getModelToken(Student.name))
-  await seedMany(calendarEventModel, calendarEvents, 'calendar events')
 
   let aircraftDocs: { arcid: string; _id: { toString(): string } }[]
   if (onlyIfEmpty && (await aircraftModel.countDocuments()) > 0) {
@@ -2315,24 +2595,6 @@ async function seed() {
   const studentIdByName = Object.fromEntries(
     studentDocs.map((doc) => [doc.name, doc._id.toString()]),
   )
-  const instructorAvailabilityEntries =
-    buildInstructorAvailabilityEntries(studentIdByName)
-
-  await seedMany(
-    availabilityEntryModel,
-    [...availabilityEntries, ...instructorAvailabilityEntries],
-    'availability entries',
-  )
-  if (onlyIfEmpty && (await courseProgressModel.countDocuments()) > 0) {
-    console.log('Skipped course progress (already has data)')
-  } else {
-    await courseProgressModel.deleteMany({})
-    await courseProgressModel.insertOne(courseProgress)
-    console.log('Seeded course progress')
-  }
-
-  const documentFolders = await buildDocumentFolders()
-  await seedMany(documentFolderModel, documentFolders, 'document folders')
 
   let instructorDocs: { name: string; _id: { toString(): string } }[]
   if (onlyIfEmpty && (await instructorModel.countDocuments()) > 0) {
@@ -2348,6 +2610,34 @@ async function seed() {
     instructorDocs.map((doc) => [doc.name, doc._id.toString()]),
   )
 
+  const instructorAvailabilityEntries =
+    buildInstructorAvailabilityEntries(studentIdByName)
+  const septemberFlights = buildSeptemberStudentFlights(
+    studentIdByName,
+    instructorIdByName,
+  )
+
+  await seedMany(
+    availabilityEntryModel,
+    [...availabilityEntries, ...instructorAvailabilityEntries],
+    'availability entries',
+  )
+  await seedMany(
+    calendarEventModel,
+    [...calendarEvents, ...septemberFlights.calendarEvents],
+    'calendar events',
+  )
+  if (onlyIfEmpty && (await courseProgressModel.countDocuments()) > 0) {
+    console.log('Skipped course progress (already has data)')
+  } else {
+    await courseProgressModel.deleteMany({})
+    await courseProgressModel.insertOne(courseProgress)
+    console.log('Seeded course progress')
+  }
+
+  const documentFolders = await buildDocumentFolders()
+  await seedMany(documentFolderModel, documentFolders, 'document folders')
+
   const personIdByName = { ...studentIdByName, ...instructorIdByName }
 
   const emergencyContacts = buildEmergencyContacts(personIdByName)
@@ -2357,7 +2647,14 @@ async function seed() {
   await seedMany(flightEvaluationModel, flightEvaluations, 'flight evaluations')
   await seedMany(logbookEntryModel, logbookEntries, 'logbook entries')
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
-  await seedMany(bookingModel, bookings, 'bookings')
+  await seedMany(
+    bookingModel,
+    [
+      ...withInstructorId(bookings, instructorIdByName),
+      ...septemberFlights.bookings,
+    ],
+    'bookings',
+  )
   await seedMany(newsItemModel, newsItems, 'news items')
 
   await app.close()
