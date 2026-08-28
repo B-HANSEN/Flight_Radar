@@ -8,6 +8,10 @@ import {
 } from './schemas/schedule-block.schema'
 import { Booking, BookingSchema } from '../bookings/schemas/booking.schema'
 import { Aircraft, AircraftSchema } from '../aircraft/schemas/aircraft.schema'
+import {
+  Instructor,
+  InstructorSchema,
+} from '../instructors/schemas/instructor.schema'
 
 @Module({
   imports: [
@@ -15,6 +19,7 @@ import { Aircraft, AircraftSchema } from '../aircraft/schemas/aircraft.schema'
       { name: ScheduleBlock.name, schema: ScheduleBlockSchema },
       { name: Booking.name, schema: BookingSchema },
       { name: Aircraft.name, schema: AircraftSchema },
+      { name: Instructor.name, schema: InstructorSchema },
     ]),
   ],
   controllers: [ScheduleController],

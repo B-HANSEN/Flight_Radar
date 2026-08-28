@@ -9,13 +9,19 @@ import { Booking, BookingDocument } from './schemas/booking.schema'
 import { Student, StudentDocument } from '../students/schemas/student.schema'
 import { Aircraft, AircraftDocument } from '../aircraft/schemas/aircraft.schema'
 import {
+  Instructor,
+  InstructorDocument,
+} from '../instructors/schemas/instructor.schema'
+import {
   CalendarEvent,
   CalendarEventDocument,
 } from '../agenda/schemas/calendar-event.schema'
+import { toDisplayDate } from '../common/date'
 
 export type CreateBookingInput = {
   studentId: string
   aircraftId: string
+  instructorId: string
   date: string
   startTime: string
   endTime: string
@@ -23,12 +29,14 @@ export type CreateBookingInput = {
   comments?: string
 }
 
-// Booking.date is a display string in DD/MM/YYYY (see seed.ts), while
-// CalendarEvent.date — the field students.service.ts actually reads to
-// subtract booked windows from availability — is ISO YYYY-MM-DD.
-function toDisplayDate(isoDate: string): string {
-  const [year, month, day] = isoDate.split('-')
-  return `${day}/${month}/${year}`
+// A student can't be dropped into a second lesson right after the first —
+// briefing/debriefing needs a gap. Aircraft turnaround isn't held to the
+// same rule (that's a pure overlap check below).
+const STUDENT_BUFFER_MINUTES = 90
+
+function toMinutes(time: string): number {
+  const [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
 }
 
 // event.time is "HH:MM - HH:MM"; splits back into comparable HH:MM strings.
@@ -48,6 +56,8 @@ export class BookingsService {
     private readonly aircraftModel: Model<AircraftDocument>,
     @InjectModel(CalendarEvent.name)
     private readonly calendarEventModel: Model<CalendarEventDocument>,
+    @InjectModel(Instructor.name)
+    private readonly instructorModel: Model<InstructorDocument>,
   ) {}
 
   findAll() {
@@ -55,9 +65,10 @@ export class BookingsService {
   }
 
   async create(input: CreateBookingInput) {
-    const [student, aircraft] = await Promise.all([
+    const [student, aircraft, instructor] = await Promise.all([
       this.studentModel.findById(input.studentId).exec(),
       this.aircraftModel.findById(input.aircraftId).exec(),
+      this.instructorModel.findById(input.instructorId).exec(),
     ])
 
     if (!student) {
@@ -65,6 +76,9 @@ export class BookingsService {
     }
     if (!aircraft) {
       throw new NotFoundException(`Aircraft ${input.aircraftId} not found`)
+    }
+    if (!instructor) {
+      throw new NotFoundException(`Instructor ${input.instructorId} not found`)
     }
 
     const sameDayBookings = await this.calendarEventModel
@@ -85,9 +99,21 @@ export class BookingsService {
       )
     })
 
-    if (overlapping.some((event) => event.studentId === input.studentId)) {
+    const inputStart = toMinutes(input.startTime)
+    const inputEnd = toMinutes(input.endTime)
+    const violatesStudentBuffer = sameDayBookings.some((event) => {
+      if (event.studentId !== input.studentId) return false
+      const range = event.time ? parseTimeRange(event.time) : null
+      if (range === null) return false
+      return (
+        inputStart < toMinutes(range.end) + STUDENT_BUFFER_MINUTES &&
+        toMinutes(range.start) < inputEnd + STUDENT_BUFFER_MINUTES
+      )
+    })
+
+    if (violatesStudentBuffer) {
       throw new ConflictException(
-        `Student ${input.studentId} already has a booking overlapping ${input.startTime}-${input.endTime} on ${input.date}`,
+        `Student ${input.studentId} needs a ${STUDENT_BUFFER_MINUTES} min buffer around ${input.startTime}-${input.endTime} on ${input.date}`,
       )
     }
     if (overlapping.some((event) => event.tailNumber === aircraft.arcid)) {
@@ -114,6 +140,7 @@ export class BookingsService {
       person: student.name,
       time,
       studentId: input.studentId,
+      instructorId: input.instructorId,
     })
   }
 }

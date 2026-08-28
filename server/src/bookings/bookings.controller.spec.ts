@@ -13,6 +13,7 @@ describe('BookingsController', () => {
       person: 'J. Whitfield',
       time: '10:00 - 11:30',
       studentId: 'student-1',
+      instructorId: 'instructor-1',
     },
   ]
   const bookingsService = {
@@ -38,6 +39,7 @@ describe('BookingsController', () => {
     const input = {
       studentId: 'student-1',
       aircraftId: 'aircraft-1',
+      instructorId: 'instructor-1',
       date: '2026-08-27',
       startTime: '09:00',
       endTime: '11:00',

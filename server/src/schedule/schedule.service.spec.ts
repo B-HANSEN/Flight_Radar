@@ -4,6 +4,7 @@ import { ScheduleService } from './schedule.service'
 import { ScheduleBlock } from './schemas/schedule-block.schema'
 import { Booking } from '../bookings/schemas/booking.schema'
 import { Aircraft } from '../aircraft/schemas/aircraft.schema'
+import { Instructor } from '../instructors/schemas/instructor.schema'
 
 describe('ScheduleService', () => {
   let service: ScheduleService
@@ -22,6 +23,7 @@ describe('ScheduleService', () => {
   const scheduleBlockModel = { find: jest.fn() }
   const bookingModel = { find: jest.fn() }
   const aircraftModel = { find: jest.fn() }
+  const instructorModel = { find: jest.fn() }
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -34,6 +36,9 @@ describe('ScheduleService', () => {
     aircraftModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue(aircraft),
     })
+    instructorModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([]),
+    })
 
     const app: TestingModule = await Test.createTestingModule({
       providers: [
@@ -44,6 +49,10 @@ describe('ScheduleService', () => {
         },
         { provide: getModelToken(Booking.name), useValue: bookingModel },
         { provide: getModelToken(Aircraft.name), useValue: aircraftModel },
+        {
+          provide: getModelToken(Instructor.name),
+          useValue: instructorModel,
+        },
       ],
     }).compile()
 
@@ -157,6 +166,105 @@ describe('ScheduleService', () => {
       expect(otherDate).not.toContainEqual(
         expect.objectContaining({ aircraftId: 'aircraft-2' }),
       )
+    })
+  })
+
+  describe('findStudentFlights', () => {
+    it("returns a student's bookings on the given date, with the instructor's name in the label", async () => {
+      bookingModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([
+          {
+            _id: { toString: () => 'booking-1' },
+            type: 'Dual instruction',
+            date: '24/08/2026',
+            tail: 'EC-DKN',
+            person: 'Alex Moreau',
+            time: '13:00 - 14:30',
+            studentId: 'student-1',
+            instructorId: 'instructor-1',
+          },
+        ]),
+      })
+      instructorModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([
+          {
+            _id: { toString: () => 'instructor-1' },
+            name: 'James Whitfield',
+          },
+        ]),
+      })
+
+      const result = await service.findStudentFlights('student-1', '2026-08-24')
+
+      expect(bookingModel.find).toHaveBeenCalledWith({
+        studentId: 'student-1',
+        date: '24/08/2026',
+      })
+      expect(result).toEqual([
+        {
+          id: 'booking-1',
+          startTime: '13:00',
+          endTime: '14:30',
+          label: 'Dual instruction · EC-DKN · James Whitfield',
+        },
+      ])
+    })
+
+    it('omits the instructor name from the label when the instructor cannot be resolved', async () => {
+      bookingModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([
+          {
+            _id: { toString: () => 'booking-1' },
+            type: 'Dual instruction',
+            date: '24/08/2026',
+            tail: 'EC-DKN',
+            time: '13:00 - 14:30',
+            studentId: 'student-1',
+            instructorId: 'unknown-instructor',
+          },
+        ]),
+      })
+
+      const result = await service.findStudentFlights('student-1', '2026-08-24')
+
+      expect(result).toEqual([
+        {
+          id: 'booking-1',
+          startTime: '13:00',
+          endTime: '14:30',
+          label: 'Dual instruction · EC-DKN',
+        },
+      ])
+    })
+
+    it('sorts multiple flights by start time', async () => {
+      bookingModel.find.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([
+          {
+            _id: { toString: () => 'booking-2' },
+            type: 'Checkride prep',
+            date: '24/08/2026',
+            tail: 'EC-DMC',
+            time: '15:00 - 16:00',
+            studentId: 'student-1',
+          },
+          {
+            _id: { toString: () => 'booking-1' },
+            type: 'Dual instruction',
+            date: '24/08/2026',
+            tail: 'EC-DKN',
+            time: '13:00 - 14:30',
+            studentId: 'student-1',
+          },
+        ]),
+      })
+
+      const result = await service.findStudentFlights('student-1', '2026-08-24')
+
+      expect(result.map((flight) => flight.id)).toEqual([
+        'booking-1',
+        'booking-2',
+      ])
     })
   })
 

@@ -22,9 +22,18 @@ describe('ScheduleController', () => {
       label: 'Reserved 09:00–12:00',
     },
   ]
+  const studentFlights = [
+    {
+      id: 'booking-1',
+      startTime: '13:00',
+      endTime: '14:30',
+      label: 'Dual instruction · EC-DKN',
+    },
+  ]
   const scheduleService = {
     findAll: jest.fn().mockResolvedValue(blocks),
     findBusyAircraft: jest.fn().mockResolvedValue(busyAircraft),
+    findStudentFlights: jest.fn().mockResolvedValue(studentFlights),
   }
 
   beforeEach(async () => {
@@ -49,6 +58,16 @@ describe('ScheduleController', () => {
       '2026-08-24',
       '09:00',
       '11:00',
+    )
+  })
+
+  it("returns a student's already-scheduled flights for a date from the service", async () => {
+    await expect(
+      controller.findStudentFlights('student-1', '2026-08-24'),
+    ).resolves.toBe(studentFlights)
+    expect(scheduleService.findStudentFlights).toHaveBeenCalledWith(
+      'student-1',
+      '2026-08-24',
     )
   })
 })

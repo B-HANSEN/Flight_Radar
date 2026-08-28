@@ -18,4 +18,12 @@ export class ScheduleController {
   ) {
     return this.scheduleService.findBusyAircraft(date, startTime, endTime)
   }
+
+  @Get('student-flights')
+  findStudentFlights(
+    @Query('studentId') studentId: string,
+    @Query('date') date: string,
+  ) {
+    return this.scheduleService.findStudentFlights(studentId, date)
+  }
 }

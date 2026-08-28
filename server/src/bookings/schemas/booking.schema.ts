@@ -33,6 +33,11 @@ export class Booking {
   // ObjectId ref once the Users module exists.
   @Prop({ required: true })
   studentId!: string
+
+  // Same plain-id convention as studentId — which instructor is assigned
+  // to teach this lesson (see ScheduleFlightModal's instructor picker).
+  @Prop({ required: true })
+  instructorId!: string
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking)

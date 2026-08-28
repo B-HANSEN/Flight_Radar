@@ -8,6 +8,11 @@ import {
 } from './schemas/schedule-block.schema'
 import { Booking, BookingDocument } from '../bookings/schemas/booking.schema'
 import { Aircraft, AircraftDocument } from '../aircraft/schemas/aircraft.schema'
+import {
+  Instructor,
+  InstructorDocument,
+} from '../instructors/schemas/instructor.schema'
+import { toDisplayDate, toISODate } from '../common/date'
 
 // A real booking rendered as a reserved block. Unlike the seeded
 // ScheduleBlock docs (which recur on every day/week with no date of their
@@ -29,21 +34,20 @@ export type BusyAircraft = {
   label: string
 }
 
+// A student's already-booked flight that day, shown in the scheduling modal
+// so the instructor can see it before picking a new time.
+export type StudentFlight = {
+  id: string
+  startTime: string
+  endTime: string
+  label: string
+}
+
 // Booking/availability form times are "HH:MM"; returns fractional
 // hours-of-day, comparable against a block's start/end.
 function parseHours(time: string): number {
   const [hours, minutes] = time.split(':').map(Number)
   return hours + minutes / 60
-}
-
-const DMY_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/
-
-// Booking.date is DD/MM/YYYY (see bookings.service.ts's toDisplayDate).
-function toISODate(displayDate: string): string | null {
-  const match = displayDate.match(DMY_PATTERN)
-  if (!match) return null
-  const [, day, month, year] = match
-  return `${year}-${month}-${day}`
 }
 
 // Monday = 0 ... Sunday = 6, matching ScheduleBoard's Monday-start weeks.
@@ -69,6 +73,8 @@ export class ScheduleService {
     private readonly bookingModel: Model<BookingDocument>,
     @InjectModel(Aircraft.name)
     private readonly aircraftModel: Model<AircraftDocument>,
+    @InjectModel(Instructor.name)
+    private readonly instructorModel: Model<InstructorDocument>,
   ) {}
 
   async findAll() {
@@ -155,5 +161,45 @@ export class ScheduleService {
     }
 
     return [...busyByAircraftId.values()]
+  }
+
+  // A given student's already-booked flights on a given date, so the
+  // scheduling modal can show them and enforce the 90 min buffer between
+  // flights (see BookingsService.create).
+  async findStudentFlights(
+    studentId: string,
+    date: string,
+  ): Promise<StudentFlight[]> {
+    const [bookings, instructors] = await Promise.all([
+      this.bookingModel.find({ studentId, date: toDisplayDate(date) }).exec(),
+      this.instructorModel.find().exec(),
+    ])
+
+    const instructorNameById = new Map(
+      instructors.map((instructor) => [
+        (instructor._id as { toString(): string }).toString(),
+        instructor.name,
+      ]),
+    )
+
+    const flights: StudentFlight[] = []
+    for (const booking of bookings) {
+      const [startTime, endTime] = booking.time.split(' - ')
+      if (!startTime || !endTime) continue
+
+      const instructorName = instructorNameById.get(booking.instructorId)
+      const label = instructorName
+        ? `${booking.type} · ${booking.tail} · ${instructorName}`
+        : `${booking.type} · ${booking.tail}`
+
+      flights.push({
+        id: (booking._id as { toString(): string }).toString(),
+        startTime,
+        endTime,
+        label,
+      })
+    }
+
+    return flights.sort((a, b) => a.startTime.localeCompare(b.startTime))
   }
 }

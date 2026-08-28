@@ -6,6 +6,10 @@ import { Booking, BookingSchema } from './schemas/booking.schema'
 import { Student, StudentSchema } from '../students/schemas/student.schema'
 import { Aircraft, AircraftSchema } from '../aircraft/schemas/aircraft.schema'
 import {
+  Instructor,
+  InstructorSchema,
+} from '../instructors/schemas/instructor.schema'
+import {
   CalendarEvent,
   CalendarEventSchema,
 } from '../agenda/schemas/calendar-event.schema'
@@ -16,6 +20,7 @@ import {
       { name: Booking.name, schema: BookingSchema },
       { name: Student.name, schema: StudentSchema },
       { name: Aircraft.name, schema: AircraftSchema },
+      { name: Instructor.name, schema: InstructorSchema },
       { name: CalendarEvent.name, schema: CalendarEventSchema },
     ]),
   ],

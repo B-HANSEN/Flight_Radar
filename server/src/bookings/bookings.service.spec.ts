@@ -5,6 +5,7 @@ import { BookingsService } from './bookings.service'
 import { Booking } from './schemas/booking.schema'
 import { Student } from '../students/schemas/student.schema'
 import { Aircraft } from '../aircraft/schemas/aircraft.schema'
+import { Instructor } from '../instructors/schemas/instructor.schema'
 import { CalendarEvent } from '../agenda/schemas/calendar-event.schema'
 
 describe('BookingsService', () => {
@@ -12,15 +13,18 @@ describe('BookingsService', () => {
 
   const student = { _id: 'student-1', name: 'Jamie Torres' }
   const aircraft = { _id: 'aircraft-1', arcid: 'EC-JOB' }
+  const instructor = { _id: 'instructor-1', name: 'James Whitfield' }
 
   const bookingModel = { find: jest.fn(), create: jest.fn() }
   const studentModel = { findById: jest.fn() }
   const aircraftModel = { findById: jest.fn() }
+  const instructorModel = { findById: jest.fn() }
   const calendarEventModel = { find: jest.fn(), create: jest.fn() }
 
   const input = {
     studentId: 'student-1',
     aircraftId: 'aircraft-1',
+    instructorId: 'instructor-1',
     date: '2026-08-27',
     startTime: '09:00',
     endTime: '11:00',
@@ -36,6 +40,9 @@ describe('BookingsService', () => {
     aircraftModel.findById.mockReturnValue({
       exec: jest.fn().mockResolvedValue(aircraft),
     })
+    instructorModel.findById.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(instructor),
+    })
     calendarEventModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue([]),
     })
@@ -48,6 +55,10 @@ describe('BookingsService', () => {
         { provide: getModelToken(Booking.name), useValue: bookingModel },
         { provide: getModelToken(Student.name), useValue: studentModel },
         { provide: getModelToken(Aircraft.name), useValue: aircraftModel },
+        {
+          provide: getModelToken(Instructor.name),
+          useValue: instructorModel,
+        },
         {
           provide: getModelToken(CalendarEvent.name),
           useValue: calendarEventModel,
@@ -71,7 +82,7 @@ describe('BookingsService', () => {
     })
   })
 
-  it('creates a booking with the display-formatted date and resolved student/aircraft', async () => {
+  it('creates a booking with the display-formatted date and resolved student/aircraft/instructor', async () => {
     await service.create(input)
 
     expect(bookingModel.create).toHaveBeenCalledWith({
@@ -81,11 +92,20 @@ describe('BookingsService', () => {
       person: 'Jamie Torres',
       time: '09:00 - 11:00',
       studentId: 'student-1',
+      instructorId: 'instructor-1',
     })
   })
 
   it('throws when the student does not exist', async () => {
     studentModel.findById.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(null),
+    })
+
+    await expect(service.create(input)).rejects.toThrow(NotFoundException)
+  })
+
+  it('throws when the instructor does not exist', async () => {
+    instructorModel.findById.mockReturnValue({
       exec: jest.fn().mockResolvedValue(null),
     })
 
@@ -116,12 +136,59 @@ describe('BookingsService', () => {
     expect(bookingModel.create).not.toHaveBeenCalled()
   })
 
-  it('allows a booking that only touches the edge of an existing one', async () => {
+  it('throws when a booking only touches the edge of an existing one for the same student (inside the 90 min buffer)', async () => {
     calendarEventModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue([
         {
           type: 'booking',
           studentId: 'student-1',
+          date: '2026-08-27',
+          time: '11:00 - 13:00',
+        },
+      ]),
+    })
+
+    await expect(service.create(input)).rejects.toThrow(ConflictException)
+    expect(bookingModel.create).not.toHaveBeenCalled()
+  })
+
+  it('throws when a booking is within the 90 min buffer but does not overlap', async () => {
+    calendarEventModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          type: 'booking',
+          studentId: 'student-1',
+          date: '2026-08-27',
+          time: '11:30 - 13:00',
+        },
+      ]),
+    })
+
+    await expect(service.create(input)).rejects.toThrow(ConflictException)
+    expect(bookingModel.create).not.toHaveBeenCalled()
+  })
+
+  it('allows a booking that clears the 90 min buffer', async () => {
+    calendarEventModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          type: 'booking',
+          studentId: 'student-1',
+          date: '2026-08-27',
+          time: '12:30 - 14:00',
+        },
+      ]),
+    })
+
+    await expect(service.create(input)).resolves.toBeDefined()
+  })
+
+  it('does not apply the student buffer to a different student on the same aircraft', async () => {
+    calendarEventModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          type: 'booking',
+          studentId: 'student-2',
           date: '2026-08-27',
           time: '11:00 - 13:00',
         },
