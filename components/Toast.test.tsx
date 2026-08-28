@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import Toast from './Toast'
 import enMessages from '@/messages/en.json'
@@ -35,6 +35,19 @@ describe('Toast', () => {
     expect(onClose).not.toHaveBeenCalled()
     vi.advanceTimersByTime(3000)
     expect(onClose).toHaveBeenCalledOnce()
+
+    vi.useRealTimers()
+  })
+
+  it('starts fading out shortly before the auto-dismiss duration elapses', () => {
+    vi.useFakeTimers()
+    const { container } = renderToast({ durationMs: 3000 })
+
+    expect(container.querySelector('.opacity-0')).not.toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(2700)
+    })
+    expect(container.querySelector('.opacity-0')).toBeInTheDocument()
 
     vi.useRealTimers()
   })

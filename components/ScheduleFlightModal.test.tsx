@@ -1,8 +1,9 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import ScheduleFlightModal from './ScheduleFlightModal'
 import {
   DUMMY_SCHEDULE_FLIGHT_AIRCRAFT,
+  DUMMY_SCHEDULE_FLIGHT_INSTRUCTORS,
   DUMMY_SCHEDULE_FLIGHT_TARGET,
 } from './ScheduleFlightModal.data'
 import { fetchApi } from '@/lib/api'
@@ -22,6 +23,8 @@ function renderModal(
       <ScheduleFlightModal
         target={DUMMY_SCHEDULE_FLIGHT_TARGET}
         instructorName='James Whitfield'
+        currentInstructorId='instructor-1'
+        instructors={DUMMY_SCHEDULE_FLIGHT_INSTRUCTORS}
         aircraft={DUMMY_SCHEDULE_FLIGHT_AIRCRAFT}
         onClose={vi.fn()}
         onConfirm={vi.fn()}
@@ -166,6 +169,7 @@ describe('ScheduleFlightModal', () => {
     expect(onConfirm).toHaveBeenCalledWith({
       studentId: 'student-1',
       aircraftId: 'ec-dkn',
+      instructorId: 'instructor-1',
       date: '2026-08-24',
       startTime: '09:30',
       endTime: '11:00',
@@ -185,9 +189,19 @@ describe('ScheduleFlightModal', () => {
   })
 
   it('greys out a busy tail with a reason and blocks selecting it', async () => {
-    vi.mocked(fetchApi).mockResolvedValue([
-      { aircraftId: 'ec-dkn', kind: 'reserved', label: 'Reserved 09:00–12:00' },
-    ])
+    vi.mocked(fetchApi).mockImplementation((url) =>
+      Promise.resolve(
+        typeof url === 'string' && url.includes('/schedule/availability')
+          ? [
+              {
+                aircraftId: 'ec-dkn',
+                kind: 'reserved',
+                label: 'Reserved 09:00–12:00',
+              },
+            ]
+          : [],
+      ),
+    )
     renderModal()
 
     fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
@@ -243,5 +257,278 @@ describe('ScheduleFlightModal', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(onClose).toHaveBeenCalled()
+  })
+
+  it("fetches the student's already-scheduled flights for the target date", async () => {
+    renderModal()
+
+    await waitFor(() =>
+      expect(fetchApi).toHaveBeenCalledWith(
+        '/schedule/student-flights?studentId=student-1&date=2026-08-24',
+      ),
+    )
+  })
+
+  it('lists already-scheduled flights alongside the time pickers', async () => {
+    vi.mocked(fetchApi).mockImplementation((url) =>
+      Promise.resolve(
+        typeof url === 'string' && url.includes('student-flights')
+          ? [
+              {
+                id: 'f1',
+                startTime: '13:00',
+                endTime: '15:00',
+                label: 'Dual instruction · EC-ERV',
+              },
+            ]
+          : [],
+      ),
+    )
+    renderModal()
+
+    expect(await screen.findByText('13:00 – 15:00')).toBeInTheDocument()
+    expect(screen.getByText('Dual instruction · EC-ERV')).toBeInTheDocument()
+  })
+
+  it('blocks confirm and warns when the picked window overlaps an existing flight', async () => {
+    vi.mocked(fetchApi).mockImplementation((url) =>
+      Promise.resolve(
+        typeof url === 'string' && url.includes('student-flights')
+          ? [
+              {
+                id: 'f1',
+                startTime: '10:00',
+                endTime: '10:30',
+                label: 'Dual instruction · EC-ERV',
+              },
+            ]
+          : [],
+      ),
+    )
+    renderModal()
+
+    expect(
+      await screen.findByText(
+        'Overlaps the 10:00 – 10:30 flight already scheduled (Dual instruction · EC-ERV).',
+      ),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    fireEvent.click(screen.getByRole('button', { name: 'EC-DKN' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Dual instruction' }))
+    expect(
+      screen.getByRole('button', { name: 'Confirm lesson' }),
+    ).toBeDisabled()
+  })
+
+  it('blocks confirm and warns when the picked window is inside the 90 min buffer', async () => {
+    vi.mocked(fetchApi).mockImplementation((url) =>
+      Promise.resolve(
+        typeof url === 'string' && url.includes('student-flights')
+          ? [
+              {
+                id: 'f1',
+                startTime: '11:30',
+                endTime: '12:30',
+                label: 'Dual instruction · EC-ERV',
+              },
+            ]
+          : [],
+      ),
+    )
+    renderModal()
+
+    expect(
+      await screen.findByText(
+        'Minimum 90 min buffer required between flights.',
+      ),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    fireEvent.click(screen.getByRole('button', { name: 'EC-DKN' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Dual instruction' }))
+    expect(
+      screen.getByRole('button', { name: 'Confirm lesson' }),
+    ).toBeDisabled()
+  })
+
+  it('allows confirm once the picked window clears the 90 min buffer', async () => {
+    vi.mocked(fetchApi).mockImplementation((url) =>
+      Promise.resolve(
+        typeof url === 'string' && url.includes('student-flights')
+          ? [
+              {
+                id: 'f1',
+                startTime: '12:30',
+                endTime: '13:30',
+                label: 'Dual instruction · EC-ERV',
+              },
+            ]
+          : [],
+      ),
+    )
+    renderModal()
+    await screen.findByText('12:30 – 13:30')
+
+    expect(
+      screen.getByText('Clear of the 90 min buffer between flights.'),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    fireEvent.click(screen.getByRole('button', { name: 'EC-DKN' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Dual instruction' }))
+    expect(screen.getByRole('button', { name: 'Confirm lesson' })).toBeEnabled()
+  })
+
+  it('does not show the buffer-clear notice when there are no existing flights that day', () => {
+    renderModal()
+
+    expect(
+      screen.queryByText('Clear of the 90 min buffer between flights.'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('warns when the student already has 2 flights booked that day', async () => {
+    vi.mocked(fetchApi).mockImplementation((url) =>
+      Promise.resolve(
+        typeof url === 'string' && url.includes('student-flights')
+          ? [
+              {
+                id: 'f1',
+                startTime: '12:30',
+                endTime: '13:30',
+                label: 'Dual instruction · EC-ERV',
+              },
+              {
+                id: 'f2',
+                startTime: '15:00',
+                endTime: '16:00',
+                label: 'Solo supervised · EC-JOB',
+              },
+            ]
+          : [],
+      ),
+    )
+    renderModal()
+
+    expect(
+      await screen.findByText(
+        'Please avoid scheduling more than 2 flights per day!',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('does not warn about flight count with fewer than 2 existing flights', async () => {
+    vi.mocked(fetchApi).mockImplementation((url) =>
+      Promise.resolve(
+        typeof url === 'string' && url.includes('student-flights')
+          ? [
+              {
+                id: 'f1',
+                startTime: '12:30',
+                endTime: '13:30',
+                label: 'Dual instruction · EC-ERV',
+              },
+            ]
+          : [],
+      ),
+    )
+    renderModal()
+    await screen.findByText('12:30 – 13:30')
+
+    expect(
+      screen.queryByText(
+        'Please avoid scheduling more than 2 flights per day!',
+      ),
+    ).not.toBeInTheDocument()
+  })
+
+  it('preselects the current (chief) instructor and lets them reassign to another instructor', () => {
+    const onConfirm = vi.fn().mockResolvedValue(undefined)
+    renderModal({ onConfirm })
+
+    expect(
+      screen.getByRole('button', { name: 'James Whitfield' }),
+    ).toHaveAttribute('aria-pressed', 'true')
+    expect(
+      screen.getByRole('button', { name: 'Kate Ashford' }),
+    ).not.toHaveAttribute('aria-disabled', 'true')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Kate Ashford' }))
+    expect(
+      screen.getByRole('button', { name: 'Kate Ashford' }),
+    ).toHaveAttribute('aria-pressed', 'true')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+    fireEvent.click(screen.getByRole('button', { name: 'EC-DKN' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Dual instruction' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm lesson' }))
+
+    expect(onConfirm).toHaveBeenCalledWith(
+      expect.objectContaining({ instructorId: 'instructor-2' }),
+    )
+  })
+
+  it('locks a deputy instructor to themselves and disables the chief pill', () => {
+    renderModal({
+      instructorName: 'Kate Ashford',
+      currentInstructorId: 'instructor-2',
+    })
+
+    const ashfordPill = screen.getByRole('button', { name: 'Kate Ashford' })
+    const whitfieldPill = screen.getByRole('button', {
+      name: 'James Whitfield',
+    })
+    expect(ashfordPill).toHaveAttribute('aria-pressed', 'true')
+    expect(whitfieldPill).toHaveAttribute('aria-disabled', 'true')
+
+    fireEvent.click(whitfieldPill)
+    expect(ashfordPill).toHaveAttribute('aria-pressed', 'true')
+    expect(whitfieldPill).toHaveAttribute('aria-pressed', 'false')
+    expect(
+      screen.getByText(
+        'To change a flight instructor, please contact the Chief Flight Instructor.',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it("doesn't show the locked-instructor notice for clicking your own already-selected pill", () => {
+    renderModal({
+      instructorName: 'Kate Ashford',
+      currentInstructorId: 'instructor-2',
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Kate Ashford' }))
+    expect(
+      screen.queryByText(
+        'To change a flight instructor, please contact the Chief Flight Instructor.',
+      ),
+    ).not.toBeInTheDocument()
+  })
+
+  it('auto-dismisses the locked-instructor notice after 5 seconds', () => {
+    vi.useFakeTimers()
+    renderModal({
+      instructorName: 'Kate Ashford',
+      currentInstructorId: 'instructor-2',
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'James Whitfield' }))
+    expect(
+      screen.getByText(
+        'To change a flight instructor, please contact the Chief Flight Instructor.',
+      ),
+    ).toBeInTheDocument()
+
+    act(() => {
+      vi.advanceTimersByTime(5000)
+    })
+    expect(
+      screen.queryByText(
+        'To change a flight instructor, please contact the Chief Flight Instructor.',
+      ),
+    ).not.toBeInTheDocument()
+
+    vi.useRealTimers()
   })
 })

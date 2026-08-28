@@ -1,3 +1,4 @@
+import { DUMMY_INSTRUCTORS } from './RoleSwitcher.data'
 import type { ScheduleAircraft } from './ScheduleBoard.types'
 import type { ScheduleFlightTarget } from './ScheduleFlightModal.types'
 
@@ -8,6 +9,8 @@ export const DUMMY_SCHEDULE_FLIGHT_AIRCRAFT: ScheduleAircraft[] = [
   { id: 'ec-job', arcid: 'EC-JOB', type: 'Cessna 172' },
   { id: 'ec-kop', arcid: 'EC-KOP', type: 'Cessna 182' },
 ]
+
+export const DUMMY_SCHEDULE_FLIGHT_INSTRUCTORS = DUMMY_INSTRUCTORS
 
 export const DUMMY_SCHEDULE_FLIGHT_TARGET: ScheduleFlightTarget = {
   studentId: 'student-1',

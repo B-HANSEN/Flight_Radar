@@ -9,8 +9,9 @@ export const DUMMY_INSTRUCTORS: Instructor[] = [
     email: 'james.whitfield@example.com',
     phone: '+34 600 111 222',
     birthday: '8 September 1985',
-    info: 'CFI · Since 2015',
+    info: 'Chief Flight Instructor · Since 2015',
     photoSrc: '/instructors/james-whitfield.webp',
+    isChief: true,
   },
   {
     id: 'instructor-2',
@@ -20,7 +21,7 @@ export const DUMMY_INSTRUCTORS: Instructor[] = [
     email: 'kate.ashford@example.com',
     phone: '+34 600 222 333',
     birthday: '19 April 1990',
-    info: 'CFI · Since 2019',
+    info: 'Deputy Chief Flight Instructor · Since 2019',
     photoSrc: '/instructors/kate-ashford.webp',
   },
 ]

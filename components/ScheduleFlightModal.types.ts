@@ -16,9 +16,20 @@ export type AircraftAvailability = {
   label: string
 }
 
+// A flight the target student already has booked that day (see server's
+// ScheduleService.findStudentFlights) — shown so the instructor can see it
+// and kept clear of by the 90 min buffer enforced below.
+export type ScheduledFlight = {
+  id: string
+  startTime: string
+  endTime: string
+  label: string
+}
+
 export type ScheduleFlightConfirmInput = {
   studentId: string
   aircraftId: string
+  instructorId: string
   date: string
   startTime: string
   endTime: string

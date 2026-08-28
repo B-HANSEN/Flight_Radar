@@ -17,6 +17,7 @@ import type {
   InstructorScheduleStudent,
 } from './InstructorSchedulePanel.types'
 import type { RawStudentSchedule } from './InstructorScheduleView.types'
+import type { Instructor } from './RoleSwitcher.types'
 import type { ScheduleAircraft } from './ScheduleBoard.types'
 import type {
   ScheduleFlightConfirmInput,
@@ -25,6 +26,8 @@ import type {
 
 type Props = {
   instructorName?: string
+  currentInstructorId?: string
+  instructors?: Instructor[]
   students?: RawStudentSchedule[]
   aircraft?: ScheduleAircraft[]
   referenceDate?: Date
@@ -37,6 +40,8 @@ type SchedulingRef = {
 
 export default function InstructorScheduleView({
   instructorName,
+  currentInstructorId,
+  instructors = [],
   students = [],
   aircraft = [],
   referenceDate,
@@ -166,6 +171,8 @@ export default function InstructorScheduleView({
         onClose={() => setScheduling(null)}
         onConfirm={handleConfirmBooking}
         instructorName={instructorName}
+        currentInstructorId={currentInstructorId}
+        instructors={instructors}
         aircraft={aircraft}
       />
 

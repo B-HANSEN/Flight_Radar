@@ -5,7 +5,10 @@ import {
   DUMMY_SCHEDULE_REFERENCE_DATE,
   DUMMY_STUDENT_SCHEDULES,
 } from './InstructorScheduleView.data'
-import { DUMMY_SCHEDULE_FLIGHT_AIRCRAFT } from './ScheduleFlightModal.data'
+import {
+  DUMMY_SCHEDULE_FLIGHT_AIRCRAFT,
+  DUMMY_SCHEDULE_FLIGHT_INSTRUCTORS,
+} from './ScheduleFlightModal.data'
 import { fetchApi } from '@/lib/api'
 import enMessages from '@/messages/en.json'
 
@@ -18,6 +21,8 @@ function renderView(
     <NextIntlClientProvider locale='en' messages={enMessages}>
       <InstructorScheduleView
         instructorName='James Whitfield'
+        currentInstructorId='instructor-1'
+        instructors={DUMMY_SCHEDULE_FLIGHT_INSTRUCTORS}
         students={DUMMY_STUDENT_SCHEDULES}
         aircraft={DUMMY_SCHEDULE_FLIGHT_AIRCRAFT}
         referenceDate={DUMMY_SCHEDULE_REFERENCE_DATE}
@@ -143,6 +148,7 @@ describe('InstructorScheduleView', () => {
       body: JSON.stringify({
         studentId: 'student-1',
         aircraftId: 'ec-dkn',
+        instructorId: 'instructor-1',
         date: '2026-08-24',
         startTime: '09:00',
         endTime: '11:00',

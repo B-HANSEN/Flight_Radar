@@ -23,4 +23,7 @@ export type Instructor = {
   birthday: string
   info: string
   photoSrc?: string
+  // The Chief Flight Instructor can assign either instructor to a lesson;
+  // a Deputy can only assign themselves (see ScheduleFlightModal).
+  isChief?: boolean
 }

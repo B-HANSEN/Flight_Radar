@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AlertCircle, CheckCircle2, Info, Loader2, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { focusRing } from '@/lib/styles'
@@ -14,6 +14,10 @@ type Props = {
   variant?: 'loading' | 'success' | 'error' | 'info'
 }
 
+// How long before auto-dismiss the fade-out transition starts — matches
+// the transition-opacity duration-300 below.
+const FADE_MS = 300
+
 export default function Toast({
   message,
   open,
@@ -22,11 +26,27 @@ export default function Toast({
   variant = 'loading',
 }: Props) {
   const t = useTranslations('Toast')
+  const [fading, setFading] = useState(false)
+  // Resets the fade for each new time this toast opens, without an effect —
+  // React's documented pattern for adjusting state as a prop changes.
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const [wasOpen, setWasOpen] = useState(open)
+  if (open !== wasOpen) {
+    setWasOpen(open)
+    if (open) setFading(false)
+  }
 
   useEffect(() => {
     if (!open) return
-    const timer = setTimeout(onClose, durationMs)
-    return () => clearTimeout(timer)
+    const fadeTimer = setTimeout(
+      () => setFading(true),
+      Math.max(durationMs - FADE_MS, 0),
+    )
+    const closeTimer = setTimeout(onClose, durationMs)
+    return () => {
+      clearTimeout(fadeTimer)
+      clearTimeout(closeTimer)
+    }
   }, [open, durationMs, onClose])
 
   if (!open) return null
@@ -35,7 +55,7 @@ export default function Toast({
     <div
       role='status'
       aria-live='polite'
-      className='fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2.5 rounded-lg border border-black-100 bg-white px-4 py-3 shadow-xl'
+      className={`fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2.5 rounded-lg border border-black-100 bg-white px-4 py-3 shadow-xl transition-opacity duration-300 ${fading ? 'opacity-0' : 'opacity-100'}`}
     >
       {variant === 'loading' ? (
         <Loader2

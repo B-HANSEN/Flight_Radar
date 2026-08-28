@@ -37,6 +37,11 @@ export class Instructor {
 
   @Prop({ required: true })
   info!: string
+
+  // The Chief Flight Instructor can assign either instructor to a lesson;
+  // a Deputy can only assign themselves (see ScheduleFlightModal).
+  @Prop({ default: false })
+  isChief?: boolean
 }
 
 export const InstructorSchema = SchemaFactory.createForClass(Instructor)

@@ -50,6 +50,8 @@ export default async function InstructorPage({
       <h1 className='sr-only'>{t('title')}</h1>
       <InstructorScheduleView
         instructorName={currentInstructor?.name}
+        currentInstructorId={currentInstructor?.id}
+        instructors={instructors}
         students={students}
         aircraft={aircraft}
       />
