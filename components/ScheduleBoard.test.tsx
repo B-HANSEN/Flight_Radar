@@ -7,6 +7,12 @@ import type {
 } from './ScheduleBoard.types'
 import enMessages from '@/messages/en.json'
 
+const mockRouterRefresh = vi.fn()
+
+vi.mock('@/i18n/navigation', () => ({
+  useRouter: () => ({ refresh: mockRouterRefresh }),
+}))
+
 const AIRCRAFT: ScheduleAircraft[] = [
   {
     id: 'ec-erv',
@@ -107,12 +113,14 @@ describe('ScheduleBoard', () => {
     expect(todayButton).toBeDisabled()
   })
 
-  it('calls onRefresh when the refresh button is clicked', () => {
+  it('refetches the schedule and calls onRefresh when the refresh button is clicked', () => {
+    mockRouterRefresh.mockClear()
     const onRefresh = vi.fn()
     renderBoard({ onRefresh })
 
     fireEvent.click(screen.getByRole('button', { name: 'Refresh' }))
 
+    expect(mockRouterRefresh).toHaveBeenCalledOnce()
     expect(onRefresh).toHaveBeenCalledOnce()
   })
 

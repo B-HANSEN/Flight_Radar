@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
 import { addDays, startOfWeek, toISODate } from '@/lib/weekGrid'
 import { focusRing } from '@/lib/styles'
 import { useDragScroll } from '@/lib/useDragScroll'
+import { useRouter } from '@/i18n/navigation'
 import ScheduleBlockDetailModal from './ScheduleBlockDetailModal'
 import Toast from './Toast'
 import type {
@@ -164,6 +165,7 @@ export default function ScheduleBoard({
 }: Props) {
   const t = useTranslations('ScheduleBoard')
   const locale = useLocale()
+  const router = useRouter()
   const [view, setView] = useState<ScheduleView>('day')
   const [referenceDate, setReferenceDate] = useState<Date>(
     () => initialDate ?? new Date(),
@@ -271,6 +273,9 @@ export default function ScheduleBoard({
 
   function handleRefresh() {
     setIsRefreshing(true)
+    // Re-runs the server component so the /schedule fetch (cache: no-store)
+    // picks up bookings added since the page was loaded.
+    router.refresh()
     onRefresh?.()
   }
 
