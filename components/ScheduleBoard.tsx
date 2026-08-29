@@ -39,7 +39,7 @@ const KIND_STYLES: Record<ScheduleBlock['kind'], string> = {
   reserved: 'bg-black-100 text-black-300',
   maintenance: 'bg-green-100 text-green-300',
   hold: 'bg-yellow-100 text-yellow-300',
-  unavailable: 'bg-black-100/70 text-black-300',
+  unavailable: 'bg-black-300 text-white',
 }
 
 // Shared look for the header's segmented toggles (day/week view, type filter).
