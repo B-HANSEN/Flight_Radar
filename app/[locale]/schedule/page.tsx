@@ -50,6 +50,9 @@ export default async function SchedulePage({
 
   const scheduledAircraftIds = new Set(blocks.map((block) => block.aircraftId))
   const aircraft = allAircraft.filter((a) => scheduledAircraftIds.has(a.id))
+  // The page renders per request (no-store fetches above), so this is when
+  // the data on screen was pulled; a Refresh re-runs this component.
+  const updatedAt = new Date().toISOString()
 
   return (
     <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12'>
@@ -67,6 +70,7 @@ export default async function SchedulePage({
           aircraft={aircraft}
           dayBlocks={blocks.filter((block) => block.period === 'day')}
           weekBlocks={blocks.filter((block) => block.period === 'week')}
+          updatedAt={updatedAt}
         />
       </div>
     </div>

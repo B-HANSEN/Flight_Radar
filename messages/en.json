@@ -125,7 +125,8 @@
     "fetching": "Fetching…",
     "filterByTypeLabel": "Filter by aircraft type",
     "allTypes": "All types",
-    "todayLabel": "Today"
+    "todayLabel": "Today",
+    "lastUpdated": "Updated {time}"
   },
   "ScheduleBlockDetailModal": {
     "title": "Schedule details",

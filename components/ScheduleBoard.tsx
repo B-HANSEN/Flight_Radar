@@ -24,6 +24,8 @@ type Props = {
   weekBlocks?: ScheduleBlockRecord[]
   initialDate?: Date
   onRefresh?: () => void
+  // ISO timestamp of when the board data was fetched, shown next to Refresh.
+  updatedAt?: string
 }
 
 type ScheduleView = 'day' | 'week'
@@ -162,6 +164,7 @@ export default function ScheduleBoard({
   weekBlocks = [],
   initialDate,
   onRefresh,
+  updatedAt,
 }: Props) {
   const t = useTranslations('ScheduleBoard')
   const locale = useLocale()
@@ -253,6 +256,17 @@ export default function ScheduleBoard({
         return `${weekday} ${String(date.getDate()).padStart(2, '0')}`
       }),
     [locale, weekStart],
+  )
+
+  const updatedLabel = useMemo(
+    () =>
+      updatedAt
+        ? new Intl.DateTimeFormat(locale, {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          }).format(new Date(updatedAt))
+        : null,
+    [updatedAt, locale],
   )
 
   const todayIso = toISODate(new Date())
@@ -383,14 +397,24 @@ export default function ScheduleBoard({
             </div>
           )}
 
-          <button
-            type='button'
-            onClick={handleRefresh}
-            aria-label={t('refreshLabel')}
-            className={`ml-auto rounded-sm p-1 text-black-200 ${focusRing}`}
-          >
-            <RefreshCw size={16} aria-hidden='true' />
-          </button>
+          <div className='ml-auto flex items-center gap-2.5'>
+            {updatedLabel && (
+              <span
+                suppressHydrationWarning
+                className='font-secondary text-xs whitespace-nowrap text-black-200'
+              >
+                {t('lastUpdated', { time: updatedLabel })}
+              </span>
+            )}
+            <button
+              type='button'
+              onClick={handleRefresh}
+              aria-label={t('refreshLabel')}
+              className={`rounded-sm p-1 text-black-200 ${focusRing}`}
+            >
+              <RefreshCw size={16} aria-hidden='true' />
+            </button>
+          </div>
         </div>
 
         {visibleAircraft.length === 0 ? (

@@ -125,7 +125,8 @@
     "fetching": "Wird geladen …",
     "filterByTypeLabel": "Nach Flugzeugtyp filtern",
     "allTypes": "Alle Typen",
-    "todayLabel": "Heute"
+    "todayLabel": "Heute",
+    "lastUpdated": "Aktualisiert {time}"
   },
   "ScheduleBlockDetailModal": {
     "title": "Belegungsdetails",

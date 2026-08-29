@@ -15,6 +15,7 @@ const meta: Meta<typeof ScheduleBoard> = {
     dayBlocks: DUMMY_SCHEDULE_DAY_BLOCKS,
     weekBlocks: DUMMY_SCHEDULE_WEEK_BLOCKS,
     initialDate: new Date(2026, 7, 9),
+    updatedAt: new Date(2026, 7, 9, 8, 30).toISOString(),
     onRefresh: fn(),
   },
 }

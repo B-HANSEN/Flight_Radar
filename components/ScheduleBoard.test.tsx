@@ -113,6 +113,18 @@ describe('ScheduleBoard', () => {
     expect(todayButton).toBeDisabled()
   })
 
+  it('shows a last-updated timestamp when updatedAt is provided', () => {
+    renderBoard({ updatedAt: '2026-08-20T09:30:00.000Z' })
+
+    expect(screen.getByText(/^Updated /)).toBeInTheDocument()
+  })
+
+  it('omits the last-updated timestamp when updatedAt is not provided', () => {
+    renderBoard()
+
+    expect(screen.queryByText(/^Updated /)).not.toBeInTheDocument()
+  })
+
   it('refetches the schedule and calls onRefresh when the refresh button is clicked', () => {
     mockRouterRefresh.mockClear()
     const onRefresh = vi.fn()

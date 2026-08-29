@@ -125,7 +125,8 @@
     "fetching": "Cargando…",
     "filterByTypeLabel": "Filtrar por tipo de aeronave",
     "allTypes": "Todos los tipos",
-    "todayLabel": "Hoy"
+    "todayLabel": "Hoy",
+    "lastUpdated": "Actualizado {time}"
   },
   "ScheduleBlockDetailModal": {
     "title": "Detalles de la programación",
