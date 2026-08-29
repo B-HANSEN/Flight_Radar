@@ -95,6 +95,18 @@ describe('ScheduleBoard', () => {
     expect(screen.getByText('Monday, Aug 10, 2026')).toBeInTheDocument()
   })
 
+  it('jumps back to the current date when the Today button is clicked', () => {
+    renderBoard()
+
+    const todayButton = screen.getByRole('button', { name: 'Today' })
+    expect(todayButton).toBeEnabled()
+
+    fireEvent.click(todayButton)
+
+    // Once the board is showing the current date there is nowhere to jump to.
+    expect(todayButton).toBeDisabled()
+  })
+
   it('calls onRefresh when the refresh button is clicked', () => {
     const onRefresh = vi.fn()
     renderBoard({ onRefresh })

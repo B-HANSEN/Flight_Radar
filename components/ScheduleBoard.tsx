@@ -253,10 +253,20 @@ export default function ScheduleBoard({
     [locale, weekStart],
   )
 
+  const todayIso = toISODate(new Date())
+  const isViewingToday =
+    view === 'day'
+      ? activeDayIso === todayIso
+      : todayIso >= weekStartIso && todayIso <= weekEndIso
+
   function handleStep(delta: number) {
     setReferenceDate((current) =>
       addDays(current, view === 'day' ? delta : delta * 7),
     )
+  }
+
+  function handleToday() {
+    setReferenceDate(new Date())
   }
 
   function handleRefresh() {
@@ -290,6 +300,14 @@ export default function ScheduleBoard({
         className='overflow-hidden rounded-xl border border-black-200 bg-white'
       >
         <div className='flex flex-wrap items-center gap-4 border-b border-black-200 px-5 py-3.5'>
+          <button
+            type='button'
+            onClick={handleToday}
+            disabled={isViewingToday}
+            className={`rounded-md border border-black-200 px-3 py-1 font-primary text-sm font-semibold text-black-300 disabled:opacity-40 ${focusRing}`}
+          >
+            {t('todayLabel')}
+          </button>
           <button
             type='button'
             onClick={() => handleStep(-1)}

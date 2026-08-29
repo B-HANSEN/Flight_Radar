@@ -124,7 +124,8 @@
     "photoAlt": "{type} ({arcid})",
     "fetching": "Cargando…",
     "filterByTypeLabel": "Filtrar por tipo de aeronave",
-    "allTypes": "Todos los tipos"
+    "allTypes": "Todos los tipos",
+    "todayLabel": "Hoy"
   },
   "ScheduleBlockDetailModal": {
     "title": "Detalles de la programación",
