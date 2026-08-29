@@ -126,7 +126,9 @@
   },
   "ScheduleBlockDetailModal": {
     "title": "Belegungsdetails",
-    "close": "Schließen"
+    "close": "Schließen",
+    "student": "Flugschüler",
+    "instructor": "Fluglehrer"
   },
   "AircraftPage": {
     "title": "Flugzeuge",

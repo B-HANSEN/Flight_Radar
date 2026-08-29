@@ -28,6 +28,28 @@ export default function ScheduleBlockDetailModal({ detail, onClose }: Props) {
           <p className='font-secondary text-sm text-black-300'>
             {detail.block.label}
           </p>
+          {(detail.block.studentName || detail.block.instructorName) && (
+            <dl className='mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-secondary text-sm'>
+              {detail.block.studentName && (
+                <>
+                  <dt className='font-semibold text-black-200'>
+                    {t('student')}
+                  </dt>
+                  <dd className='text-black-300'>{detail.block.studentName}</dd>
+                </>
+              )}
+              {detail.block.instructorName && (
+                <>
+                  <dt className='font-semibold text-black-200'>
+                    {t('instructor')}
+                  </dt>
+                  <dd className='text-black-300'>
+                    {detail.block.instructorName}
+                  </dd>
+                </>
+              )}
+            </dl>
+          )}
         </>
       )}
     </Modal>

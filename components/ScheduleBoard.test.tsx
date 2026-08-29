@@ -167,6 +167,31 @@ describe('ScheduleBoard', () => {
     ).toBeInTheDocument()
   })
 
+  it('shows the student and instructor names in the detail modal for a booking block', () => {
+    renderBoard({
+      dayBlocks: [
+        {
+          id: 'booking-1',
+          aircraftId: 'ec-erv',
+          label: 'Dual instruction · Alex Moreau',
+          kind: 'reserved',
+          start: 13,
+          end: 14.5,
+          date: '2026-08-09',
+          studentName: 'Alex Moreau',
+          instructorName: 'James Whitfield',
+        },
+      ],
+    })
+
+    fireEvent.click(screen.getByText('Dual instruction · Alex Moreau'))
+
+    expect(screen.getByText('Student')).toBeInTheDocument()
+    expect(screen.getByText('Alex Moreau')).toBeInTheDocument()
+    expect(screen.getByText('Instructor')).toBeInTheDocument()
+    expect(screen.getByText('James Whitfield')).toBeInTheDocument()
+  })
+
   it('only shows a dated week block within the currently viewed week', () => {
     renderBoard({
       weekBlocks: [

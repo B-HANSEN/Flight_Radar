@@ -45,6 +45,36 @@ describe('ScheduleBlockDetailModal', () => {
     expect(screen.getByText('Reserved 09:00–12:00')).toBeInTheDocument()
   })
 
+  it('shows the student and instructor names when the block carries them', () => {
+    renderModal({
+      detail: {
+        ...DETAIL,
+        block: {
+          ...DETAIL.block,
+          studentName: 'Alex Moreau',
+          instructorName: 'James Whitfield',
+        },
+      },
+    })
+
+    expect(screen.getByText('Student')).toBeInTheDocument()
+    expect(screen.getByText('Alex Moreau')).toBeInTheDocument()
+    expect(screen.getByText('Instructor')).toBeInTheDocument()
+    expect(screen.getByText('James Whitfield')).toBeInTheDocument()
+  })
+
+  it('omits the instructor row when only a student name is present', () => {
+    renderModal({
+      detail: {
+        ...DETAIL,
+        block: { ...DETAIL.block, studentName: 'Alex Moreau' },
+      },
+    })
+
+    expect(screen.getByText('Student')).toBeInTheDocument()
+    expect(screen.queryByText('Instructor')).not.toBeInTheDocument()
+  })
+
   it('calls onClose when the close button is clicked', () => {
     const onClose = vi.fn()
     renderModal({ onClose })

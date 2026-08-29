@@ -40,6 +40,14 @@ export class ScheduleBlock {
 
   @Prop({ required: true })
   end!: number
+
+  // Who a reserved block is for, shown in the schedule detail modal. Only
+  // set on `reserved` blocks; absent on maintenance/hold/unavailable.
+  @Prop()
+  studentName?: string
+
+  @Prop()
+  instructorName?: string
 }
 
 export const ScheduleBlockSchema = SchemaFactory.createForClass(ScheduleBlock)

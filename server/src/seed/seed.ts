@@ -1017,10 +1017,10 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
   },
 ]
 
-// `person` here already holds the instructor's abbreviated name (a
-// pre-existing quirk of this legacy demo data — BookingsService.create
-// stores the student's name there instead, see toDisplayDate's callers);
-// `instructorName` is the full name needed to resolve a real instructorId.
+// `person` holds the student's name (matching BookingsService.create, see
+// toDisplayDate's callers) and `instructorName` the full instructor name
+// used to resolve a real instructorId. These are the demo student's own
+// past lessons, so `person` is the same student throughout.
 type LegacyBookingSeed = Omit<Booking, '_id' | 'instructorId'> & {
   instructorName: string
 }
@@ -1030,7 +1030,7 @@ const bookings: LegacyBookingSeed[] = [
     type: 'Instruction',
     date: '15/08/2026',
     tail: 'EC-ERV',
-    person: 'J. Whitfield',
+    person: 'Jamie Torres',
     time: '10:00 - 11:30',
     studentId,
     instructorName: 'James Whitfield',
@@ -1039,7 +1039,7 @@ const bookings: LegacyBookingSeed[] = [
     type: 'Instruction',
     date: '16/08/2026',
     tail: 'EC-ERV',
-    person: 'K. Ashford',
+    person: 'Jamie Torres',
     time: '15:00 - 17:00',
     studentId,
     instructorName: 'Kate Ashford',
@@ -1048,7 +1048,7 @@ const bookings: LegacyBookingSeed[] = [
     type: 'Instruction',
     date: '17/08/2026',
     tail: 'EC-ERV',
-    person: 'J. Whitfield',
+    person: 'Jamie Torres',
     time: '09:00 - 10:30',
     studentId,
     instructorName: 'James Whitfield',
@@ -1057,7 +1057,7 @@ const bookings: LegacyBookingSeed[] = [
     type: 'Instruction',
     date: '18/08/2026',
     tail: 'EC-ERV',
-    person: 'J. Whitfield',
+    person: 'Jamie Torres',
     time: '13:00 - 14:30',
     studentId,
     instructorName: 'James Whitfield',
@@ -2433,7 +2433,10 @@ const calendarEvents: Omit<CalendarEvent, '_id'>[] = [
 const HOURS_PER_DAY = 24
 const WEEKDAYS = [0, 1, 2, 3, 4, 5, 6]
 
-type DayBlockTemplate = Pick<ScheduleBlock, 'label' | 'kind' | 'start' | 'end'>
+type DayBlockTemplate = Pick<
+  ScheduleBlock,
+  'label' | 'kind' | 'start' | 'end' | 'studentName' | 'instructorName'
+>
 
 function buildAircraftScheduleBlocks(
   aircraftId: string,
@@ -2467,39 +2470,82 @@ function buildScheduleBlocks(
 
   return [
     ...buildAircraftScheduleBlocks(erv, [
-      { label: 'Reserved 09:00–12:00', kind: 'reserved', start: 9, end: 12 },
+      {
+        label: 'Reserved 09:00–12:00',
+        kind: 'reserved',
+        start: 9,
+        end: 12,
+        studentName: 'Alex Moreau',
+        instructorName: 'James Whitfield',
+      },
       {
         label: 'Reserved 13:30–16:00',
         kind: 'reserved',
         start: 13.5,
         end: 16,
+        studentName: 'Priya Shah',
+        instructorName: 'Kate Ashford',
       },
       {
         label: 'Reserved 16:30–19:00',
         kind: 'reserved',
         start: 16.5,
         end: 19,
+        studentName: 'Noah Becker',
+        instructorName: 'James Whitfield',
       },
     ]),
     ...buildAircraftScheduleBlocks(exl, [
-      { label: 'Reserved 09:00–12:00', kind: 'reserved', start: 9, end: 12 },
-      { label: 'Reserved', kind: 'reserved', start: 14.5, end: 16 },
+      {
+        label: 'Reserved 09:00–12:00',
+        kind: 'reserved',
+        start: 9,
+        end: 12,
+        studentName: 'Jamie Torres',
+        instructorName: 'Kate Ashford',
+      },
+      {
+        label: 'Reserved',
+        kind: 'reserved',
+        start: 14.5,
+        end: 16,
+        studentName: 'Priya Shah',
+        instructorName: 'James Whitfield',
+      },
       {
         label: 'Reserved 16:00–21:30',
         kind: 'reserved',
         start: 16,
         end: 21.5,
+        studentName: 'Alex Moreau',
+        instructorName: 'Kate Ashford',
       },
     ]),
     ...buildAircraftScheduleBlocks(fed, [
       { label: 'Not available', kind: 'unavailable', start: 9, end: 14.5 },
-      { label: 'Reserved', kind: 'reserved', start: 14.5, end: 16 },
-      { label: 'Reserved', kind: 'reserved', start: 16.5, end: 18 },
+      {
+        label: 'Reserved',
+        kind: 'reserved',
+        start: 14.5,
+        end: 16,
+        studentName: 'Noah Becker',
+        instructorName: 'Kate Ashford',
+      },
+      {
+        label: 'Reserved',
+        kind: 'reserved',
+        start: 16.5,
+        end: 18,
+        studentName: 'Jamie Torres',
+        instructorName: 'James Whitfield',
+      },
       {
         label: 'Reserved 18:00–20:30',
         kind: 'reserved',
         start: 18,
         end: 20.5,
+        studentName: 'Priya Shah',
+        instructorName: 'Kate Ashford',
       },
     ]),
   ]

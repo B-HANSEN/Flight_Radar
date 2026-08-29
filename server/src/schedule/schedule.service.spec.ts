@@ -76,8 +76,16 @@ describe('ScheduleService', () => {
           person: 'Alex Moreau',
           time: '13:00 - 14:30',
           studentId: 'student-1',
+          instructorId: 'instructor-1',
         },
       ]),
+    })
+    instructorModel.find.mockReturnValue({
+      exec: jest
+        .fn()
+        .mockResolvedValue([
+          { _id: { toString: () => 'instructor-1' }, name: 'James Whitfield' },
+        ]),
     })
 
     const result = await service.findAll()
@@ -91,6 +99,8 @@ describe('ScheduleService', () => {
       start: 13,
       end: 14.5,
       date: '2026-08-24',
+      studentName: 'Alex Moreau',
+      instructorName: 'James Whitfield',
     })
     // 2026-08-24 is a Monday -> week day-index 0
     expect(result).toContainEqual({
@@ -102,7 +112,36 @@ describe('ScheduleService', () => {
       start: 13 / 24,
       end: 14.5 / 24,
       date: '2026-08-24',
+      studentName: 'Alex Moreau',
+      instructorName: 'James Whitfield',
     })
+  })
+
+  it('leaves instructorName undefined when the booking instructor is unknown', async () => {
+    bookingModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          _id: { toString: () => 'booking-1' },
+          type: 'Dual instruction',
+          date: '24/08/2026',
+          tail: 'EC-DKN',
+          person: 'Alex Moreau',
+          time: '13:00 - 14:30',
+          studentId: 'student-1',
+          instructorId: 'ghost',
+        },
+      ]),
+    })
+
+    const result = await service.findAll()
+
+    expect(result).toContainEqual(
+      expect.objectContaining({
+        id: 'booking-1-day',
+        studentName: 'Alex Moreau',
+        instructorName: undefined,
+      }),
+    )
   })
 
   describe('findBusyAircraft', () => {

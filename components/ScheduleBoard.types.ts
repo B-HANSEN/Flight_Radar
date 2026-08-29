@@ -14,6 +14,9 @@ export type ScheduleBlock = {
   kind: ScheduleBlockKind
   start: number
   end: number
+  // Present only on reserved blocks that come from a real booking.
+  studentName?: string
+  instructorName?: string
 }
 
 export type ScheduleBlockRecord = ScheduleBlock & {

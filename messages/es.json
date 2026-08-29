@@ -126,7 +126,9 @@
   },
   "ScheduleBlockDetailModal": {
     "title": "Detalles de la programación",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "student": "Alumno",
+    "instructor": "Instructor"
   },
   "AircraftPage": {
     "title": "Aeronaves",

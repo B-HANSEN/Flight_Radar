@@ -26,6 +26,9 @@ export type BookingScheduleBlock = {
   start: number
   end: number
   date: string
+  // Who the reservation is for, surfaced in the schedule detail modal.
+  studentName: string
+  instructorName?: string
 }
 
 export type BusyAircraft = {
@@ -78,16 +81,24 @@ export class ScheduleService {
   ) {}
 
   async findAll() {
-    const [blocks, bookings, aircraft] = await Promise.all([
+    const [blocks, bookings, aircraft, instructors] = await Promise.all([
       this.scheduleBlockModel.find().exec(),
       this.bookingModel.find().exec(),
       this.aircraftModel.find().exec(),
+      this.instructorModel.find().exec(),
     ])
 
     const aircraftIdByTail = new Map(
       aircraft.map((a) => [
         a.arcid,
         (a._id as { toString(): string }).toString(),
+      ]),
+    )
+
+    const instructorNameById = new Map(
+      instructors.map((instructor) => [
+        (instructor._id as { toString(): string }).toString(),
+        instructor.name,
       ]),
     )
 
@@ -101,6 +112,8 @@ export class ScheduleService {
       const id = (booking._id as { toString(): string }).toString()
       const label = `${booking.type} · ${booking.person}`
       const dayIndex = weekdayIndex(date)
+      const instructorName = instructorNameById.get(booking.instructorId)
+      const who = { studentName: booking.person, instructorName }
 
       bookingBlocks.push(
         {
@@ -112,6 +125,7 @@ export class ScheduleService {
           start: range.start,
           end: range.end,
           date,
+          ...who,
         },
         {
           id: `${id}-week`,
@@ -122,6 +136,7 @@ export class ScheduleService {
           start: dayIndex + range.start / 24,
           end: dayIndex + range.end / 24,
           date,
+          ...who,
         },
       )
     }

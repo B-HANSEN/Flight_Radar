@@ -126,7 +126,9 @@
   },
   "ScheduleBlockDetailModal": {
     "title": "Schedule details",
-    "close": "Close"
+    "close": "Close",
+    "student": "Student",
+    "instructor": "Instructor"
   },
   "AircraftPage": {
     "title": "Aircraft",

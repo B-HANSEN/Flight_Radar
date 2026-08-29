@@ -7,10 +7,12 @@ const SAMPLE_DETAIL: ScheduleBlockDetail = {
   aircraft: { id: 'ec-erv', arcid: 'EC-ERV', type: 'Cessna 152' },
   block: {
     id: 'b1',
-    label: 'Reserved 09:00–12:00',
+    label: 'Dual instruction · Alex Moreau',
     kind: 'reserved',
     start: 9,
     end: 12,
+    studentName: 'Alex Moreau',
+    instructorName: 'James Whitfield',
   },
   timeLabel: 'Sunday, Aug 9, 2026 · 09:00 – 12:00',
 }
