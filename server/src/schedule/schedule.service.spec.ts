@@ -144,6 +144,54 @@ describe('ScheduleService', () => {
     )
   })
 
+  it('carries the booking comments onto the day and week blocks', async () => {
+    bookingModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          _id: { toString: () => 'booking-1' },
+          type: 'Theory',
+          date: '24/08/2026',
+          tail: 'EC-DKN',
+          person: 'Alex Moreau',
+          time: '13:00 - 14:30',
+          studentId: 'student-1',
+          instructorId: 'instructor-1',
+          comments: 'Navigation',
+        },
+      ]),
+    })
+
+    const result = await service.findAll()
+
+    expect(result).toContainEqual(
+      expect.objectContaining({ id: 'booking-1-day', comments: 'Navigation' }),
+    )
+    expect(result).toContainEqual(
+      expect.objectContaining({ id: 'booking-1-week', comments: 'Navigation' }),
+    )
+  })
+
+  it('skips a booking with no tail (a Theory lesson) since the board has no row for it', async () => {
+    bookingModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          _id: { toString: () => 'booking-1' },
+          type: 'Theory',
+          date: '24/08/2026',
+          person: 'Alex Moreau',
+          time: '13:00 - 14:30',
+          studentId: 'student-1',
+          instructorId: 'instructor-1',
+          comments: 'Navigation',
+        },
+      ]),
+    })
+
+    const result = await service.findAll()
+
+    expect(result).toEqual([staticBlock])
+  })
+
   describe('findBusyAircraft', () => {
     it('flags an aircraft with a recurring demo block overlapping the window', async () => {
       const result = await service.findBusyAircraft(

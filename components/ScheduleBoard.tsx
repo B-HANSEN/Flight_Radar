@@ -69,6 +69,7 @@ function groupByAircraft(blocks: ScheduleBlockRecord[]): ScheduleRow[] {
       end: record.end,
       studentName: record.studentName,
       instructorName: record.instructorName,
+      comments: record.comments,
     })
   }
 

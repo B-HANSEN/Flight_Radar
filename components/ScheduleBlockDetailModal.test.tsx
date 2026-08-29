@@ -63,6 +63,18 @@ describe('ScheduleBlockDetailModal', () => {
     expect(screen.getByText('James Whitfield')).toBeInTheDocument()
   })
 
+  it('shows the notes row when the block carries comments', () => {
+    renderModal({
+      detail: {
+        ...DETAIL,
+        block: { ...DETAIL.block, comments: 'Navigation' },
+      },
+    })
+
+    expect(screen.getByText('Notes')).toBeInTheDocument()
+    expect(screen.getByText('Navigation')).toBeInTheDocument()
+  })
+
   it('omits the instructor row when only a student name is present', () => {
     renderModal({
       detail: {

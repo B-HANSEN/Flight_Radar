@@ -132,7 +132,8 @@
     "title": "Detalles de la programación",
     "close": "Cerrar",
     "student": "Alumno",
-    "instructor": "Instructor"
+    "instructor": "Instructor",
+    "notes": "Notas"
   },
   "AircraftPage": {
     "title": "Aeronaves",
@@ -484,13 +485,19 @@
     "lessonTypeDual": "Instrucción dual",
     "lessonTypeSolo": "Solo supervisado",
     "lessonTypeCheckride": "Preparación de examen",
+    "lessonTypeTheory": "Teoría",
     "instructorAssignedLegend": "Instructor",
     "instructorLocked": "Solo el instructor jefe puede asignar esta lección a otro instructor.",
     "instructorLockedNotice": "Para cambiar el instructor de vuelo, contacta con el instructor jefe.",
     "commentsLegend": "Comentarios",
+    "commentsLegendTheory": "Tema y detalles de teoría",
+    "aircraftNotNeededForTheory": "No es necesario para una clase teórica.",
     "commentsPlaceholder": "Notas para esta lección: maniobras a cubrir, punto de encuentro, lo que el alumno debe preparar.",
+    "commentsTheoryPlaceholder": "Tema de esta clase teórica: p. ej. circuito de tránsito, navegación, preparación de vuelo de travesía, procedimientos de radio.",
     "summaryReady": "{student} · {aircraft} · {lessonType} · {start} – {end}",
+    "summaryReadyTheory": "{student} · {lessonType} — {topic} · {start} – {end}",
     "summaryPrompt": "Elige una hora, un avión y un tipo de lección",
+    "summaryPromptTheory": "Elige una hora y añade el tema de teoría en los comentarios",
     "confirm": "Confirmar lección",
     "confirming": "Confirmando…"
   },

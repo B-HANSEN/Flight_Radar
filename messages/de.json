@@ -132,7 +132,8 @@
     "title": "Belegungsdetails",
     "close": "Schließen",
     "student": "Flugschüler",
-    "instructor": "Fluglehrer"
+    "instructor": "Fluglehrer",
+    "notes": "Notizen"
   },
   "AircraftPage": {
     "title": "Flugzeuge",
@@ -484,13 +485,19 @@
     "lessonTypeDual": "Fluglehrerbegleitung",
     "lessonTypeSolo": "Betreuter Alleinflug",
     "lessonTypeCheckride": "Prüfungsvorbereitung",
+    "lessonTypeTheory": "Theorie",
     "instructorAssignedLegend": "Fluglehrer",
     "instructorLocked": "Nur der Chefflugleiter kann diese Lektion einem anderen Fluglehrer zuweisen.",
     "instructorLockedNotice": "Um den Fluglehrer zu ändern, wenden Sie sich bitte an den Chefflugleiter.",
     "commentsLegend": "Anmerkungen",
+    "commentsLegendTheory": "Theoriethema & Details",
+    "aircraftNotNeededForTheory": "Für eine Theoriestunde nicht erforderlich.",
     "commentsPlaceholder": "Notizen zu dieser Lektion – Manöver, Treffpunkt, was der Flugschüler vorbereiten soll.",
+    "commentsTheoryPlaceholder": "Thema dieser Theoriestunde – z. B. Platzrunde, Navigation, Überlandflug-Vorbereitung, Sprechfunkverfahren.",
     "summaryReady": "{student} · {aircraft} · {lessonType} · {start} – {end}",
+    "summaryReadyTheory": "{student} · {lessonType} – {topic} · {start} – {end}",
     "summaryPrompt": "Uhrzeit, Flugzeug und Unterrichtsart auswählen",
+    "summaryPromptTheory": "Uhrzeit wählen und das Theoriethema in den Anmerkungen angeben",
     "confirm": "Lektion bestätigen",
     "confirming": "Wird bestätigt…"
   },

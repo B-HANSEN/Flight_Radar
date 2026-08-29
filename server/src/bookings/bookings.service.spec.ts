@@ -93,7 +93,36 @@ describe('BookingsService', () => {
       time: '09:00 - 11:00',
       studentId: 'student-1',
       instructorId: 'instructor-1',
+      comments: 'Cover steep turns',
     })
+  })
+
+  it('stores no comments when the note is blank', async () => {
+    await service.create({ ...input, comments: '   ' })
+
+    expect(bookingModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({ comments: undefined }),
+    )
+  })
+
+  it('creates a Theory lesson with no aircraft when aircraftId is omitted', async () => {
+    await service.create({
+      studentId: input.studentId,
+      instructorId: input.instructorId,
+      date: input.date,
+      startTime: input.startTime,
+      endTime: input.endTime,
+      lessonType: 'Theory',
+      comments: 'Navigation',
+    })
+
+    expect(aircraftModel.findById).not.toHaveBeenCalled()
+    expect(bookingModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'Theory', tail: undefined }),
+    )
+    expect(calendarEventModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({ tailNumber: undefined }),
+    )
   })
 
   it('throws when the student does not exist', async () => {

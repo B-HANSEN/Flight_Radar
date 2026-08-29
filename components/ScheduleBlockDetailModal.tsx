@@ -28,7 +28,9 @@ export default function ScheduleBlockDetailModal({ detail, onClose }: Props) {
           <p className='font-secondary text-sm text-black-300'>
             {detail.block.label}
           </p>
-          {(detail.block.studentName || detail.block.instructorName) && (
+          {(detail.block.studentName ||
+            detail.block.instructorName ||
+            detail.block.comments) && (
             <dl className='mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-secondary text-sm'>
               {detail.block.studentName && (
                 <>
@@ -46,6 +48,12 @@ export default function ScheduleBlockDetailModal({ detail, onClose }: Props) {
                   <dd className='text-black-300'>
                     {detail.block.instructorName}
                   </dd>
+                </>
+              )}
+              {detail.block.comments && (
+                <>
+                  <dt className='font-semibold text-black-200'>{t('notes')}</dt>
+                  <dd className='text-black-300'>{detail.block.comments}</dd>
                 </>
               )}
             </dl>

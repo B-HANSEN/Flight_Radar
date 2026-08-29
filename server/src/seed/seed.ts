@@ -1866,8 +1866,11 @@ type StudentFlightSeed = {
   date: string // ISO, matches CalendarEvent.date
   startTime: string
   endTime: string
-  tail: string
+  // Absent for a Theory (ground-school) lesson, which uses no aircraft.
+  tail?: string
   lessonType: string
+  // Instructor's note; for a Theory lesson it carries the topic.
+  comments?: string
 }
 
 const SEPTEMBER_STUDENT_FLIGHTS: StudentFlightSeed[] = [
@@ -2009,6 +2012,44 @@ const SEPTEMBER_STUDENT_FLIGHTS: StudentFlightSeed[] = [
     tail: 'EC-JPY',
     lessonType: 'Dual instruction',
   },
+
+  // Ground-school (Theory) lessons — no aircraft, the topic lives in comments.
+  {
+    studentName: 'Alex Moreau',
+    instructorName: 'James Whitfield',
+    date: '2026-09-04',
+    startTime: '16:00',
+    endTime: '17:30',
+    lessonType: 'Theory',
+    comments: 'Cross-country prep',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-09',
+    startTime: '08:00',
+    endTime: '09:30',
+    lessonType: 'Theory',
+    comments: 'Circuit pattern',
+  },
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-11',
+    startTime: '13:00',
+    endTime: '14:30',
+    lessonType: 'Theory',
+    comments: 'Navigation',
+  },
+  {
+    studentName: 'Noah Becker',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-16',
+    startTime: '10:00',
+    endTime: '11:00',
+    lessonType: 'Theory',
+    comments: 'Radio procedures',
+  },
 ]
 
 function buildSeptemberStudentFlights(
@@ -2035,6 +2076,7 @@ function buildSeptemberStudentFlights(
       time,
       studentId: flightStudentId,
       instructorId: flightInstructorId,
+      comments: flight.comments,
     })
 
     calendarEvents.push({
@@ -2042,7 +2084,11 @@ function buildSeptemberStudentFlights(
       date: flight.date,
       time,
       tailNumber: flight.tail,
-      flightLines: [`${flight.lessonType} · ${flight.tail}`],
+      flightLines: [
+        flight.comments
+          ? `${flight.lessonType} · ${flight.comments}`
+          : `${flight.lessonType} · ${flight.tail}`,
+      ],
       studentId: flightStudentId,
     })
   }

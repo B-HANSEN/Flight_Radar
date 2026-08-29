@@ -178,6 +178,59 @@ describe('ScheduleFlightModal', () => {
     })
   })
 
+  it('offers a Theory lesson type and swaps the comments placeholder to a topic prompt', () => {
+    renderModal()
+
+    const comments = screen.getByLabelText('Comments')
+    expect(comments).toHaveAttribute(
+      'placeholder',
+      expect.stringContaining('manoeuvres to cover'),
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Theory' }))
+
+    expect(comments).toHaveAttribute(
+      'placeholder',
+      expect.stringContaining('circuit pattern, navigation'),
+    )
+  })
+
+  it('confirms a Theory lesson with no aircraft and the topic in the comments', () => {
+    const onConfirm = vi.fn().mockResolvedValue(undefined)
+    renderModal({ onConfirm })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Theory' }))
+    // Aircraft type pills are disabled for Theory
+    expect(screen.getByRole('button', { name: 'Cessna 152' })).toBeDisabled()
+
+    fireEvent.change(screen.getByLabelText('Theory topic & details'), {
+      target: { value: 'Navigation' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm lesson' }))
+
+    expect(onConfirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        lessonType: 'Theory',
+        aircraftId: undefined,
+        comments: 'Navigation',
+      }),
+    )
+  })
+
+  it('keeps Confirm disabled for a Theory lesson until the topic is filled in', () => {
+    renderModal()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Theory' }))
+    expect(
+      screen.getByRole('button', { name: 'Confirm lesson' }),
+    ).toBeDisabled()
+
+    fireEvent.change(screen.getByLabelText('Theory topic & details'), {
+      target: { value: 'Radio procedures' },
+    })
+    expect(screen.getByRole('button', { name: 'Confirm lesson' })).toBeEnabled()
+  })
+
   it('fetches busy aircraft for the target date and time window', async () => {
     renderModal()
 

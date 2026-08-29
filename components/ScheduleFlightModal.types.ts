@@ -28,7 +28,8 @@ export type ScheduledFlight = {
 
 export type ScheduleFlightConfirmInput = {
   studentId: string
-  aircraftId: string
+  // Omitted for a Theory (ground-school) lesson, which needs no aircraft.
+  aircraftId?: string
   instructorId: string
   date: string
   startTime: string

@@ -29,6 +29,8 @@ export type BookingScheduleBlock = {
   // Who the reservation is for, surfaced in the schedule detail modal.
   studentName: string
   instructorName?: string
+  // Instructor's note for the lesson (the topic, for a Theory lesson).
+  comments?: string
 }
 
 export type BusyAircraft = {
@@ -104,7 +106,11 @@ export class ScheduleService {
 
     const bookingBlocks: BookingScheduleBlock[] = []
     for (const booking of bookings) {
-      const aircraftId = aircraftIdByTail.get(booking.tail)
+      // A Theory lesson has no tail, so it maps to no aircraft row and is
+      // skipped here (it still shows in the student's day / calendar).
+      const aircraftId = booking.tail
+        ? aircraftIdByTail.get(booking.tail)
+        : undefined
       const date = toISODate(booking.date)
       const range = parseTimeRange(booking.time)
       if (!aircraftId || !date || !range) continue
@@ -113,7 +119,11 @@ export class ScheduleService {
       const label = `${booking.type} · ${booking.person}`
       const dayIndex = weekdayIndex(date)
       const instructorName = instructorNameById.get(booking.instructorId)
-      const who = { studentName: booking.person, instructorName }
+      const who = {
+        studentName: booking.person,
+        instructorName,
+        comments: booking.comments,
+      }
 
       bookingBlocks.push(
         {
@@ -203,9 +213,10 @@ export class ScheduleService {
       if (!startTime || !endTime) continue
 
       const instructorName = instructorNameById.get(booking.instructorId)
-      const label = instructorName
-        ? `${booking.type} · ${booking.tail} · ${instructorName}`
-        : `${booking.type} · ${booking.tail}`
+      // Theory lessons have no tail, so it's just left out of the label.
+      const label = [booking.type, booking.tail, instructorName]
+        .filter(Boolean)
+        .join(' · ')
 
       flights.push({
         id: (booking._id as { toString(): string }).toString(),

@@ -132,7 +132,8 @@
     "title": "Schedule details",
     "close": "Close",
     "student": "Student",
-    "instructor": "Instructor"
+    "instructor": "Instructor",
+    "notes": "Notes"
   },
   "AircraftPage": {
     "title": "Aircraft",
@@ -484,13 +485,19 @@
     "lessonTypeDual": "Dual instruction",
     "lessonTypeSolo": "Solo supervised",
     "lessonTypeCheckride": "Checkride prep",
+    "lessonTypeTheory": "Theory",
     "instructorAssignedLegend": "Instructor",
     "instructorLocked": "Only the Chief Flight Instructor can assign this lesson to another instructor.",
     "instructorLockedNotice": "To change a flight instructor, please contact the Chief Flight Instructor.",
     "commentsLegend": "Comments",
+    "commentsLegendTheory": "Theory topic & details",
+    "aircraftNotNeededForTheory": "Not needed for a theory lesson.",
     "commentsPlaceholder": "Notes for this lesson — manoeuvres to cover, meeting point, anything the student should prepare.",
+    "commentsTheoryPlaceholder": "Topic for this theory lesson — e.g. circuit pattern, navigation, cross-country prep, radio procedures.",
     "summaryReady": "{student} · {aircraft} · {lessonType} · {start} – {end}",
+    "summaryReadyTheory": "{student} · {lessonType} — {topic} · {start} – {end}",
     "summaryPrompt": "Pick a time, an aircraft and a lesson type",
+    "summaryPromptTheory": "Pick a time and add the theory topic in the comments",
     "confirm": "Confirm lesson",
     "confirming": "Confirming…"
   },

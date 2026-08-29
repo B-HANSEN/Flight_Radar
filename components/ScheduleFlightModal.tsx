@@ -42,6 +42,7 @@ const LESSON_TYPE_KEYS = [
   ['Dual instruction', 'lessonTypeDual'],
   ['Solo supervised', 'lessonTypeSolo'],
   ['Checkride prep', 'lessonTypeCheckride'],
+  ['Theory', 'lessonTypeTheory'],
 ] as const
 
 const timeTriggerClassName =
@@ -236,6 +237,12 @@ export default function ScheduleFlightModal({
 
   function toggleLessonType(type: string) {
     setSelectedLessonType((current) => (current === type ? '' : type))
+    // A Theory lesson has no aircraft — drop any pending aircraft choice so
+    // it can't be sent, and so the (now hidden) tail picker resets.
+    if (type === 'Theory') {
+      setSelectedAircraftType('')
+      setSelectedAircraftId('')
+    }
   }
 
   function handleTimeConfirm(time: string) {
@@ -244,39 +251,55 @@ export default function ScheduleFlightModal({
     setTimePickerTarget(null)
   }
 
+  // Theory (ground school) needs no aircraft, but the topic is mandatory —
+  // it must go in the comments so the lesson isn't just labelled "Theory".
+  const isTheory = selectedLessonType === 'Theory'
+  const commentsProvided = comments.trim() !== ''
+
   const canConfirm =
     !isSubmitting &&
     target !== null &&
-    selectedAircraft !== undefined &&
     selectedLessonType !== '' &&
     selectedInstructor !== undefined &&
-    !hasSchedulingConflict
+    !hasSchedulingConflict &&
+    (isTheory ? commentsProvided : selectedAircraft !== undefined)
 
-  const summary =
+  const summaryReady =
     target &&
-    selectedAircraft &&
-    selectedLessonType &&
     selectedLessonTypeKey &&
     selectedInstructor &&
-    !hasSchedulingConflict
-      ? t('summaryReady', {
+    !hasSchedulingConflict &&
+    (isTheory ? commentsProvided : selectedAircraft !== undefined)
+
+  const summary = !summaryReady
+    ? isTheory
+      ? t('summaryPromptTheory')
+      : t('summaryPrompt')
+    : isTheory
+      ? t('summaryReadyTheory', {
           student: target.studentName,
-          aircraft: selectedAircraft.arcid,
+          lessonType: t(selectedLessonTypeKey),
+          topic: comments.trim(),
+          start: startTime,
+          end: endTime,
+        })
+      : t('summaryReady', {
+          student: target.studentName,
+          aircraft: selectedAircraft!.arcid,
           lessonType: t(selectedLessonTypeKey),
           start: startTime,
           end: endTime,
         })
-      : t('summaryPrompt')
 
   async function handleConfirm() {
-    if (!canConfirm || !target || !selectedAircraft || !selectedInstructor)
-      return
+    if (!canConfirm || !target || !selectedInstructor) return
+    if (!isTheory && !selectedAircraft) return
 
     setIsSubmitting(true)
     try {
       await onConfirm({
         studentId: target.studentId,
-        aircraftId: selectedAircraft.id,
+        aircraftId: selectedAircraft?.id,
         instructorId: selectedInstructor.id,
         date: target.slot.date,
         startTime,
@@ -443,7 +466,10 @@ export default function ScheduleFlightModal({
             )}
           </fieldset>
 
-          <fieldset className='m-0 mb-5 border-0 p-0'>
+          <fieldset
+            disabled={isTheory}
+            className={`m-0 mb-5 border-0 p-0 ${isTheory ? 'opacity-50' : ''}`}
+          >
             <legend className='mb-2.5 block w-full font-secondary text-xs font-semibold text-black-200 uppercase'>
               {t('aircraftTypeLegend')}
             </legend>
@@ -454,12 +480,20 @@ export default function ScheduleFlightModal({
                   type='button'
                   onClick={() => selectAircraftType(type)}
                   aria-pressed={selectedAircraftType === type}
-                  className={pillClassName(selectedAircraftType === type)}
+                  className={pillClassName(
+                    selectedAircraftType === type,
+                    isTheory,
+                  )}
                 >
                   {type}
                 </button>
               ))}
             </div>
+            {isTheory && (
+              <p className='mt-2 font-secondary text-xs text-black-200'>
+                {t('aircraftNotNeededForTheory')}
+              </p>
+            )}
           </fieldset>
 
           {selectedAircraftType && (
@@ -567,14 +601,24 @@ export default function ScheduleFlightModal({
               htmlFor={`${formId}-comments`}
               className='mb-2.5 block w-full font-secondary text-xs font-semibold text-black-200 uppercase'
             >
-              {t('commentsLegend')}
+              {isTheory ? t('commentsLegendTheory') : t('commentsLegend')}
             </label>
             <textarea
               id={`${formId}-comments`}
               value={comments}
               onChange={(event) => setComments(event.target.value)}
-              placeholder={t('commentsPlaceholder')}
-              className={`min-h-20 w-full resize-y rounded-lg border border-black-100 bg-white px-3.5 py-3 font-secondary text-sm text-black-300 ${focusRing}`}
+              required={isTheory}
+              aria-required={isTheory}
+              placeholder={
+                isTheory
+                  ? t('commentsTheoryPlaceholder')
+                  : t('commentsPlaceholder')
+              }
+              className={`min-h-20 w-full resize-y rounded-lg border bg-white px-3.5 py-3 font-secondary text-sm text-black-300 ${focusRing} ${
+                isTheory && !commentsProvided
+                  ? 'border-red-200'
+                  : 'border-black-100'
+              }`}
             />
           </div>
 

@@ -20,7 +20,8 @@ import { toDisplayDate } from '../common/date'
 
 export type CreateBookingInput = {
   studentId: string
-  aircraftId: string
+  // Omitted for a Theory (ground-school) lesson, which needs no aircraft.
+  aircraftId?: string
   instructorId: string
   date: string
   startTime: string
@@ -65,20 +66,24 @@ export class BookingsService {
   }
 
   async create(input: CreateBookingInput) {
-    const [student, aircraft, instructor] = await Promise.all([
+    const [student, instructor] = await Promise.all([
       this.studentModel.findById(input.studentId).exec(),
-      this.aircraftModel.findById(input.aircraftId).exec(),
       this.instructorModel.findById(input.instructorId).exec(),
     ])
 
     if (!student) {
       throw new NotFoundException(`Student ${input.studentId} not found`)
     }
-    if (!aircraft) {
-      throw new NotFoundException(`Aircraft ${input.aircraftId} not found`)
-    }
     if (!instructor) {
       throw new NotFoundException(`Instructor ${input.instructorId} not found`)
+    }
+
+    // A Theory (ground-school) lesson carries no aircraft.
+    const aircraft = input.aircraftId
+      ? await this.aircraftModel.findById(input.aircraftId).exec()
+      : null
+    if (input.aircraftId && !aircraft) {
+      throw new NotFoundException(`Aircraft ${input.aircraftId} not found`)
     }
 
     const sameDayBookings = await this.calendarEventModel
@@ -86,7 +91,10 @@ export class BookingsService {
         type: 'booking',
         date: input.date,
         cancelled: { $ne: true },
-        $or: [{ studentId: input.studentId }, { tailNumber: aircraft.arcid }],
+        $or: [
+          { studentId: input.studentId },
+          ...(aircraft ? [{ tailNumber: aircraft.arcid }] : []),
+        ],
       })
       .exec()
 
@@ -116,7 +124,10 @@ export class BookingsService {
         `Student ${input.studentId} needs a ${STUDENT_BUFFER_MINUTES} min buffer around ${input.startTime}-${input.endTime} on ${input.date}`,
       )
     }
-    if (overlapping.some((event) => event.tailNumber === aircraft.arcid)) {
+    if (
+      aircraft &&
+      overlapping.some((event) => event.tailNumber === aircraft.arcid)
+    ) {
       throw new ConflictException(
         `Aircraft ${aircraft.arcid} is already booked overlapping ${input.startTime}-${input.endTime} on ${input.date}`,
       )
@@ -128,7 +139,7 @@ export class BookingsService {
       type: 'booking',
       date: input.date,
       time,
-      tailNumber: aircraft.arcid,
+      tailNumber: aircraft?.arcid,
       flightLines: input.comments ? [input.comments] : undefined,
       studentId: input.studentId,
     })
@@ -136,11 +147,12 @@ export class BookingsService {
     return this.bookingModel.create({
       type: input.lessonType,
       date: toDisplayDate(input.date),
-      tail: aircraft.arcid,
+      tail: aircraft?.arcid,
       person: student.name,
       time,
       studentId: input.studentId,
       instructorId: input.instructorId,
+      comments: input.comments?.trim() || undefined,
     })
   }
 }

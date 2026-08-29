@@ -17,6 +17,8 @@ export type ScheduleBlock = {
   // Present only on reserved blocks that come from a real booking.
   studentName?: string
   instructorName?: string
+  // Instructor's note for the lesson (the topic, for a Theory lesson).
+  comments?: string
 }
 
 export type ScheduleBlockRecord = ScheduleBlock & {

@@ -20,8 +20,9 @@ export class Booking {
   @Prop({ required: true })
   date!: string
 
-  @Prop({ required: true })
-  tail!: string
+  // Absent for a Theory (ground-school) lesson, which uses no aircraft.
+  @Prop()
+  tail?: string
 
   @Prop({ required: true })
   person!: string
@@ -38,6 +39,11 @@ export class Booking {
   // to teach this lesson (see ScheduleFlightModal's instructor picker).
   @Prop({ required: true })
   instructorId!: string
+
+  // Free-text note from the instructor. For a Theory lesson this is where
+  // the topic lives (e.g. "navigation", "radio procedures").
+  @Prop()
+  comments?: string
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking)
