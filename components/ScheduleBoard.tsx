@@ -42,6 +42,11 @@ const KIND_STYLES: Record<ScheduleBlock['kind'], string> = {
   unavailable: 'bg-black-100/70 text-black-300',
 }
 
+// Shared look for the header's segmented toggles (day/week view, type filter).
+const SEGMENT_BUTTON = `rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing}`
+const segmentButton = (active: boolean) =>
+  `${SEGMENT_BUTTON} ${active ? 'bg-white text-blue-300' : 'text-black-300'}`
+
 function groupByAircraft(blocks: ScheduleBlockRecord[]): ScheduleRow[] {
   const rows: ScheduleRow[] = []
   const rowByAircraftId = new Map<string, ScheduleRow>()
@@ -167,6 +172,20 @@ export default function ScheduleBoard({
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [selectedBlock, setSelectedBlock] =
     useState<ScheduleBlockDetail | null>(null)
+  const [typeFilter, setTypeFilter] = useState<string | null>(null)
+
+  const aircraftTypes = useMemo(
+    () =>
+      [...new Set(aircraft.map((ac) => ac.type))].sort((a, b) =>
+        a.localeCompare(b),
+      ),
+    [aircraft],
+  )
+  const visibleAircraft = useMemo(
+    () =>
+      typeFilter ? aircraft.filter((ac) => ac.type === typeFilter) : aircraft,
+    [aircraft, typeFilter],
+  )
 
   const weekStart = useMemo(() => startOfWeek(referenceDate), [referenceDate])
   const weekEnd = useMemo(() => addDays(weekStart, 6), [weekStart])
@@ -299,7 +318,7 @@ export default function ScheduleBoard({
               type='button'
               onClick={() => setView('day')}
               aria-pressed={view === 'day'}
-              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'day' ? 'bg-white text-blue-300' : 'text-black-300'}`}
+              className={segmentButton(view === 'day')}
             >
               {t('dayView')}
             </button>
@@ -307,11 +326,39 @@ export default function ScheduleBoard({
               type='button'
               onClick={() => setView('week')}
               aria-pressed={view === 'week'}
-              className={`rounded-md px-3.5 py-1.5 font-primary text-sm font-semibold ${focusRing} ${view === 'week' ? 'bg-white text-blue-300' : 'text-black-300'}`}
+              className={segmentButton(view === 'week')}
             >
               {t('weekView')}
             </button>
           </div>
+
+          {aircraftTypes.length > 1 && (
+            <div
+              role='group'
+              aria-label={t('filterByTypeLabel')}
+              className='flex flex-wrap gap-1 rounded-lg bg-black-100/50 p-0.75'
+            >
+              <button
+                type='button'
+                onClick={() => setTypeFilter(null)}
+                aria-pressed={typeFilter === null}
+                className={segmentButton(typeFilter === null)}
+              >
+                {t('allTypes')}
+              </button>
+              {aircraftTypes.map((type) => (
+                <button
+                  key={type}
+                  type='button'
+                  onClick={() => setTypeFilter(type)}
+                  aria-pressed={typeFilter === type}
+                  className={segmentButton(typeFilter === type)}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          )}
 
           <button
             type='button'
@@ -323,7 +370,7 @@ export default function ScheduleBoard({
           </button>
         </div>
 
-        {aircraft.length === 0 ? (
+        {visibleAircraft.length === 0 ? (
           <p className='px-5 py-12 text-center font-secondary text-sm text-black-200'>
             {t('noAircraft')}
           </p>
@@ -333,7 +380,7 @@ export default function ScheduleBoard({
               <div className='flex h-9.5 items-center border-b border-black-200 px-4 font-primary text-xs font-bold tracking-wide text-black-200 uppercase'>
                 {t('singleEngineGroup')}
               </div>
-              {aircraft.map((ac) => (
+              {visibleAircraft.map((ac) => (
                 <div
                   key={ac.id}
                   className='flex h-18 items-center gap-2.5 border-b border-black-200 px-4 last:border-b-0'
@@ -374,7 +421,7 @@ export default function ScheduleBoard({
             >
               {view === 'day' ? (
                 <ScheduleGrid
-                  aircraft={aircraft}
+                  aircraft={visibleAircraft}
                   rows={dayRows}
                   labels={HOUR_LABELS}
                   gridColsClassName='grid-cols-[repeat(13,1fr)]'
@@ -387,7 +434,7 @@ export default function ScheduleBoard({
                 />
               ) : (
                 <ScheduleGrid
-                  aircraft={aircraft}
+                  aircraft={visibleAircraft}
                   rows={weekRows}
                   labels={dayLabels}
                   gridColsClassName='grid-cols-[repeat(7,1fr)]'

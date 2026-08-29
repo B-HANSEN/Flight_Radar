@@ -122,7 +122,9 @@
     "noAircraft": "Keine Flugzeuge vorhanden.",
     "gridLabel": "Belegungsraster, scrollbar",
     "photoAlt": "{type} ({arcid})",
-    "fetching": "Wird geladen …"
+    "fetching": "Wird geladen …",
+    "filterByTypeLabel": "Nach Flugzeugtyp filtern",
+    "allTypes": "Alle Typen"
   },
   "ScheduleBlockDetailModal": {
     "title": "Belegungsdetails",

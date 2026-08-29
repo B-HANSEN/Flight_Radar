@@ -122,7 +122,9 @@
     "noAircraft": "No hay aeronaves que mostrar.",
     "gridLabel": "Cuadrícula de programación, desplazable",
     "photoAlt": "{type} ({arcid})",
-    "fetching": "Cargando…"
+    "fetching": "Cargando…",
+    "filterByTypeLabel": "Filtrar por tipo de aeronave",
+    "allTypes": "Todos los tipos"
   },
   "ScheduleBlockDetailModal": {
     "title": "Detalles de la programación",

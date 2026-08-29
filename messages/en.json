@@ -122,7 +122,9 @@
     "noAircraft": "No aircraft to show.",
     "gridLabel": "Schedule grid, scrollable",
     "photoAlt": "{type} ({arcid})",
-    "fetching": "Fetching…"
+    "fetching": "Fetching…",
+    "filterByTypeLabel": "Filter by aircraft type",
+    "allTypes": "All types"
   },
   "ScheduleBlockDetailModal": {
     "title": "Schedule details",

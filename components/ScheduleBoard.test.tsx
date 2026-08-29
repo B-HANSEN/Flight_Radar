@@ -192,6 +192,33 @@ describe('ScheduleBoard', () => {
     expect(screen.getByText('James Whitfield')).toBeInTheDocument()
   })
 
+  it('filters the aircraft rows by type', () => {
+    renderBoard({
+      aircraft: [
+        ...AIRCRAFT,
+        { id: 'ec-kop', arcid: 'EC-KOP', type: 'Cessna 172' },
+      ],
+    })
+
+    expect(screen.getByText('EC-KOP')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cessna 152' }))
+
+    expect(screen.queryByText('EC-KOP')).not.toBeInTheDocument()
+    expect(screen.getByText('EC-ERV')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'All types' }))
+    expect(screen.getByText('EC-KOP')).toBeInTheDocument()
+  })
+
+  it('has no type filter when every aircraft shares one type', () => {
+    renderBoard()
+
+    expect(
+      screen.queryByRole('button', { name: 'All types' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('only shows a dated week block within the currently viewed week', () => {
     renderBoard({
       weekBlocks: [
