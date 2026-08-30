@@ -1,7 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Clock, ExternalLink, PenLine, Plane, User } from 'lucide-react'
+import {
+  Clock,
+  ExternalLink,
+  GraduationCap,
+  PenLine,
+  Plane,
+  User,
+} from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { AIRFIELD_NAMES } from '@/lib/airfields'
@@ -171,12 +178,25 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
                 </div>
                 <div className='flex items-center gap-4 pl-4'>
                   <span className='flex items-center gap-1.5 font-secondary text-xs text-blue-300'>
-                    <Plane
-                      size={14}
-                      className='text-black-200'
-                      aria-hidden='true'
-                    />
-                    {booking.tail}
+                    {booking.type === 'Theory' ? (
+                      <>
+                        <GraduationCap
+                          size={14}
+                          className='text-black-200'
+                          aria-hidden='true'
+                        />
+                        {booking.comments}
+                      </>
+                    ) : (
+                      <>
+                        <Plane
+                          size={14}
+                          className='text-black-200'
+                          aria-hidden='true'
+                        />
+                        {booking.tail}
+                      </>
+                    )}
                   </span>
                   <span className='flex items-center gap-1.5 font-secondary text-xs text-blue-300'>
                     <User

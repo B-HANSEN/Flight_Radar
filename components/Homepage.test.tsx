@@ -49,6 +49,14 @@ const bookings = [
     person: 'J. Whitfield',
     time: '10:00 - 11:30',
   },
+  {
+    id: 'booking-2',
+    type: 'Theory',
+    date: '19/08/2026',
+    person: 'K. Ashford',
+    time: '09:00 - 10:30',
+    comments: 'Radio procedures',
+  },
 ]
 
 const signatures = [
@@ -130,6 +138,11 @@ describe('Homepage', () => {
     expect(within(bookingsSection).getByText('EC-ERV')).toBeInTheDocument()
     expect(
       within(bookingsSection).getByText('J. Whitfield'),
+    ).toBeInTheDocument()
+    // A Theory lesson shows its topic in place of a tail number.
+    expect(within(bookingsSection).getByText('Theory')).toBeInTheDocument()
+    expect(
+      within(bookingsSection).getByText('Radio procedures'),
     ).toBeInTheDocument()
 
     const signaturesSection = screen

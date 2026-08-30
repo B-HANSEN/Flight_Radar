@@ -9,9 +9,12 @@ export type Booking = {
   id: string
   type: string
   date: string
-  tail: string
+  // Absent for a Theory (ground-school) lesson, which uses no aircraft.
+  tail?: string
   person: string
   time: string
+  // Free-text note; for a Theory lesson this holds the topic.
+  comments?: string
 }
 
 export type NewsTag = 'operations' | 'fuel' | 'atc'
