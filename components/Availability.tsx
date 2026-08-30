@@ -15,6 +15,9 @@ import type {
 
 type Props = {
   entries?: AvailabilityEntry[]
+  // The persona these entries belong to — sent with a newly created entry so
+  // it lands on the right student. Omitted in Storybook / the demo persona.
+  studentId?: string
 }
 
 const gridColumnsClassName =
@@ -81,7 +84,10 @@ function formValuesToApiFields(values: AvailabilityFormValues) {
   }
 }
 
-export default function Availability({ entries: initialEntries = [] }: Props) {
+export default function Availability({
+  entries: initialEntries = [],
+  studentId,
+}: Props) {
   const t = useTranslations('Availability')
   const formT = useTranslations('AvailabilityFormModal')
 
@@ -161,6 +167,7 @@ export default function Availability({ entries: initialEntries = [] }: Props) {
           timeLabel,
           recurrence: recurrenceLabel,
           ...fields,
+          ...(studentId ? { studentId } : {}),
         }),
         cache: 'no-store',
       })

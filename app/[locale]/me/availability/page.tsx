@@ -5,6 +5,7 @@ import { redirect } from '@/i18n/navigation'
 import { CURRENT_ROLE_COOKIE, isInstructorRoleValue } from '@/lib/currentRole'
 import Availability from '@/components/Availability'
 import type { AvailabilityEntry } from '@/components/Availability.types'
+import type { Student } from '@/components/RoleSwitcher.types'
 import { fetchApi } from '@/lib/api'
 
 export function generateStaticParams() {
@@ -27,12 +28,23 @@ export default async function AvailabilityPage({
   }
 
   const t = await getTranslations('AvailabilityPage')
-  const entries = await fetchApi<AvailabilityEntry[]>('/availability')
+
+  // Same persona resolution as the rest of /me — the cookie value is the
+  // student's own id, falling back to the default demo persona.
+  const students = await fetchApi<Student[]>('/students')
+  const student =
+    students.find((s) => s.id === roleCookie) ??
+    students.find((s) => s.name === 'Jamie Torres') ??
+    students[0]
+
+  const entries = await fetchApi<AvailabilityEntry[]>(
+    `/availability?studentId=${student.id}`,
+  )
 
   return (
     <>
       <h1 className='sr-only'>{t('title')}</h1>
-      <Availability entries={entries} />
+      <Availability entries={entries} studentId={student.id} />
     </>
   )
 }

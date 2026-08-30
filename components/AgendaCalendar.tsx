@@ -2,13 +2,9 @@
 
 import { useId, useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
-import {
-  CalendarCheck,
-  ChevronLeft,
-  ChevronRight,
-  RefreshCw,
-} from 'lucide-react'
+import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
 import { focusRing } from '@/lib/styles'
+import { useRouter } from '@/i18n/navigation'
 import { useDragScroll } from '@/lib/useDragScroll'
 import {
   addMonths,
@@ -18,12 +14,22 @@ import {
   type MonthKey,
 } from '@/lib/monthGrid'
 import BookingDetailModal from './BookingDetailModal'
-import type { BookingEvent, CalendarEvent } from './AgendaCalendar.types'
+import Toast from './Toast'
+import {
+  isTheory,
+  type AgendaPerspective,
+  type BookingEvent,
+  type CalendarEvent,
+} from './AgendaCalendar.types'
+import { getFlightContent } from '@/lib/trainingContent'
 
 type Props = {
   events?: CalendarEvent[]
   initialMonth?: MonthKey
   onRefresh?: () => void
+  // ISO timestamp of when the agenda data was fetched, shown next to Refresh.
+  updatedAt?: string
+  perspective?: AgendaPerspective
 }
 
 const MAX_MONTHS_AHEAD = 3
@@ -40,9 +46,12 @@ export default function AgendaCalendar({
   events = [],
   initialMonth,
   onRefresh,
+  updatedAt,
+  perspective = 'student',
 }: Props) {
   const t = useTranslations('AgendaCalendar')
   const locale = useLocale()
+  const router = useRouter()
   const monthLabelId = useId()
   const today = useMemo(() => new Date(), [])
   const currentMonth = { year: today.getFullYear(), month: today.getMonth() }
@@ -51,9 +60,20 @@ export default function AgendaCalendar({
   const [month, setMonth] = useState<MonthKey>(() =>
     clampMonth(initialMonth ?? currentMonth, minMonth, maxMonth),
   )
-  const [showCancelations, setShowCancelations] = useState(false)
+  // Cancelled lessons show by default (struck through, labelled); the toggle
+  // hides them for a cleaner view.
+  const [hideCancelations, setHideCancelations] = useState(false)
   const [activeEvent, setActiveEvent] = useState<BookingEvent | null>(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
+
+  function handleRefresh() {
+    setIsRefreshing(true)
+    // Re-runs the server component so the /agenda fetch (cache: no-store)
+    // picks up bookings/availability changed since the page was loaded.
+    router.refresh()
+    onRefresh?.()
+  }
 
   const isAtMin = toMonthIndex(month) === toMonthIndex(minMonth)
   const isAtMax = toMonthIndex(month) === toMonthIndex(maxMonth)
@@ -68,12 +88,23 @@ export default function AgendaCalendar({
     [locale, month],
   )
 
+  const updatedLabel = useMemo(
+    () =>
+      updatedAt
+        ? new Intl.DateTimeFormat(locale, {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          }).format(new Date(updatedAt))
+        : null,
+    [updatedAt, locale],
+  )
+
   const weekdayLabels = t.raw('weekdaysShort') as string[]
 
   const eventsByDate = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>()
     for (const event of events) {
-      if (event.type === 'booking' && event.cancelled && !showCancelations) {
+      if (event.type === 'booking' && event.cancelled && hideCancelations) {
         continue
       }
       const list = map.get(event.date) ?? []
@@ -81,7 +112,7 @@ export default function AgendaCalendar({
       map.set(event.date, list)
     }
     return map
-  }, [events, showCancelations])
+  }, [events, hideCancelations])
 
   const gridDates = useMemo(() => getMonthGridDates(month), [month])
   const todayISO = toISODate(today)
@@ -92,6 +123,15 @@ export default function AgendaCalendar({
       className='overflow-hidden rounded-xl border border-black-200 bg-white'
     >
       <div className='flex flex-wrap items-center gap-4 border-b border-black-200 px-5 py-4'>
+        <button
+          type='button'
+          onClick={() => setMonth(currentMonth)}
+          disabled={isAtCurrentMonth}
+          className={`rounded-md border border-black-200 px-3 py-1 font-primary text-sm font-semibold text-black-300 disabled:opacity-40 ${focusRing}`}
+        >
+          {t('thisMonth')}
+        </button>
+
         <button
           type='button'
           onClick={() => setMonth((current) => addMonths(current, -1))}
@@ -120,34 +160,34 @@ export default function AgendaCalendar({
           <ChevronRight size={18} aria-hidden='true' />
         </button>
 
-        <button
-          type='button'
-          onClick={onRefresh}
-          aria-label={t('refresh')}
-          className={`rounded-sm p-1 text-black-200 ${focusRing}`}
-        >
-          <RefreshCw size={16} aria-hidden='true' />
-        </button>
-
-        <button
-          type='button'
-          onClick={() => setMonth(currentMonth)}
-          disabled={isAtCurrentMonth}
-          aria-label={t('today')}
-          className={`rounded-sm p-1 text-black-200 disabled:opacity-30 ${focusRing}`}
-        >
-          <CalendarCheck size={16} aria-hidden='true' />
-        </button>
-
         <label className='flex cursor-pointer items-center gap-2 py-1 font-secondary text-sm text-black-300'>
           <input
             type='checkbox'
-            checked={showCancelations}
-            onChange={(event) => setShowCancelations(event.target.checked)}
+            checked={hideCancelations}
+            onChange={(event) => setHideCancelations(event.target.checked)}
             className='size-3.5 cursor-pointer accent-blue-300'
           />
-          {t('viewCancelations')}
+          {t('hideCancelations')}
         </label>
+
+        <div className='ml-auto flex items-center gap-2.5'>
+          {updatedLabel && (
+            <span
+              suppressHydrationWarning
+              className='font-secondary text-xs whitespace-nowrap text-black-200'
+            >
+              {t('lastUpdated', { time: updatedLabel })}
+            </span>
+          )}
+          <button
+            type='button'
+            onClick={handleRefresh}
+            aria-label={t('refresh')}
+            className={`rounded-sm p-1 text-black-200 ${focusRing}`}
+          >
+            <RefreshCw size={16} aria-hidden='true' />
+          </button>
+        </div>
       </div>
 
       <div
@@ -214,27 +254,40 @@ export default function AgendaCalendar({
                           key={event.id}
                           type='button'
                           onClick={() => setActiveEvent(event)}
-                          className={`rounded-sm bg-yellow-100 px-2 py-1.25 text-left ${focusRing}`}
+                          className={`rounded-sm px-2 py-1.25 text-left ${isTheory(event) ? 'bg-green-100' : 'bg-yellow-100'} ${focusRing}`}
                         >
                           <div className='flex items-baseline justify-between gap-1.5'>
-                            <span className='truncate font-secondary text-xs font-bold text-black-300'>
+                            <span
+                              className={`truncate font-secondary text-xs font-bold text-black-300 ${event.cancelled ? 'line-through' : ''}`}
+                            >
                               {event.time}
                             </span>
                             <span className='shrink-0 font-secondary text-[11px] font-bold text-black-300'>
-                              {event.tailNumber}
+                              {isTheory(event)
+                                ? t('theoryLabel')
+                                : event.tailNumber}
                             </span>
                           </div>
-                          <div className='truncate font-secondary text-xs font-semibold text-blue-300 underline'>
-                            {event.pilotInCommand}
-                          </div>
-                          {event.flightLines.map((line) => (
-                            <div
-                              key={line}
-                              className='truncate font-secondary text-xs text-blue-300 underline'
-                            >
-                              {line}
+                          {event.cancelled && (
+                            <div className='font-secondary text-[11px] font-bold tracking-wide text-red-300 uppercase'>
+                              {t('cancelledLabel')}
                             </div>
-                          ))}
+                          )}
+                          <div className='truncate font-secondary text-xs font-semibold text-blue-300 underline'>
+                            {perspective === 'instructor'
+                              ? event.studentName
+                              : event.instructorName}
+                          </div>
+                          <div
+                            className={`truncate font-secondary text-xs text-blue-300 underline ${event.cancelled ? 'line-through' : ''}`}
+                          >
+                            {isTheory(event)
+                              ? event.comments
+                              : getFlightContent(
+                                  event.trainingCode,
+                                  event.comments,
+                                ).shortLabel}
+                          </div>
                         </button>
                       ),
                     )}
@@ -249,6 +302,12 @@ export default function AgendaCalendar({
       <BookingDetailModal
         event={activeEvent}
         onClose={() => setActiveEvent(null)}
+      />
+
+      <Toast
+        message={t('fetching')}
+        open={isRefreshing}
+        onClose={() => setIsRefreshing(false)}
       />
     </section>
   )
