@@ -73,6 +73,38 @@ describe('BookingsService', () => {
     service = app.get<BookingsService>(BookingsService)
   })
 
+  it('lists every booking when no filter is given', async () => {
+    bookingModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([]),
+    })
+
+    await service.findAll()
+
+    expect(bookingModel.find).toHaveBeenCalledWith({})
+  })
+
+  it('scopes the list to one student when a studentId is given', async () => {
+    bookingModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([]),
+    })
+
+    await service.findAll({ studentId: 'student-1' })
+
+    expect(bookingModel.find).toHaveBeenCalledWith({ studentId: 'student-1' })
+  })
+
+  it('scopes the list to one instructor when an instructorId is given', async () => {
+    bookingModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([]),
+    })
+
+    await service.findAll({ instructorId: 'instructor-1' })
+
+    expect(bookingModel.find).toHaveBeenCalledWith({
+      instructorId: 'instructor-1',
+    })
+  })
+
   it('creates a booking-type calendar event so the slot no longer shows as open', async () => {
     await service.create(input)
 

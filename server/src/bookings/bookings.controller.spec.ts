@@ -32,7 +32,26 @@ describe('BookingsController', () => {
 
   it('returns the bookings from the service', async () => {
     await expect(controller.findAll()).resolves.toBe(bookings)
-    expect(bookingsService.findAll).toHaveBeenCalled()
+    expect(bookingsService.findAll).toHaveBeenCalledWith({
+      studentId: undefined,
+      instructorId: undefined,
+    })
+  })
+
+  it('passes a studentId filter through to the service', async () => {
+    await controller.findAll('student-1')
+    expect(bookingsService.findAll).toHaveBeenCalledWith({
+      studentId: 'student-1',
+      instructorId: undefined,
+    })
+  })
+
+  it('passes an instructorId filter through to the service', async () => {
+    await controller.findAll(undefined, 'instructor-1')
+    expect(bookingsService.findAll).toHaveBeenCalledWith({
+      studentId: undefined,
+      instructorId: 'instructor-1',
+    })
   })
 
   it('creates a booking through the service', async () => {

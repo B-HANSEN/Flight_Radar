@@ -13,8 +13,10 @@ export class FlightEvaluationsService {
     private readonly flightEvaluationModel: Model<FlightEvaluationDocument>,
   ) {}
 
-  findAll() {
-    return this.flightEvaluationModel.find().exec()
+  findAll(studentId?: string) {
+    return this.flightEvaluationModel
+      .find(studentId ? { studentId } : {})
+      .exec()
   }
 
   async sign(id: string) {

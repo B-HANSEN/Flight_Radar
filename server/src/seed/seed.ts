@@ -1064,13 +1064,33 @@ const bookings: LegacyBookingSeed[] = [
   },
 ]
 
-function withInstructorId(
+// Resolves the real per-student and per-instructor ids for the legacy demo
+// bookings, which are otherwise pinned to the `studentId` placeholder (see
+// line 24). `person` holds the student's name, `instructorName` the
+// instructor's — both keyed off the seeded docs so the homepage's
+// per-student booking filter matches the default demo persona.
+function withResolvedIds(
   entries: LegacyBookingSeed[],
+  studentIdByName: Record<string, string>,
   instructorIdByName: Record<string, string>,
 ): Omit<Booking, '_id'>[] {
   return entries.map(({ instructorName, ...entry }) => ({
     ...entry,
+    studentId: studentIdByName[entry.person] ?? entry.studentId,
     instructorId: instructorIdByName[instructorName],
+  }))
+}
+
+// The legacy flight evaluations are pinned to the same `studentId`
+// placeholder; resolve each to its real student id (keyed by the `student`
+// name) so the homepage's per-student signature filter matches.
+function withResolvedStudentId(
+  entries: Omit<FlightEvaluation, '_id'>[],
+  studentIdByName: Record<string, string>,
+): Omit<FlightEvaluation, '_id'>[] {
+  return entries.map((entry) => ({
+    ...entry,
+    studentId: studentIdByName[entry.student] ?? entry.studentId,
   }))
 }
 
@@ -2736,13 +2756,17 @@ async function seed() {
   await seedMany(emergencyContactModel, emergencyContacts, 'emergency contacts')
   const certificates = buildCertificates(personIdByName)
   await seedMany(certificateModel, certificates, 'certificates')
-  await seedMany(flightEvaluationModel, flightEvaluations, 'flight evaluations')
+  await seedMany(
+    flightEvaluationModel,
+    withResolvedStudentId(flightEvaluations, studentIdByName),
+    'flight evaluations',
+  )
   await seedMany(logbookEntryModel, logbookEntries, 'logbook entries')
   await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
   await seedMany(
     bookingModel,
     [
-      ...withInstructorId(bookings, instructorIdByName),
+      ...withResolvedIds(bookings, studentIdByName, instructorIdByName),
       ...septemberFlights.bookings,
     ],
     'bookings',

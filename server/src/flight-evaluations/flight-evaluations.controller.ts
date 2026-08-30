@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch } from '@nestjs/common'
+import { Controller, Get, Param, Patch, Query } from '@nestjs/common'
 import { FlightEvaluationsService } from './flight-evaluations.service'
 
 @Controller('flight-evaluations')
@@ -7,9 +7,12 @@ export class FlightEvaluationsController {
     private readonly flightEvaluationsService: FlightEvaluationsService,
   ) {}
 
+  // `studentId` scopes the list to one student's evaluations (the homepage
+  // passes it so a student only sees their own pending signatures);
+  // omitted, it returns every evaluation.
   @Get()
-  findAll() {
-    return this.flightEvaluationsService.findAll()
+  findAll(@Query('studentId') studentId?: string) {
+    return this.flightEvaluationsService.findAll(studentId)
   }
 
   @Patch(':id/sign')

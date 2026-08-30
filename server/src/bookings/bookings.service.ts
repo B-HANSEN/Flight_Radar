@@ -62,8 +62,11 @@ export class BookingsService {
     private readonly instructorModel: Model<InstructorDocument>,
   ) {}
 
-  findAll() {
-    return this.bookingModel.find().exec()
+  findAll(filter: { studentId?: string; instructorId?: string } = {}) {
+    const query: Record<string, string> = {}
+    if (filter.studentId) query.studentId = filter.studentId
+    if (filter.instructorId) query.instructorId = filter.instructorId
+    return this.bookingModel.find(query).exec()
   }
 
   async create(input: CreateBookingInput) {

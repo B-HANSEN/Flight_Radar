@@ -60,7 +60,12 @@ describe('FlightEvaluationsController', () => {
 
   it('returns the flight evaluations from the service', async () => {
     await expect(controller.findAll()).resolves.toBe(evaluations)
-    expect(flightEvaluationsService.findAll).toHaveBeenCalled()
+    expect(flightEvaluationsService.findAll).toHaveBeenCalledWith(undefined)
+  })
+
+  it('passes a studentId filter through to the service', async () => {
+    await controller.findAll('student-1')
+    expect(flightEvaluationsService.findAll).toHaveBeenCalledWith('student-1')
   })
 
   it('signs a flight evaluation via the service', async () => {
