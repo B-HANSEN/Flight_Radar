@@ -25,6 +25,9 @@ type Props = {
   weather?: WeatherReport[]
   bookings?: Booking[]
   signatures?: FlightEvaluation[]
+  // Instructor view: the signatures card shows an "under development" note
+  // instead of a sign-off list.
+  signaturesUnderDevelopment?: boolean
   news?: NewsItem[]
 }
 
@@ -221,9 +224,11 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
 
 function SignaturesCard({
   signatures,
+  underDevelopment = false,
   onSelect,
 }: {
   signatures: FlightEvaluation[]
+  underDevelopment?: boolean
   onSelect: (flight: FlightEvaluation) => void
 }) {
   const t = useTranslations('Homepage')
@@ -240,7 +245,13 @@ function SignaturesCard({
       >
         {t('signatures.title')}
       </h2>
-      {signatures.length === 0 ? (
+      {underDevelopment ? (
+        // Instructors don't sign off evaluations — the report-authoring
+        // flow that belongs here isn't built yet.
+        <p className='px-5 py-6 text-center font-secondary text-sm text-black-200'>
+          {t('signatures.underDevelopment')}
+        </p>
+      ) : signatures.length === 0 ? (
         <p className='px-5 py-6 text-center font-secondary text-sm text-black-200'>
           {t('signatures.empty')}
         </p>
@@ -354,6 +365,7 @@ export default function Homepage({
   weather = [],
   bookings = [],
   signatures: initialSignatures = [],
+  signaturesUnderDevelopment = false,
   news = [],
 }: Props) {
   const t = useTranslations('Homepage')
@@ -381,6 +393,7 @@ export default function Homepage({
         <BookingsCard bookings={bookings} />
         <SignaturesCard
           signatures={signatures}
+          underDevelopment={signaturesUnderDevelopment}
           onSelect={(flight) => setSelectedId(flight.id)}
         />
       </div>

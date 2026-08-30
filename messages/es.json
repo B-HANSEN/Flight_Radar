@@ -37,6 +37,7 @@
     "signatures": {
       "title": "Firmas pendientes",
       "empty": "No hay firmas pendientes.",
+      "underDevelopment": "La creación de informes todavía está en desarrollo.",
       "flightLabel": "Vuelo n.º {id}",
       "signLabel": "Firmar {label}"
     },
@@ -250,7 +251,8 @@
     "behindOfTarget": "por detrás del objetivo"
   },
   "SignaturesPage": {
-    "title": "Firmas"
+    "title": "Firmas",
+    "underDevelopment": "La creación de informes todavía está en desarrollo."
   },
   "Signatures": {
     "title": "Vuelos",

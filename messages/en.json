@@ -37,6 +37,7 @@
     "signatures": {
       "title": "Missing signatures",
       "empty": "No missing signatures.",
+      "underDevelopment": "Report creation is still under development.",
       "flightLabel": "Flight #{id}",
       "signLabel": "Sign {label}"
     },
@@ -250,7 +251,8 @@
     "behindOfTarget": "behind target"
   },
   "SignaturesPage": {
-    "title": "Signatures"
+    "title": "Signatures",
+    "underDevelopment": "Report creation is still under development."
   },
   "Signatures": {
     "title": "Flights",

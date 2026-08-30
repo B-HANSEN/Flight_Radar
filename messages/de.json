@@ -37,6 +37,7 @@
     "signatures": {
       "title": "Fehlende Unterschriften",
       "empty": "Keine fehlenden Unterschriften.",
+      "underDevelopment": "Die Berichterstellung befindet sich noch in Entwicklung.",
       "flightLabel": "Flug Nr. {id}",
       "signLabel": "{label} unterschreiben"
     },
@@ -250,7 +251,8 @@
     "behindOfTarget": "unter Plan"
   },
   "SignaturesPage": {
-    "title": "Unterschriften"
+    "title": "Unterschriften",
+    "underDevelopment": "Die Berichterstellung befindet sich noch in Entwicklung."
   },
   "Signatures": {
     "title": "Flüge",

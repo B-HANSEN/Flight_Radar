@@ -202,4 +202,20 @@ describe('Homepage', () => {
       { method: 'PATCH', cache: 'no-store' },
     )
   })
+
+  it('shows an under-development note instead of the signatures list in instructor view', () => {
+    renderHomepage({ signatures, signaturesUnderDevelopment: true })
+
+    const signaturesSection = screen
+      .getByRole('heading', { name: 'Missing signatures' })
+      .closest('section') as HTMLElement
+    expect(
+      within(signaturesSection).getByText(
+        'Report creation is still under development.',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      within(signaturesSection).queryByText('Flight #4041369'),
+    ).not.toBeInTheDocument()
+  })
 })

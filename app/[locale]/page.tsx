@@ -99,16 +99,17 @@ export default async function HomePage({
     : persona.instructorId
       ? `?instructorId=${persona.instructorId}`
       : ''
-  // Signatures stay student-scoped only — an evaluation has no assigned
-  // instructor, so an instructor still sees the whole pending list.
-  const signaturesScope = persona.studentId
-    ? `?studentId=${persona.studentId}`
-    : ''
 
   const [weather, bookings, flightEvaluations, news] = await Promise.all([
     fetchApi<WeatherReport[]>('/weather'),
     fetchApi<Booking[]>(`/bookings${bookingsScope}`),
-    fetchApi<FlightEvaluation[]>(`/flight-evaluations${signaturesScope}`),
+    // Instructors don't sign off evaluations — the card shows an "under
+    // development" note instead, so there's nothing to fetch for them.
+    isInstructorView
+      ? Promise.resolve<FlightEvaluation[]>([])
+      : fetchApi<FlightEvaluation[]>(
+          `/flight-evaluations?studentId=${persona.studentId}`,
+        ),
     fetchApi<NewsItem[]>('/news'),
   ])
 
@@ -130,10 +131,15 @@ export default async function HomePage({
       />
       <div className='mx-auto max-w-350'>
         <Homepage
+          // Remount when the previewed persona changes so Homepage's local
+          // signature state is re-seeded from the freshly fetched props
+          // (RoleSwitcher does a router.refresh(), not a full navigation).
+          key={persona.studentId ?? persona.instructorId}
           name={persona.name}
           weather={weather}
           bookings={upcomingBookings}
           signatures={signatures}
+          signaturesUnderDevelopment={isInstructorView}
           news={news.slice(0, LATEST_NEWS_COUNT)}
         />
       </div>
