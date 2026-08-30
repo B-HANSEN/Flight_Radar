@@ -3,19 +3,23 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { AgendaController } from './agenda.controller'
 import { AgendaService } from './agenda.service'
 import {
-  CalendarEvent,
-  CalendarEventSchema,
-} from './schemas/calendar-event.schema'
-import {
   AvailabilityEntry,
   AvailabilityEntrySchema,
 } from '../availability/schemas/availability-entry.schema'
+import { Booking, BookingSchema } from '../bookings/schemas/booking.schema'
+import {
+  Instructor,
+  InstructorSchema,
+} from '../instructors/schemas/instructor.schema'
+import { Student, StudentSchema } from '../students/schemas/student.schema'
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: CalendarEvent.name, schema: CalendarEventSchema },
       { name: AvailabilityEntry.name, schema: AvailabilityEntrySchema },
+      { name: Booking.name, schema: BookingSchema },
+      { name: Instructor.name, schema: InstructorSchema },
+      { name: Student.name, schema: StudentSchema },
     ]),
   ],
   controllers: [AgendaController],

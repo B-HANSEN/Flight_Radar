@@ -60,7 +60,26 @@ describe('AvailabilityController', () => {
       recurrenceDays: ['mon', 'wed'] as ('mon' | 'wed')[],
     }
     await expect(controller.create(input)).resolves.toBe(createdEntry)
-    expect(availabilityService.create).toHaveBeenCalledWith(input)
+    expect(availabilityService.create).toHaveBeenCalledWith(input, undefined)
+  })
+
+  it('forwards the studentId from the body when creating', async () => {
+    const input = {
+      dateLabel: 'On 05/10/2026',
+      dateMode: 'on' as const,
+      onDate: '05/10/2026',
+      timeLabel: 'All day',
+      timeMode: 'allDay' as const,
+      recurrence: 'Everyday',
+      recurrenceMode: 'everyday' as const,
+    }
+    await controller.create({ ...input, studentId: 'student-7' })
+    expect(availabilityService.create).toHaveBeenCalledWith(input, 'student-7')
+  })
+
+  it('passes a studentId query through to findAll', async () => {
+    await controller.findAll('student-9')
+    expect(availabilityService.findAll).toHaveBeenCalledWith('student-9')
   })
 
   it('updates an availability entry via the service', async () => {

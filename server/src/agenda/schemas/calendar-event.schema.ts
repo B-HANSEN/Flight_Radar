@@ -42,6 +42,11 @@ export class CalendarEvent {
   @Prop({ type: [String] })
   flightLines?: string[]
 
+  // Hardcoded syllabus code (e.g. VBD15) — mirrors Booking.trainingCode so a
+  // booking created at runtime can carry it through to the agenda later.
+  @Prop()
+  trainingCode?: string
+
   @Prop()
   cancelled?: boolean
 

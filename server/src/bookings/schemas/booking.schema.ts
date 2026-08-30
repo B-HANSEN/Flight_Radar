@@ -44,6 +44,17 @@ export class Booking {
   // the topic lives (e.g. "navigation", "radio procedures").
   @Prop()
   comments?: string
+
+  // Hardcoded syllabus code for a flight lesson (e.g. VBD15, NAV06, SOLO01),
+  // resolved to a title + briefing checklist by lib/trainingContent.ts on the
+  // agenda. Absent for Theory lessons (their topic comes from `comments`).
+  @Prop()
+  trainingCode?: string
+
+  // A booking the student/instructor later cancelled — shown struck-through
+  // on the agenda by default, hidden by the "Hide cancelations" toggle.
+  @Prop()
+  cancelled?: boolean
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking)

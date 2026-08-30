@@ -9,6 +9,7 @@ import {
   AvailabilityTimeMode,
   AvailabilityWeekday,
 } from './schemas/availability-entry.schema'
+import { startOfCurrentMonth } from '../common/date'
 
 export type AvailabilityEntryInput = {
   dateLabel: string
@@ -29,8 +30,33 @@ export type CreateAvailabilityEntryInput = AvailabilityEntryInput
 export type UpdateAvailabilityEntryInput = AvailabilityEntryInput
 
 // No Users module yet (no auth) — plain id for now, becomes a real
-// ObjectId ref once the Users module exists.
-const studentId = 'student-1'
+// ObjectId ref once the Users module exists. Callers that know the persona
+// (the /me pages) pass a real student id; the default keeps older callers
+// and tests working.
+const DEFAULT_STUDENT_ID = 'student-1'
+
+const DMY_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/
+
+// The last calendar day an entry covers (`toDate` for a range, `onDate`
+// otherwise). Unparseable dates are treated as "keep" so a malformed entry
+// is never silently hidden.
+function entryEndDate(entry: AvailabilityEntryDocument): Date | null {
+  const raw = entry.dateMode === 'range' ? entry.toDate : entry.onDate
+  const match = raw?.match(DMY_PATTERN)
+  if (!match) return null
+  const [, day, month, year] = match
+  return new Date(Number(year), Number(month) - 1, Number(day))
+}
+
+// Hides availability that belongs entirely to a past month — a past date in
+// the current month is still shown (see TODO.md).
+export function isEntryInOrAfterMonth(
+  entry: AvailabilityEntryDocument,
+  monthStart: Date,
+): boolean {
+  const end = entryEndDate(entry)
+  return end === null || end >= monthStart
+}
 
 @Injectable()
 export class AvailabilityService {
@@ -39,11 +65,16 @@ export class AvailabilityService {
     private readonly availabilityEntryModel: Model<AvailabilityEntryDocument>,
   ) {}
 
-  findAll() {
-    return this.availabilityEntryModel.find({ studentId }).exec()
+  async findAll(studentId: string = DEFAULT_STUDENT_ID) {
+    const entries = await this.availabilityEntryModel.find({ studentId }).exec()
+    const monthStart = startOfCurrentMonth()
+    return entries.filter((entry) => isEntryInOrAfterMonth(entry, monthStart))
   }
 
-  create(input: CreateAvailabilityEntryInput) {
+  create(
+    input: CreateAvailabilityEntryInput,
+    studentId: string = DEFAULT_STUDENT_ID,
+  ) {
     return this.availabilityEntryModel.create({ ...input, studentId })
   }
 

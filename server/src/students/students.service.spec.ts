@@ -106,9 +106,12 @@ describe('StudentsService', () => {
     service = app.get<StudentsService>(StudentsService)
   })
 
-  it('only reads booking-type calendar events', async () => {
+  it('only reads active (non-cancelled) booking-type calendar events', async () => {
     await service.findSchedule()
-    expect(calendarEventModel.find).toHaveBeenCalledWith({ type: 'booking' })
+    expect(calendarEventModel.find).toHaveBeenCalledWith({
+      type: 'booking',
+      cancelled: { $ne: true },
+    })
   })
 
   it('returns one entry per student, carrying name and course through', async () => {

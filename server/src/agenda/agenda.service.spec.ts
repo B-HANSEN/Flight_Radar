@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/mongoose'
 import { AgendaService } from './agenda.service'
-import { CalendarEvent } from './schemas/calendar-event.schema'
 import { AvailabilityEntry } from '../availability/schemas/availability-entry.schema'
+import { Booking } from '../bookings/schemas/booking.schema'
+import { Instructor } from '../instructors/schemas/instructor.schema'
+import { Student } from '../students/schemas/student.schema'
 
 function toISODate(date: Date): string {
   const year = date.getFullYear()
@@ -18,23 +20,36 @@ function toDMY(date: Date): string {
   return `${day}/${month}/${year}`
 }
 
+function findMock<T>(value: T[]) {
+  return jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue(value) })
+}
+
 describe('AgendaService', () => {
-  let service: AgendaService
   const today = new Date()
 
   const bookings = [
     {
-      type: 'booking',
-      date: toISODate(today),
+      _id: { toString: () => 'booking-1' },
+      type: 'Dual instruction',
+      date: toDMY(today),
+      tail: 'EC-ERV',
+      person: 'Jamie Torres',
       time: '09:00 - 10:00',
-      tailNumber: 'EC-ERV',
-      pilotInCommand: 'J. Whitfield [PIC]',
-      flightLines: ['VBD01'],
       studentId: 'student-1',
+      instructorId: 'instructor-1',
+      trainingCode: 'VBD15',
+      comments: 'circuits',
     },
   ]
 
-  const availabilityEntries: Omit<AvailabilityEntry, 'studentId'>[] = [
+  const instructors = [
+    { _id: { toString: () => 'instructor-1' }, name: 'James Whitfield' },
+  ]
+  const students = [
+    { _id: { toString: () => 'student-1' }, name: 'Jamie Torres' },
+  ]
+
+  const availabilityEntries = [
     {
       dateLabel: `On ${toDMY(today)}`,
       dateMode: 'on',
@@ -45,75 +60,69 @@ describe('AgendaService', () => {
       endTime: '12:00',
       recurrence: 'Everyday',
       recurrenceMode: 'everyday',
+      studentId: 'student-1',
     },
   ]
 
-  const calendarEventModel = {
-    find: jest.fn().mockReturnValue({
-      exec: jest.fn().mockResolvedValue(bookings),
-    }),
-  }
-  const availabilityEntryModel = {
-    find: jest.fn().mockReturnValue({
-      exec: jest.fn().mockResolvedValue(
-        availabilityEntries.map((entry) => ({
-          ...entry,
-          studentId: 'student-1',
-        })),
-      ),
-    }),
-  }
-
-  beforeEach(async () => {
-    jest.clearAllMocks()
-    calendarEventModel.find.mockReturnValue({
-      exec: jest.fn().mockResolvedValue(bookings),
-    })
-    availabilityEntryModel.find.mockReturnValue({
-      exec: jest.fn().mockResolvedValue(
-        availabilityEntries.map((entry) => ({
-          ...entry,
-          studentId: 'student-1',
-        })),
-      ),
-    })
+  async function buildService(overrides?: {
+    bookings?: unknown[]
+    availabilityEntries?: unknown[]
+  }) {
+    const bookingModel = { find: findMock(overrides?.bookings ?? bookings) }
+    const availabilityEntryModel = {
+      find: findMock(overrides?.availabilityEntries ?? availabilityEntries),
+    }
+    const instructorModel = { find: findMock(instructors) }
+    const studentModel = { find: findMock(students) }
 
     const app: TestingModule = await Test.createTestingModule({
       providers: [
         AgendaService,
         {
-          provide: getModelToken(CalendarEvent.name),
-          useValue: calendarEventModel,
-        },
-        {
           provide: getModelToken(AvailabilityEntry.name),
           useValue: availabilityEntryModel,
         },
+        { provide: getModelToken(Booking.name), useValue: bookingModel },
+        { provide: getModelToken(Instructor.name), useValue: instructorModel },
+        { provide: getModelToken(Student.name), useValue: studentModel },
       ],
     }).compile()
 
-    service = app.get<AgendaService>(AgendaService)
+    return {
+      service: app.get<AgendaService>(AgendaService),
+      bookingModel,
+      availabilityEntryModel,
+    }
+  }
+
+  it('scopes bookings to the given student and enriches them', async () => {
+    const { service, bookingModel } = await buildService()
+    const result = await service.findAll({ studentId: 'student-1' })
+
+    expect(bookingModel.find).toHaveBeenCalledWith({ studentId: 'student-1' })
+    expect(result).toContainEqual(
+      expect.objectContaining({
+        id: 'booking-1',
+        type: 'booking',
+        date: toISODate(today),
+        time: '09:00 - 10:00',
+        tailNumber: 'EC-ERV',
+        instructorName: 'James Whitfield',
+        studentName: 'Jamie Torres',
+        lessonType: 'Dual instruction',
+        trainingCode: 'VBD15',
+        comments: 'circuits',
+      }),
+    )
   })
 
-  it('only reads bookings from CalendarEvent, never stored unavailability', async () => {
-    await service.findAll()
-    expect(calendarEventModel.find).toHaveBeenCalledWith({
-      type: 'booking',
-      studentId: 'student-1',
-    })
-  })
-
-  it('includes the real bookings in the result', async () => {
-    const result = await service.findAll()
-    expect(result).toContainEqual(bookings[0])
-  })
-
-  it('derives a partial-day unavailability gap around a covered window', async () => {
-    const result = await service.findAll()
-    const todayIso = toISODate(today)
+  it('derives partial-day unavailability gaps around a covered window', async () => {
+    const { service } = await buildService()
+    const result = await service.findAll({ studentId: 'student-1' })
     const todaysUnavailability = result.filter(
-      (event) => event.type === 'unavailability' && event.date === todayIso,
-    ) as Array<{ allDay: boolean; timeRange?: string }>
+      (event) =>
+        event.type === 'unavailability' && event.date === toISODate(today),
+    )
 
     expect(todaysUnavailability).toEqual(
       expect.arrayContaining([
@@ -123,64 +132,55 @@ describe('AgendaService', () => {
     )
   })
 
-  it('derives a full-day unavailability block for a date with no availability entry', async () => {
-    const result = await service.findAll()
-    const uncoveredDate = toISODate(
+  it('derives a full-day unavailability block for a date with no availability', async () => {
+    const { service } = await buildService()
+    const result = await service.findAll({ studentId: 'student-1' })
+    const tomorrow = toISODate(
       new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
     )
     const event = result.find(
       (candidate) =>
-        candidate.type === 'unavailability' && candidate.date === uncoveredDate,
+        candidate.type === 'unavailability' && candidate.date === tomorrow,
     ) as { allDay?: boolean } | undefined
 
     expect(event?.allDay).toBe(true)
   })
 
-  it('produces no unavailability block for a date fully covered by availability', async () => {
-    const calendarEventModelFullDay = {
-      find: jest
-        .fn()
-        .mockReturnValue({ exec: jest.fn().mockResolvedValue([]) }),
-    }
-    const availabilityEntryModelFullDay = {
-      find: jest.fn().mockReturnValue({
-        exec: jest.fn().mockResolvedValue([
-          {
-            dateLabel: `On ${toDMY(today)}`,
-            dateMode: 'on',
-            onDate: toDMY(today),
-            timeLabel: 'All day',
-            timeMode: 'allDay',
-            recurrence: 'Everyday',
-            recurrenceMode: 'everyday',
-            studentId: 'student-1',
-          },
-        ]),
-      }),
-    }
-
-    const app: TestingModule = await Test.createTestingModule({
-      providers: [
-        AgendaService,
+  it('produces no unavailability block for a fully covered date', async () => {
+    const { service } = await buildService({
+      bookings: [],
+      availabilityEntries: [
         {
-          provide: getModelToken(CalendarEvent.name),
-          useValue: calendarEventModelFullDay,
-        },
-        {
-          provide: getModelToken(AvailabilityEntry.name),
-          useValue: availabilityEntryModelFullDay,
+          dateLabel: `On ${toDMY(today)}`,
+          dateMode: 'on',
+          onDate: toDMY(today),
+          timeLabel: 'All day',
+          timeMode: 'allDay',
+          recurrence: 'Everyday',
+          recurrenceMode: 'everyday',
+          studentId: 'student-1',
         },
       ],
-    }).compile()
-
-    const fullDayService = app.get<AgendaService>(AgendaService)
-    const result = await fullDayService.findAll()
-    const todayIso = toISODate(today)
+    })
+    const result = await service.findAll({ studentId: 'student-1' })
 
     expect(
       result.some(
-        (event) => event.type === 'unavailability' && event.date === todayIso,
+        (event) =>
+          event.type === 'unavailability' && event.date === toISODate(today),
       ),
     ).toBe(false)
+  })
+
+  it('for an instructor view returns only bookings, no unavailability', async () => {
+    const { service, bookingModel, availabilityEntryModel } =
+      await buildService()
+    const result = await service.findAll({ instructorId: 'instructor-1' })
+
+    expect(bookingModel.find).toHaveBeenCalledWith({
+      instructorId: 'instructor-1',
+    })
+    expect(availabilityEntryModel.find).not.toHaveBeenCalled()
+    expect(result.every((event) => event.type === 'booking')).toBe(true)
   })
 })

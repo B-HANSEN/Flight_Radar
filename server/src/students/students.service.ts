@@ -16,11 +16,12 @@ import {
   formatMinutes,
   subtractBookedWindows,
 } from '../availability/availability-expansion'
+import { isEntryInOrAfterMonth } from '../availability/availability.service'
+import { startOfCurrentMonth } from '../common/date'
 
 // Bounds how far the schedule looks; matches AgendaService's window so the
 // instructor view and a student's own agenda never disagree on "the future".
 const SCHEDULE_MONTHS_AHEAD = 3
-const SCHEDULE_MONTHS_BEHIND = 3
 
 export type StudentScheduleSlot = {
   id: string
@@ -75,19 +76,27 @@ export class StudentsService {
     const [students, availabilityEntries, bookings] = await Promise.all([
       this.studentModel.find().exec(),
       this.availabilityEntryModel.find().exec(),
-      this.calendarEventModel.find({ type: 'booking' }).exec(),
+      // A cancelled lesson frees its slot again, so it must not count as
+      // booked time when computing what's still open.
+      this.calendarEventModel
+        .find({ type: 'booking', cancelled: { $ne: true } })
+        .exec(),
     ])
 
-    const rangeStart = startOfDay(
-      addMonths(new Date(), -SCHEDULE_MONTHS_BEHIND),
-    )
+    // Never look before the current month — matches AgendaService and the
+    // students' own /me/availability, which hide whole past months.
+    const rangeStart = startOfCurrentMonth()
     const rangeEnd = startOfDay(addMonths(new Date(), SCHEDULE_MONTHS_AHEAD))
 
     return students.map((student) => {
       const studentId = student._id.toString()
 
       const coverageByDate = expandAvailability(
-        availabilityEntries.filter((entry) => entry.studentId === studentId),
+        availabilityEntries.filter(
+          (entry) =>
+            entry.studentId === studentId &&
+            isEntryInOrAfterMonth(entry, rangeStart),
+        ),
         rangeStart,
         rangeEnd,
       )

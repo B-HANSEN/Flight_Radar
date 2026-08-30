@@ -2,41 +2,58 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import {
-  CalendarEvent,
-  CalendarEventDocument,
-} from './schemas/calendar-event.schema'
-import {
   AvailabilityEntry,
   AvailabilityEntryDocument,
 } from '../availability/schemas/availability-entry.schema'
+import { Booking, BookingDocument } from '../bookings/schemas/booking.schema'
+import {
+  Instructor,
+  InstructorDocument,
+} from '../instructors/schemas/instructor.schema'
+import { Student, StudentDocument } from '../students/schemas/student.schema'
 import {
   MINUTES_PER_DAY,
   computeUnavailableGaps,
   expandAvailability,
   formatMinutes,
 } from '../availability/availability-expansion'
+import { isEntryInOrAfterMonth } from '../availability/availability.service'
+import { formatISODate, startOfCurrentMonth, toISODate } from '../common/date'
 
 // Bounds how far derived 'unavailability' events reach. Must match
-// MAX_MONTHS_AHEAD/MAX_MONTHS_BEHIND in components/AgendaCalendar.tsx — the
-// UI can't browse further than that, so deriving beyond it is wasted work.
-// lib/ isn't shared with server/, so this is a deliberate duplicated constant.
+// MAX_MONTHS_AHEAD in components/AgendaCalendar.tsx — the UI can't browse
+// further than that, so deriving beyond it is wasted work. lib/ isn't shared
+// with server/, so this is a deliberate duplicated constant.
 const AGENDA_MONTHS_AHEAD = 3
-const AGENDA_MONTHS_BEHIND = 3
 
 // No Users module yet (no auth) — plain id for now, becomes a real
 // ObjectId ref once the Users module exists.
-const STUDENT_ID = 'student-1'
+const DEFAULT_STUDENT_ID = 'student-1'
+
+export type AgendaQuery = {
+  studentId?: string
+  instructorId?: string
+}
+
+export type AgendaBookingEvent = {
+  id: string
+  type: 'booking'
+  date: string
+  time: string
+  tailNumber?: string
+  instructorName: string
+  studentName: string
+  lessonType: string
+  trainingCode?: string
+  comments?: string
+  cancelled?: boolean
+}
 
 export type DerivedUnavailabilityEvent = {
   id: string
   type: 'unavailability'
   date: string
-  studentId: string
 } & ({ allDay: true } | { allDay: false; timeRange: string })
-
-function startOfDay(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
-}
 
 function addMonths(date: Date, months: number): Date {
   return new Date(date.getFullYear(), date.getMonth() + months, date.getDate())
@@ -48,32 +65,79 @@ function addDays(date: Date, days: number): Date {
   return result
 }
 
-function toISODate(date: Date): string {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
 @Injectable()
 export class AgendaService {
   constructor(
-    @InjectModel(CalendarEvent.name)
-    private readonly calendarEventModel: Model<CalendarEventDocument>,
     @InjectModel(AvailabilityEntry.name)
     private readonly availabilityEntryModel: Model<AvailabilityEntryDocument>,
+    @InjectModel(Booking.name)
+    private readonly bookingModel: Model<BookingDocument>,
+    @InjectModel(Instructor.name)
+    private readonly instructorModel: Model<InstructorDocument>,
+    @InjectModel(Student.name)
+    private readonly studentModel: Model<StudentDocument>,
   ) {}
 
-  async findAll() {
-    const [bookings, availabilityEntries] = await Promise.all([
-      this.calendarEventModel
-        .find({ type: 'booking', studentId: STUDENT_ID })
-        .exec(),
-      this.availabilityEntryModel.find({ studentId: STUDENT_ID }).exec(),
+  async findAll(query: AgendaQuery = {}) {
+    const isInstructorView = Boolean(query.instructorId)
+    const studentId = query.studentId ?? DEFAULT_STUDENT_ID
+
+    const bookingFilter = isInstructorView
+      ? { instructorId: query.instructorId }
+      : { studentId }
+
+    const [bookings, instructors, students] = await Promise.all([
+      this.bookingModel.find(bookingFilter).exec(),
+      this.instructorModel.find().exec(),
+      this.studentModel.find().exec(),
     ])
 
-    const rangeStart = startOfDay(addMonths(new Date(), -AGENDA_MONTHS_BEHIND))
-    const rangeEnd = startOfDay(addMonths(new Date(), AGENDA_MONTHS_AHEAD))
+    const instructorNameById = new Map(
+      instructors.map((instructor) => [
+        (instructor._id as { toString(): string }).toString(),
+        instructor.name,
+      ]),
+    )
+    const studentNameById = new Map(
+      students.map((student) => [
+        (student._id as { toString(): string }).toString(),
+        student.name,
+      ]),
+    )
+
+    const bookingEvents: AgendaBookingEvent[] = []
+    for (const booking of bookings) {
+      const date = toISODate(booking.date)
+      if (!date) continue
+      bookingEvents.push({
+        id: (booking._id as { toString(): string }).toString(),
+        type: 'booking',
+        date,
+        time: booking.time,
+        tailNumber: booking.tail,
+        instructorName:
+          instructorNameById.get(booking.instructorId) ?? 'Instructor',
+        studentName: studentNameById.get(booking.studentId) ?? booking.person,
+        lessonType: booking.type,
+        trainingCode: booking.trainingCode,
+        comments: booking.comments,
+        cancelled: booking.cancelled,
+      })
+    }
+
+    // Instructors are available by default — no unavailability derivation
+    // (the "2 days off per week" model is a TODO). They just see bookings.
+    if (isInstructorView) {
+      return bookingEvents.sort((a, b) => a.date.localeCompare(b.date))
+    }
+
+    const monthStart = startOfCurrentMonth()
+    const availabilityEntries = (
+      await this.availabilityEntryModel.find({ studentId }).exec()
+    ).filter((entry) => isEntryInOrAfterMonth(entry, monthStart))
+
+    const rangeStart = monthStart
+    const rangeEnd = addMonths(new Date(), AGENDA_MONTHS_AHEAD)
     const coverageByDate = expandAvailability(
       availabilityEntries,
       rangeStart,
@@ -82,7 +146,7 @@ export class AgendaService {
 
     const derivedUnavailability: DerivedUnavailabilityEvent[] = []
     for (let date = rangeStart; date <= rangeEnd; date = addDays(date, 1)) {
-      const iso = toISODate(date)
+      const iso = formatISODate(date)
       const gaps = computeUnavailableGaps(coverageByDate.get(iso) ?? [])
 
       gaps.forEach((gap, index) => {
@@ -94,7 +158,6 @@ export class AgendaService {
                 type: 'unavailability',
                 date: iso,
                 allDay: true,
-                studentId: STUDENT_ID,
               }
             : {
                 id: `unavailability-${iso}-${index}`,
@@ -102,13 +165,12 @@ export class AgendaService {
                 date: iso,
                 allDay: false,
                 timeRange: `${formatMinutes(gap.start)} - ${formatMinutes(gap.end)}`,
-                studentId: STUDENT_ID,
               },
         )
       })
     }
 
-    return [...bookings, ...derivedUnavailability].sort((a, b) =>
+    return [...bookingEvents, ...derivedUnavailability].sort((a, b) =>
       a.date.localeCompare(b.date),
     )
   }
