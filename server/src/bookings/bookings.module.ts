@@ -13,6 +13,10 @@ import {
   CalendarEvent,
   CalendarEventSchema,
 } from '../agenda/schemas/calendar-event.schema'
+import {
+  AvailabilityEntry,
+  AvailabilityEntrySchema,
+} from '../availability/schemas/availability-entry.schema'
 
 @Module({
   imports: [
@@ -22,6 +26,7 @@ import {
       { name: Aircraft.name, schema: AircraftSchema },
       { name: Instructor.name, schema: InstructorSchema },
       { name: CalendarEvent.name, schema: CalendarEventSchema },
+      { name: AvailabilityEntry.name, schema: AvailabilityEntrySchema },
     ]),
   ],
   controllers: [BookingsController],

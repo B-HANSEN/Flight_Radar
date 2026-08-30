@@ -17,6 +17,11 @@ import {
   CalendarEvent,
   CalendarEventDocument,
 } from '../agenda/schemas/calendar-event.schema'
+import {
+  AvailabilityEntry,
+  AvailabilityEntryDocument,
+} from '../availability/schemas/availability-entry.schema'
+import { expandAvailability } from '../availability/availability-expansion'
 import { toDisplayDate } from '../common/date'
 
 export type CreateBookingInput = {
@@ -60,7 +65,27 @@ export class BookingsService {
     private readonly calendarEventModel: Model<CalendarEventDocument>,
     @InjectModel(Instructor.name)
     private readonly instructorModel: Model<InstructorDocument>,
+    @InjectModel(AvailabilityEntry.name)
+    private readonly availabilityEntryModel: Model<AvailabilityEntryDocument>,
   ) {}
+
+  // True when [startTime, endTime] fits entirely inside one of the student's
+  // declared availability windows for that ISO date (recurring entries
+  // included). A date with no declared availability yields no window, so any
+  // booking on it is "out of window".
+  private async isWithinDeclaredAvailability(
+    studentId: string,
+    isoDate: string,
+    startTime: string,
+    endTime: string,
+  ): Promise<boolean> {
+    const entries = await this.availabilityEntryModel.find({ studentId }).exec()
+    const day = new Date(`${isoDate}T00:00:00`)
+    const windows = expandAvailability(entries, day, day).get(isoDate) ?? []
+    const start = toMinutes(startTime)
+    const end = toMinutes(endTime)
+    return windows.some((w) => w.start <= start && end <= w.end)
+  }
 
   findAll(filter: { studentId?: string; instructorId?: string } = {}) {
     const query: Record<string, string> = {}
@@ -142,6 +167,18 @@ export class BookingsService {
     ) {
       throw new ConflictException(
         `Aircraft ${aircraft.arcid} is already booked overlapping ${input.startTime}-${input.endTime} on ${input.date}`,
+      )
+    }
+
+    const withinAvailability = await this.isWithinDeclaredAvailability(
+      input.studentId,
+      input.date,
+      input.startTime,
+      input.endTime,
+    )
+    if (!withinAvailability) {
+      throw new ConflictException(
+        `${input.startTime}-${input.endTime} on ${input.date} is outside student ${input.studentId}'s declared availability`,
       )
     }
 

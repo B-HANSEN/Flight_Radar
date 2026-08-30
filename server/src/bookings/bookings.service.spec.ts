@@ -11,6 +11,7 @@ import { Student } from '../students/schemas/student.schema'
 import { Aircraft } from '../aircraft/schemas/aircraft.schema'
 import { Instructor } from '../instructors/schemas/instructor.schema'
 import { CalendarEvent } from '../agenda/schemas/calendar-event.schema'
+import { AvailabilityEntry } from '../availability/schemas/availability-entry.schema'
 
 describe('BookingsService', () => {
   let service: BookingsService
@@ -19,11 +20,23 @@ describe('BookingsService', () => {
   const aircraft = { _id: 'aircraft-1', arcid: 'EC-JOB' }
   const instructor = { _id: 'instructor-1', name: 'James Whitfield' }
 
+  // Covers the `input` window (27/08/2026, 09:00-11:00) so the availability
+  // check passes by default; individual tests override it.
+  const availabilityCoveringInput = {
+    dateMode: 'on',
+    onDate: '27/08/2026',
+    timeMode: 'between',
+    startTime: '08:00',
+    endTime: '18:00',
+    recurrenceMode: 'everyday',
+  }
+
   const bookingModel = { find: jest.fn(), create: jest.fn() }
   const studentModel = { findById: jest.fn() }
   const aircraftModel = { findById: jest.fn() }
   const instructorModel = { findById: jest.fn() }
   const calendarEventModel = { find: jest.fn(), create: jest.fn() }
+  const availabilityEntryModel = { find: jest.fn() }
 
   const input = {
     studentId: 'student-1',
@@ -51,6 +64,9 @@ describe('BookingsService', () => {
       exec: jest.fn().mockResolvedValue([]),
     })
     calendarEventModel.create.mockResolvedValue({})
+    availabilityEntryModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([availabilityCoveringInput]),
+    })
     bookingModel.create.mockResolvedValue({ id: 'booking-1', ...input })
 
     const app: TestingModule = await Test.createTestingModule({
@@ -66,6 +82,10 @@ describe('BookingsService', () => {
         {
           provide: getModelToken(CalendarEvent.name),
           useValue: calendarEventModel,
+        },
+        {
+          provide: getModelToken(AvailabilityEntry.name),
+          useValue: availabilityEntryModel,
         },
       ],
     }).compile()
@@ -293,6 +313,52 @@ describe('BookingsService', () => {
 
     await expect(service.create(input)).rejects.toThrow(ConflictException)
     expect(bookingModel.create).not.toHaveBeenCalled()
+  })
+
+  it('rejects a booking placed outside the student’s declared availability', async () => {
+    availabilityEntryModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          dateMode: 'on',
+          onDate: '27/08/2026',
+          timeMode: 'between',
+          startTime: '13:00',
+          endTime: '17:00',
+          recurrenceMode: 'everyday',
+        },
+      ]),
+    })
+
+    await expect(service.create(input)).rejects.toThrow(ConflictException)
+    expect(bookingModel.create).not.toHaveBeenCalled()
+  })
+
+  it('rejects a booking on a day the student declared no availability', async () => {
+    availabilityEntryModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([]),
+    })
+
+    await expect(service.create(input)).rejects.toThrow(ConflictException)
+    expect(bookingModel.create).not.toHaveBeenCalled()
+  })
+
+  it('allows a booking that a recurring weekday availability entry covers', async () => {
+    availabilityEntryModel.find.mockReturnValue({
+      exec: jest.fn().mockResolvedValue([
+        {
+          dateMode: 'range',
+          fromDate: '01/08/2026',
+          toDate: '31/08/2026',
+          timeMode: 'between',
+          startTime: '08:00',
+          endTime: '12:00',
+          recurrenceMode: 'days',
+          recurrenceDays: ['thu'], // 27/08/2026 is a Thursday
+        },
+      ]),
+    })
+
+    await expect(service.create(input)).resolves.toBeDefined()
   })
 
   it('ignores cancelled bookings when checking for a conflict', async () => {
