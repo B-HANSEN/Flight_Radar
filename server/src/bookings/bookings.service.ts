@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -66,6 +67,14 @@ export class BookingsService {
   }
 
   async create(input: CreateBookingInput) {
+    // A non-Theory lesson is an actual flight — it must have a tail number
+    // picked at booking time. Theory (ground school) carries no aircraft.
+    if (input.lessonType !== 'Theory' && !input.aircraftId) {
+      throw new BadRequestException(
+        `An aircraft is required for a ${input.lessonType} booking`,
+      )
+    }
+
     const [student, instructor] = await Promise.all([
       this.studentModel.findById(input.studentId).exec(),
       this.instructorModel.findById(input.instructorId).exec(),

@@ -1,4 +1,8 @@
-import { ConflictException, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/mongoose'
 import { BookingsService } from './bookings.service'
@@ -123,6 +127,21 @@ describe('BookingsService', () => {
     expect(calendarEventModel.create).toHaveBeenCalledWith(
       expect.objectContaining({ tailNumber: undefined }),
     )
+  })
+
+  it('rejects a non-Theory booking with no aircraft', async () => {
+    await expect(
+      service.create({
+        studentId: input.studentId,
+        instructorId: input.instructorId,
+        date: input.date,
+        startTime: input.startTime,
+        endTime: input.endTime,
+        lessonType: 'Dual instruction',
+      }),
+    ).rejects.toThrow(BadRequestException)
+
+    expect(bookingModel.create).not.toHaveBeenCalled()
   })
 
   it('throws when the student does not exist', async () => {
