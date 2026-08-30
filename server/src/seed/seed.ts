@@ -4,7 +4,13 @@ import { Model } from 'mongoose'
 import { AppModule } from '../app.module'
 import { CalendarEvent } from '../agenda/schemas/calendar-event.schema'
 import { Aircraft } from '../aircraft/schemas/aircraft.schema'
-import { AvailabilityEntry } from '../availability/schemas/availability-entry.schema'
+import {
+  AvailabilityDateMode,
+  AvailabilityEntry,
+  AvailabilityRecurrenceMode,
+  AvailabilityTimeMode,
+  AvailabilityWeekday,
+} from '../availability/schemas/availability-entry.schema'
 import { Booking } from '../bookings/schemas/booking.schema'
 import { Certificate } from '../certificates/schemas/certificate.schema'
 import { CourseProgress } from '../courses/schemas/course-progress.schema'
@@ -643,132 +649,229 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
   },
 ]
 
-const availabilityEntries: Omit<AvailabilityEntry, '_id'>[] = [
-  {
-    dateLabel: 'From 27/08/2026 to 30/08/2026',
-    dateMode: 'range',
-    fromDate: '27/08/2026',
-    toDate: '30/08/2026',
-    timeLabel: 'Between 18:00 and 21:00',
-    timeMode: 'between',
-    startTime: '18:00',
-    endTime: '21:00',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-  {
-    dateLabel: 'From 17/08/2026 to 19/08/2026',
-    dateMode: 'range',
-    fromDate: '17/08/2026',
-    toDate: '19/08/2026',
-    timeLabel: 'All day',
-    timeMode: 'allDay',
-    recurrence: 'On Monday, Tuesday, Wednesday',
-    recurrenceMode: 'days',
-    recurrenceDays: ['mon', 'tue', 'wed'],
-    studentId,
-  },
-  {
-    dateLabel: 'From 10/08/2026 to 16/08/2026',
-    dateMode: 'range',
-    fromDate: '10/08/2026',
-    toDate: '16/08/2026',
-    timeLabel: 'Between 12:00 and 15:00',
-    timeMode: 'between',
-    startTime: '12:00',
-    endTime: '15:00',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-  {
-    dateLabel: 'From 03/08/2026 to 09/08/2026',
-    dateMode: 'range',
-    fromDate: '03/08/2026',
-    toDate: '09/08/2026',
-    timeLabel: 'Between 08:00 and 21:00',
-    timeMode: 'between',
-    startTime: '08:00',
-    endTime: '21:00',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-  {
-    dateLabel: 'From 31/07/2026 to 02/08/2026',
-    dateMode: 'range',
-    fromDate: '31/07/2026',
-    toDate: '02/08/2026',
-    timeLabel: 'All day',
-    timeMode: 'allDay',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-  {
-    dateLabel: 'From 31/08/2026 to 06/09/2026',
-    dateMode: 'range',
-    fromDate: '31/08/2026',
-    toDate: '06/09/2026',
-    timeLabel: 'Between 09:00 and 12:00',
-    timeMode: 'between',
-    startTime: '09:00',
-    endTime: '12:00',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-  {
-    dateLabel: 'From 07/09/2026 to 13/09/2026',
-    dateMode: 'range',
-    fromDate: '07/09/2026',
-    toDate: '13/09/2026',
-    timeLabel: 'Between 15:00 and 20:00',
-    timeMode: 'between',
-    startTime: '15:00',
-    endTime: '20:00',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-  {
-    dateLabel: 'From 14/09/2026 to 20/09/2026',
-    dateMode: 'range',
-    fromDate: '14/09/2026',
-    toDate: '20/09/2026',
-    timeLabel: 'All day',
-    timeMode: 'allDay',
-    recurrence: 'On Monday, Wednesday, Friday',
-    recurrenceMode: 'days',
-    recurrenceDays: ['mon', 'wed', 'fri'],
-    studentId,
-  },
-  {
-    dateLabel: 'From 21/09/2026 to 27/09/2026',
-    dateMode: 'range',
-    fromDate: '21/09/2026',
-    toDate: '27/09/2026',
-    timeLabel: 'Between 08:00 and 21:00',
-    timeMode: 'between',
-    startTime: '08:00',
-    endTime: '21:00',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-  {
-    dateLabel: 'From 28/09/2026 to 30/09/2026',
-    dateMode: 'range',
-    fromDate: '28/09/2026',
-    toDate: '30/09/2026',
-    timeLabel: 'All day',
-    timeMode: 'allDay',
-    recurrence: 'Everyday',
-    recurrenceMode: 'everyday',
-    studentId,
-  },
-]
+// One consolidated availability fixture per real student — this single set
+// now drives /me/availability, the "not available" blocks derived on
+// /me/agenda, AND the open slots in the instructor scheduling view, so all
+// three always agree (previously three disjoint fixtures, see TODO.md).
+// Anchored to the current/next months (no past-month entries); each student
+// gets a couple of recurring windows plus a few one-off slots of varied
+// length. Priya is deliberately sparse to keep exercising the near-empty
+// state in InstructorSchedulePanel.
+type StudentAvailabilitySeed = {
+  dateMode: AvailabilityDateMode
+  onDate?: string
+  fromDate?: string
+  toDate?: string
+  timeMode: AvailabilityTimeMode
+  startTime?: string
+  endTime?: string
+  recurrenceMode: AvailabilityRecurrenceMode
+  recurrenceDays?: AvailabilityWeekday[]
+}
+
+const WEEKDAY_LABELS: Record<AvailabilityWeekday, string> = {
+  mon: 'Monday',
+  tue: 'Tuesday',
+  wed: 'Wednesday',
+  thu: 'Thursday',
+  fri: 'Friday',
+  sat: 'Saturday',
+  sun: 'Sunday',
+}
+
+const STUDENT_AVAILABILITY: Record<string, StudentAvailabilitySeed[]> = {
+  'Jamie Torres': [
+    {
+      dateMode: 'range',
+      fromDate: '01/08/2026',
+      toDate: '31/08/2026',
+      timeMode: 'between',
+      startTime: '08:00',
+      endTime: '21:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'range',
+      fromDate: '01/09/2026',
+      toDate: '15/09/2026',
+      timeMode: 'between',
+      startTime: '15:00',
+      endTime: '20:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'range',
+      fromDate: '16/09/2026',
+      toDate: '30/09/2026',
+      timeMode: 'allDay',
+      recurrenceMode: 'days',
+      recurrenceDays: ['mon', 'wed', 'fri'],
+    },
+    {
+      dateMode: 'on',
+      onDate: '05/10/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '13:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'range',
+      fromDate: '01/10/2026',
+      toDate: '31/10/2026',
+      timeMode: 'between',
+      startTime: '18:00',
+      endTime: '21:00',
+      recurrenceMode: 'everyday',
+    },
+  ],
+  'Alex Moreau': [
+    {
+      dateMode: 'range',
+      fromDate: '01/08/2026',
+      toDate: '31/08/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '12:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'on',
+      onDate: '22/08/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '11:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'on',
+      onDate: '26/08/2026',
+      timeMode: 'between',
+      startTime: '14:00',
+      endTime: '17:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'range',
+      fromDate: '01/09/2026',
+      toDate: '30/09/2026',
+      timeMode: 'between',
+      startTime: '13:00',
+      endTime: '18:00',
+      recurrenceMode: 'days',
+      recurrenceDays: ['tue', 'thu'],
+    },
+    {
+      dateMode: 'on',
+      onDate: '09/09/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '11:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'on',
+      onDate: '23/09/2026',
+      timeMode: 'between',
+      startTime: '10:00',
+      endTime: '12:00',
+      recurrenceMode: 'everyday',
+    },
+  ],
+  'Noah Becker': [
+    {
+      dateMode: 'range',
+      fromDate: '15/08/2026',
+      toDate: '31/08/2026',
+      timeMode: 'allDay',
+      recurrenceMode: 'days',
+      recurrenceDays: ['sat', 'sun'],
+    },
+    {
+      dateMode: 'on',
+      onDate: '28/08/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '10:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'on',
+      onDate: '30/08/2026',
+      timeMode: 'between',
+      startTime: '11:00',
+      endTime: '15:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'range',
+      fromDate: '01/09/2026',
+      toDate: '30/09/2026',
+      timeMode: 'between',
+      startTime: '14:00',
+      endTime: '17:00',
+      recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'on',
+      onDate: '12/09/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '10:00',
+      recurrenceMode: 'everyday',
+    },
+  ],
+  'Priya Shah': [
+    {
+      dateMode: 'on',
+      onDate: '22/09/2026',
+      timeMode: 'between',
+      startTime: '10:00',
+      endTime: '12:00',
+      recurrenceMode: 'everyday',
+    },
+  ],
+}
+
+function availabilityDateLabel(seed: StudentAvailabilitySeed): string {
+  return seed.dateMode === 'on'
+    ? `On ${seed.onDate}`
+    : `From ${seed.fromDate} to ${seed.toDate}`
+}
+
+function availabilityTimeLabel(seed: StudentAvailabilitySeed): string {
+  return seed.timeMode === 'allDay'
+    ? 'All day'
+    : `Between ${seed.startTime} and ${seed.endTime}`
+}
+
+function availabilityRecurrenceLabel(seed: StudentAvailabilitySeed): string {
+  if (seed.recurrenceMode === 'everyday') return 'Everyday'
+  const days = (seed.recurrenceDays ?? []).map((day) => WEEKDAY_LABELS[day])
+  return `On ${days.join(', ')}`
+}
+
+function buildAvailabilityEntries(
+  studentIdByName: Record<string, string>,
+): Omit<AvailabilityEntry, '_id'>[] {
+  return Object.entries(STUDENT_AVAILABILITY).flatMap(([name, seeds]) =>
+    seeds.map((seed) => ({
+      dateLabel: availabilityDateLabel(seed),
+      dateMode: seed.dateMode,
+      onDate: seed.onDate,
+      fromDate: seed.fromDate,
+      toDate: seed.toDate,
+      timeLabel: availabilityTimeLabel(seed),
+      timeMode: seed.timeMode,
+      startTime: seed.startTime,
+      endTime: seed.endTime,
+      recurrence: availabilityRecurrenceLabel(seed),
+      recurrenceMode: seed.recurrenceMode,
+      recurrenceDays: seed.recurrenceDays,
+      studentId: studentIdByName[name],
+    })),
+  )
+}
 
 const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
   {
@@ -1034,6 +1137,7 @@ const bookings: LegacyBookingSeed[] = [
     time: '10:00 - 11:30',
     studentId,
     instructorName: 'James Whitfield',
+    trainingCode: 'VBD10',
   },
   {
     type: 'Instruction',
@@ -1043,6 +1147,7 @@ const bookings: LegacyBookingSeed[] = [
     time: '15:00 - 17:00',
     studentId,
     instructorName: 'Kate Ashford',
+    trainingCode: 'VBD11',
   },
   {
     type: 'Instruction',
@@ -1052,6 +1157,7 @@ const bookings: LegacyBookingSeed[] = [
     time: '09:00 - 10:30',
     studentId,
     instructorName: 'James Whitfield',
+    trainingCode: 'VBD12',
   },
   {
     type: 'Instruction',
@@ -1061,6 +1167,7 @@ const bookings: LegacyBookingSeed[] = [
     time: '13:00 - 14:30',
     studentId,
     instructorName: 'James Whitfield',
+    trainingCode: 'VBD13',
   },
 ]
 
@@ -1802,177 +1909,6 @@ const instructors: Omit<Instructor, '_id'>[] = [
   },
 ]
 
-// Extra AvailabilityEntry rows keyed to each student's real seeded _id,
-// distinct from `availabilityEntries` above (which are keyed to the
-// hardcoded single-demo-persona placeholder `studentId`, not a real id) —
-// these feed the instructor schedule view (`GET /students/schedule`),
-// which needs per-student availability to compute open slots.
-type InstructorAvailabilitySlot = {
-  studentName: string
-  onDate: string
-  startTime: string
-  endTime: string
-}
-
-// One-off slots (not recurring) spanning the current week (w/c 17/08/2026)
-// and the two weeks after it, 0-5 per student, of varying lengths — enough
-// for the instructor schedule view to have real, varied data to browse
-// without needing to reseed every week. Priya deliberately has none, to
-// keep exercising InstructorSchedulePanel's empty-per-student state.
-const INSTRUCTOR_AVAILABILITY_SLOTS: InstructorAvailabilitySlot[] = [
-  {
-    studentName: 'Alex Moreau',
-    onDate: '22/08/2026',
-    startTime: '09:00',
-    endTime: '11:00',
-  },
-  {
-    studentName: 'Alex Moreau',
-    onDate: '26/08/2026',
-    startTime: '14:00',
-    endTime: '17:00',
-  },
-  {
-    studentName: 'Alex Moreau',
-    onDate: '02/09/2026',
-    startTime: '10:00',
-    endTime: '12:00',
-  },
-
-  {
-    studentName: 'Jamie Torres',
-    onDate: '23/08/2026',
-    startTime: '08:00',
-    endTime: '10:00',
-  },
-  {
-    studentName: 'Jamie Torres',
-    onDate: '25/08/2026',
-    startTime: '13:00',
-    endTime: '15:00',
-  },
-  {
-    studentName: 'Jamie Torres',
-    onDate: '27/08/2026',
-    startTime: '09:00',
-    endTime: '12:00',
-  },
-  {
-    studentName: 'Jamie Torres',
-    onDate: '29/08/2026',
-    startTime: '15:00',
-    endTime: '16:00',
-  },
-  {
-    studentName: 'Jamie Torres',
-    onDate: '03/09/2026',
-    startTime: '10:00',
-    endTime: '14:00',
-  },
-
-  {
-    studentName: 'Noah Becker',
-    onDate: '22/08/2026',
-    startTime: '13:00',
-    endTime: '16:00',
-  },
-  {
-    studentName: 'Noah Becker',
-    onDate: '28/08/2026',
-    startTime: '09:00',
-    endTime: '10:00',
-  },
-  {
-    studentName: 'Noah Becker',
-    onDate: '30/08/2026',
-    startTime: '11:00',
-    endTime: '15:00',
-  },
-  {
-    studentName: 'Noah Becker',
-    onDate: '05/09/2026',
-    startTime: '14:00',
-    endTime: '17:00',
-  },
-
-  // Further into September, so the instructor view has open slots to
-  // schedule against for the rest of the month too, not just its first
-  // week. Priya still has none — see the comment above.
-  {
-    studentName: 'Alex Moreau',
-    onDate: '09/09/2026',
-    startTime: '09:00',
-    endTime: '11:00',
-  },
-  {
-    studentName: 'Alex Moreau',
-    onDate: '16/09/2026',
-    startTime: '13:00',
-    endTime: '16:00',
-  },
-  {
-    studentName: 'Alex Moreau',
-    onDate: '23/09/2026',
-    startTime: '10:00',
-    endTime: '12:00',
-  },
-
-  {
-    studentName: 'Jamie Torres',
-    onDate: '10/09/2026',
-    startTime: '08:00',
-    endTime: '10:00',
-  },
-  {
-    studentName: 'Jamie Torres',
-    onDate: '17/09/2026',
-    startTime: '14:00',
-    endTime: '16:00',
-  },
-  {
-    studentName: 'Jamie Torres',
-    onDate: '24/09/2026',
-    startTime: '09:00',
-    endTime: '11:00',
-  },
-
-  {
-    studentName: 'Noah Becker',
-    onDate: '11/09/2026',
-    startTime: '09:00',
-    endTime: '10:00',
-  },
-  {
-    studentName: 'Noah Becker',
-    onDate: '18/09/2026',
-    startTime: '15:00',
-    endTime: '17:00',
-  },
-  {
-    studentName: 'Noah Becker',
-    onDate: '26/09/2026',
-    startTime: '10:00',
-    endTime: '13:00',
-  },
-]
-
-function buildInstructorAvailabilityEntries(
-  studentIdByName: Record<string, string>,
-): Omit<AvailabilityEntry, '_id'>[] {
-  return INSTRUCTOR_AVAILABILITY_SLOTS.map((slot) => ({
-    dateLabel: `On ${slot.onDate}`,
-    dateMode: 'on',
-    onDate: slot.onDate,
-    timeLabel: `Between ${slot.startTime} and ${slot.endTime}`,
-    timeMode: 'between',
-    startTime: slot.startTime,
-    endTime: slot.endTime,
-    recurrence: 'Once',
-    recurrenceMode: 'everyday',
-    studentId: studentIdByName[slot.studentName],
-  }))
-}
-
 // Real per-student September bookings — distinct from the `bookings`/
 // `calendarEvents` arrays above (which are all keyed to the hardcoded
 // single-demo-persona placeholder `studentId`, see line 23) — these feed
@@ -1991,9 +1927,332 @@ type StudentFlightSeed = {
   lessonType: string
   // Instructor's note; for a Theory lesson it carries the topic.
   comments?: string
+  // Hardcoded syllabus code for a flight lesson — resolved to a title +
+  // briefing checklist by lib/trainingContent.ts on the agenda. Left unset
+  // for Theory (its topic comes straight from `comments`); when unset for a
+  // flight, DEFAULT_TRAINING_CODE_BY_LESSON_TYPE fills one in.
+  trainingCode?: string
+  // A booking the student later cancelled — shown struck-through on the
+  // agenda by default, hidden by the "Hide cancelations" toggle.
+  cancelled?: boolean
 }
 
-const SEPTEMBER_STUDENT_FLIGHTS: StudentFlightSeed[] = [
+const DEFAULT_TRAINING_CODE_BY_LESSON_TYPE: Record<string, string | undefined> =
+  {
+    'Dual instruction': 'VTD03',
+    Instruction: 'VBD10',
+    'Checkride prep': 'VBD15',
+    'Solo supervised': 'SOLO01',
+    Theory: undefined,
+  }
+
+// Generates a steady 2-3 lessons/week for a student across a run of weeks so
+// every active student has a realistically full agenda. Syllabus codes and
+// instructors/tails rotate; every Nth generated lesson becomes a Theory
+// (ground-school) session. Priya is left out on purpose to keep her hours low.
+const BULK_SYLLABUS_CODES = [
+  'VTD03',
+  'VBD10',
+  'VBD11',
+  'VBD12',
+  'VBD13',
+  'NAV06',
+  'NAV08',
+  'VBD18',
+  'VBD19',
+]
+
+const BULK_THEORY_TOPICS = [
+  'Radio procedures and RT phraseology',
+  'Meteorology — reading METARs and TAFs',
+  'Mass & balance and aircraft performance',
+  'Emergency procedures and the practice forced landing',
+  'Air law and airspace',
+  'Principles of flight and stalling',
+]
+
+type LessonPlan = {
+  studentName: string
+  instructors: string[]
+  tails: string[]
+  firstMonday: string // ISO, a Monday
+  weeks: number
+  // 1 = Monday … 7 = Sunday, paired with a fixed time window.
+  slots: { weekday: number; start: string; end: string }[]
+  theoryEvery: number // every Nth generated lesson is Theory
+}
+
+const LESSON_PLANS: LessonPlan[] = [
+  {
+    studentName: 'Jamie Torres',
+    instructors: ['James Whitfield', 'Kate Ashford'],
+    tails: ['EC-ERV', 'EC-EXL', 'EC-FED'],
+    firstMonday: '2026-08-03',
+    weeks: 8,
+    slots: [
+      { weekday: 1, start: '09:00', end: '11:00' },
+      { weekday: 4, start: '13:00', end: '15:00' },
+    ],
+    theoryEvery: 4,
+  },
+  {
+    studentName: 'Alex Moreau',
+    instructors: ['James Whitfield', 'Kate Ashford'],
+    tails: ['EC-ERV', 'EC-EXL', 'EC-FED'],
+    firstMonday: '2026-08-03',
+    weeks: 8,
+    slots: [
+      { weekday: 2, start: '09:00', end: '11:00' },
+      { weekday: 5, start: '14:00', end: '16:00' },
+      { weekday: 3, start: '10:00', end: '12:00' },
+    ],
+    theoryEvery: 5,
+  },
+  {
+    studentName: 'Noah Becker',
+    instructors: ['Kate Ashford', 'James Whitfield'],
+    tails: ['EC-EXL', 'EC-FED', 'EC-ERV'],
+    firstMonday: '2026-08-10',
+    weeks: 7,
+    slots: [
+      { weekday: 3, start: '09:00', end: '10:30' },
+      { weekday: 6, start: '11:00', end: '12:30' },
+    ],
+    theoryEvery: 4,
+  },
+]
+
+function isoAddDays(iso: string, days: number): string {
+  const date = new Date(`${iso}T00:00:00`)
+  date.setDate(date.getDate() + days)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function generatePlanFlights(plan: LessonPlan): StudentFlightSeed[] {
+  const flights: StudentFlightSeed[] = []
+  let index = 0
+
+  for (let week = 0; week < plan.weeks; week += 1) {
+    for (const slot of plan.slots) {
+      const date = isoAddDays(plan.firstMonday, week * 7 + (slot.weekday - 1))
+      const instructorName = plan.instructors[index % plan.instructors.length]
+      const isTheoryLesson = index > 0 && index % plan.theoryEvery === 0
+
+      if (isTheoryLesson) {
+        flights.push({
+          studentName: plan.studentName,
+          instructorName,
+          date,
+          startTime: slot.start,
+          endTime: slot.end,
+          lessonType: 'Theory',
+          comments:
+            BULK_THEORY_TOPICS[
+              Math.floor(index / plan.theoryEvery) % BULK_THEORY_TOPICS.length
+            ],
+        })
+      } else {
+        flights.push({
+          studentName: plan.studentName,
+          instructorName,
+          date,
+          startTime: slot.start,
+          endTime: slot.end,
+          tail: plan.tails[index % plan.tails.length],
+          lessonType: 'Dual instruction',
+          trainingCode: BULK_SYLLABUS_CODES[index % BULK_SYLLABUS_CODES.length],
+        })
+      }
+      index += 1
+    }
+  }
+
+  return flights
+}
+
+// Marks 2-3 lessons per calendar month per student as cancelled, so every
+// student's agenda has some struck-through history behind the "View
+// cancelations" toggle. Deterministic: picks are spread across the month and
+// at least one lesson per month always survives; already-cancelled entries
+// are left as-is. A month with a single lesson gets one cancellation.
+function applyMonthlyCancellations(
+  flights: StudentFlightSeed[],
+): StudentFlightSeed[] {
+  const indicesByMonth = new Map<string, number[]>()
+  flights.forEach((flight, i) => {
+    const key = `${flight.studentName}|${flight.date.slice(0, 7)}`
+    const list = indicesByMonth.get(key) ?? []
+    list.push(i)
+    indicesByMonth.set(key, list)
+  })
+
+  const cancel = new Set<number>()
+  let monthNo = 0
+  for (const indices of indicesByMonth.values()) {
+    // Never cancel every lesson in a month that has more than one.
+    const maxCancellable =
+      indices.length <= 1 ? indices.length : indices.length - 1
+    const target = Math.min(2 + (monthNo % 2), maxCancellable)
+    const start = indices.length <= 1 ? 0 : 1
+    const step = Math.max(1, Math.floor((indices.length - start) / target))
+    for (
+      let picked = 0, k = start;
+      picked < target && k < indices.length;
+      k += step
+    ) {
+      cancel.add(indices[k])
+      picked += 1
+    }
+    monthNo += 1
+  }
+
+  return flights.map((flight, i) =>
+    cancel.has(i) ? { ...flight, cancelled: true } : flight,
+  )
+}
+
+// Curated lessons for specific dates — the default demo persona's first solo,
+// a cancelled lesson, and the per-student September detail the instructor
+// scheduling demo leans on. Merged with the generated bulk below.
+const EXPLICIT_STUDENT_FLIGHTS: StudentFlightSeed[] = [
+  // Jamie Torres is the default demo persona — a full, varied agenda across
+  // the current and next month (migrated from the old standalone
+  // `calendarEvents` array), including one cancelled lesson.
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-08-04',
+    startTime: '18:10',
+    endTime: '20:20',
+    tail: 'EC-EXL',
+    lessonType: 'Dual instruction',
+    trainingCode: 'VTD01',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-08-07',
+    startTime: '13:10',
+    endTime: '15:20',
+    tail: 'EC-ERV',
+    lessonType: 'Checkride prep',
+    trainingCode: 'VBD15',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-08-12',
+    startTime: '09:00',
+    endTime: '12:30',
+    tail: 'EC-KLM',
+    lessonType: 'Dual instruction',
+    trainingCode: 'VTD04',
+    cancelled: true,
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-02',
+    startTime: '10:00',
+    endTime: '11:15',
+    tail: 'EC-FED',
+    lessonType: 'Dual instruction',
+    trainingCode: 'VBD03',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-07',
+    startTime: '09:00',
+    endTime: '10:15',
+    tail: 'EC-FED',
+    lessonType: 'Checkride prep',
+    trainingCode: 'VBD16',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-09',
+    startTime: '15:00',
+    endTime: '16:00',
+    tail: 'EC-ERV',
+    lessonType: 'Solo supervised',
+    trainingCode: 'SOLO01',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-18',
+    startTime: '10:00',
+    endTime: '11:30',
+    tail: 'EC-ERV',
+    lessonType: 'Solo supervised',
+    trainingCode: 'VBD18',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-25',
+    startTime: '19:00',
+    endTime: '20:30',
+    tail: 'EC-EXL',
+    lessonType: 'Dual instruction',
+    trainingCode: 'NIT02',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-30',
+    startTime: '10:00',
+    endTime: '11:15',
+    tail: 'EC-FED',
+    lessonType: 'Checkride prep',
+    trainingCode: 'VBD19',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-14',
+    startTime: '09:00',
+    endTime: '11:30',
+    tail: 'EC-EXL',
+    lessonType: 'Dual instruction',
+    trainingCode: 'NAV06',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-21',
+    startTime: '09:00',
+    endTime: '12:00',
+    tail: 'EC-EXL',
+    lessonType: 'Dual instruction',
+    trainingCode: 'NAV08',
+  },
+  // Theory (ground-school) lessons — no aircraft; the agenda shows the
+  // comment below as the topic.
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'James Whitfield',
+    date: '2026-09-16',
+    startTime: '18:00',
+    endTime: '19:30',
+    lessonType: 'Theory',
+    comments: 'Navigation theory — map reading, drift and diversions',
+  },
+  {
+    studentName: 'Jamie Torres',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-28',
+    startTime: '18:00',
+    endTime: '19:30',
+    lessonType: 'Theory',
+    comments: 'Radio procedures and RT phraseology',
+  },
+
   {
     studentName: 'Alex Moreau',
     instructorName: 'James Whitfield',
@@ -2077,6 +2336,16 @@ const SEPTEMBER_STUDENT_FLIGHTS: StudentFlightSeed[] = [
     lessonType: 'Dual instruction',
   },
 
+  // Priya keeps a light September load — roughly 0-2 lessons a week.
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'James Whitfield',
+    date: '2026-09-03',
+    startTime: '10:00',
+    endTime: '12:00',
+    tail: 'EC-DMC',
+    lessonType: 'Dual instruction',
+  },
   {
     studentName: 'Priya Shah',
     instructorName: 'James Whitfield',
@@ -2098,11 +2367,38 @@ const SEPTEMBER_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   {
     studentName: 'Priya Shah',
     instructorName: 'Kate Ashford',
+    date: '2026-09-17',
+    startTime: '09:00',
+    endTime: '11:00',
+    tail: 'EC-DMC',
+    lessonType: 'Dual instruction',
+  },
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'Kate Ashford',
     date: '2026-09-22',
     startTime: '10:00',
     endTime: '12:00',
     tail: 'EC-KOP',
     lessonType: 'Solo supervised',
+  },
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'James Whitfield',
+    date: '2026-09-24',
+    startTime: '14:00',
+    endTime: '16:00',
+    tail: 'EC-KOQ',
+    lessonType: 'Checkride prep',
+  },
+  {
+    studentName: 'Priya Shah',
+    instructorName: 'Kate Ashford',
+    date: '2026-09-29',
+    startTime: '16:00',
+    endTime: '17:30',
+    lessonType: 'Theory',
+    comments: 'Meteorology — reading METARs and TAFs',
   },
 
   {
@@ -2172,7 +2468,17 @@ const SEPTEMBER_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   },
 ]
 
-function buildSeptemberStudentFlights(
+const STUDENT_FLIGHTS: StudentFlightSeed[] = applyMonthlyCancellations([
+  ...LESSON_PLANS.flatMap(generatePlanFlights),
+  ...EXPLICIT_STUDENT_FLIGHTS,
+])
+
+function flightTrainingCode(flight: StudentFlightSeed): string | undefined {
+  if (flight.trainingCode) return flight.trainingCode
+  return DEFAULT_TRAINING_CODE_BY_LESSON_TYPE[flight.lessonType]
+}
+
+function buildStudentFlights(
   studentIdByName: Record<string, string>,
   instructorIdByName: Record<string, string>,
 ): {
@@ -2182,11 +2488,12 @@ function buildSeptemberStudentFlights(
   const bookings: Omit<Booking, '_id'>[] = []
   const calendarEvents: Omit<CalendarEvent, '_id'>[] = []
 
-  for (const flight of SEPTEMBER_STUDENT_FLIGHTS) {
+  for (const flight of STUDENT_FLIGHTS) {
     const flightStudentId = studentIdByName[flight.studentName]
     const flightInstructorId = instructorIdByName[flight.instructorName]
     if (!flightStudentId || !flightInstructorId) continue
     const time = `${flight.startTime} - ${flight.endTime}`
+    const trainingCode = flightTrainingCode(flight)
 
     bookings.push({
       type: flight.lessonType,
@@ -2197,6 +2504,8 @@ function buildSeptemberStudentFlights(
       studentId: flightStudentId,
       instructorId: flightInstructorId,
       comments: flight.comments,
+      trainingCode,
+      cancelled: flight.cancelled,
     })
 
     calendarEvents.push({
@@ -2207,8 +2516,10 @@ function buildSeptemberStudentFlights(
       flightLines: [
         flight.comments
           ? `${flight.lessonType} · ${flight.comments}`
-          : `${flight.lessonType} · ${flight.tail}`,
+          : `${flight.lessonType} · ${flight.tail ?? trainingCode ?? ''}`,
       ],
+      trainingCode,
+      cancelled: flight.cancelled,
       studentId: flightStudentId,
     })
   }
@@ -2472,126 +2783,6 @@ function buildEmergencyContacts(
   }))
 }
 
-const calendarEvents: Omit<CalendarEvent, '_id'>[] = [
-  {
-    type: 'booking',
-    date: '2026-08-04',
-    time: '18:10 - 20:20',
-    tailNumber: 'EC-EXL',
-    pilotInCommand: 'Mike Murdoch [PIC]',
-    flightLines: [
-      'VTD01 - Precautionary landing. Reading maps of local area',
-      'VTD02 - DM cross country flight',
-    ],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-08-07',
-    time: '13:10 - 15:20',
-    tailNumber: 'EC-ERV',
-    pilotInCommand: 'Jane Smith [PIC]',
-    flightLines: ['VBD15 - Final check before solo flight'],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-08-12',
-    time: '09:00 - 12:30',
-    tailNumber: 'EC-KLM',
-    pilotInCommand: 'SAMPLE PLACEHOLDER [PIC]',
-    flightLines: [
-      'VTD04 - Navigation exercise over the coastline with diversion practice',
-      'VTD05 - Steep turns and stall recovery review',
-      'VTD06 - Radio navigation using VOR and ADF, followed by a full instrument approach briefing',
-      'VTD07 - Circuit practice, short and soft field landings',
-    ],
-    cancelled: true,
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-02',
-    time: '10:00 - 11:15',
-    tailNumber: 'EC-FED',
-    pilotInCommand: 'Jane Smith [PIC]',
-    flightLines: ['VBD03 - Circuit consolidation'],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-07',
-    time: '09:00 - 10:15',
-    tailNumber: 'EC-FED',
-    pilotInCommand: 'R. Sinclair [PIC]',
-    flightLines: [
-      'VBD16 - Pre-solo written test review',
-      'VBD17 - Solo circuit briefing',
-    ],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-09',
-    time: '15:00 - 16:00',
-    tailNumber: 'EC-ERV',
-    pilotInCommand: 'R. Sinclair [PIC]',
-    flightLines: ['SOLO01 - First solo flight (supervised circuits)'],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-14',
-    time: '09:00 - 11:30',
-    tailNumber: 'EC-KLM',
-    pilotInCommand: 'M. Whitcombe [PIC]',
-    flightLines: [
-      'NAV06 - Navigation exercise, diversion planning',
-      'NAV07 - Radio navigation using VOR and ADF',
-    ],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-18',
-    time: '10:00 - 11:30',
-    tailNumber: 'EC-ERV',
-    pilotInCommand: 'R. Sinclair [PIC]',
-    flightLines: ['VBD18 - Solo consolidation circuits'],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-21',
-    time: '09:00 - 12:00',
-    tailNumber: 'EC-KLM',
-    pilotInCommand: 'M. Whitcombe [PIC]',
-    flightLines: [
-      'NAV08 - Cross-country qualifier planning and briefing',
-      'NAV09 - Cross-country qualifying flight, LELL-LEVD-LERS-LELL',
-    ],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-25',
-    time: '19:00 - 20:30',
-    tailNumber: 'EC-EXL',
-    pilotInCommand: 'K. Ashford [PIC]',
-    flightLines: ['NIT02 - Night navigation exercise'],
-    studentId,
-  },
-  {
-    type: 'booking',
-    date: '2026-09-30',
-    time: '10:00 - 11:15',
-    tailNumber: 'EC-FED',
-    pilotInCommand: 'R. Sinclair [PIC]',
-    flightLines: ['VBD19 - Instrument appreciation, partial panel'],
-    studentId,
-  },
-]
-
 // Week-view blocks are derived from the same per-aircraft day template so
 // picking any weekday in the week view always matches the day view. start/end
 // for 'day' blocks are hours-of-day (9-21.5); 'week' blocks are day-index +
@@ -2822,21 +3013,19 @@ async function seed() {
     instructorDocs.map((doc) => [doc.name, doc._id.toString()]),
   )
 
-  const instructorAvailabilityEntries =
-    buildInstructorAvailabilityEntries(studentIdByName)
-  const septemberFlights = buildSeptemberStudentFlights(
+  const studentFlights = buildStudentFlights(
     studentIdByName,
     instructorIdByName,
   )
 
   await seedMany(
     availabilityEntryModel,
-    [...availabilityEntries, ...instructorAvailabilityEntries],
+    buildAvailabilityEntries(studentIdByName),
     'availability entries',
   )
   await seedMany(
     calendarEventModel,
-    [...calendarEvents, ...septemberFlights.calendarEvents],
+    studentFlights.calendarEvents,
     'calendar events',
   )
   if (onlyIfEmpty && (await courseProgressModel.countDocuments()) > 0) {
@@ -2870,7 +3059,7 @@ async function seed() {
     bookingModel,
     [
       ...withResolvedIds(bookings, studentIdByName, instructorIdByName),
-      ...septemberFlights.bookings,
+      ...studentFlights.bookings,
     ],
     'bookings',
   )
