@@ -6,25 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A flight school management platform: a Next.js (App Router) + TypeScript + next-intl + Tailwind CSS frontend, backed by a NestJS + MongoDB API (`server/`, npm workspace — see its own architecture notes below). Public pages (home, about, news, aircraft directory, schedule overview) are visible to anyone; a `/me` area lets students track their own progress (logbook, certificates, courses). Instructor tooling is planned for later. Currently scaffolding-stage — frontend pages still render from `DUMMY_*` data and the backend only has config/MongoDB/health-check groundwork; no feature endpoints exist yet. See `TODO.md` for the project outline and roadmap.
+A flight school management platform: a locale-routed frontend backed by a NestJS + MongoDB API in `server/` (its own npm workspace). Public pages (home, about, news, aircraft directory, schedule overview) are visible to anyone; a `/me` area lets students track their own progress (logbook, certificates, courses). Instructor tooling is planned for later. See `TODO.md` for the project outline and roadmap.
 
 ## Commands
 
-```bash
-npm run dev              # start dev server
-npm run build             # production build
-npm run lint               # eslint
-npm run type-check          # tsc --noEmit
-npm run format              # prettier --write .
-npm run format:check        # prettier --check .
-npm run test                # vitest run (single run)
-npm run test:watch          # vitest watch mode
-npm run test:coverage       # vitest run with coverage; enforces 80% lines/branches/functions/statements per component
-npm run storybook           # storybook dev, port 6006
-npm run build-storybook     # static storybook build
-```
-
-Run a single test file: `npx vitest run components/PageHeading.test.tsx`
+Run a single test file: `npx vitest run --config config/vitest.config.ts components/PageHeading.test.tsx`
 
 The user runs their own dev server on :3000 and Storybook on :6006. When Claude needs to launch either to verify a change, use `npm run dev:claude` (port 3100) and `npm run storybook:claude` (port 6106) instead, so the user's own running instances aren't killed or reused.
 
