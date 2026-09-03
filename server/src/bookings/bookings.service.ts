@@ -2,10 +2,12 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { Connection, Model } from 'mongoose'
 import { Booking, BookingDocument } from './schemas/booking.schema'
 import { Student, StudentDocument } from '../students/schemas/student.schema'
 import { Aircraft, AircraftDocument } from '../aircraft/schemas/aircraft.schema'
@@ -54,6 +56,8 @@ function parseTimeRange(time: string): { start: string; end: string } | null {
 
 @Injectable()
 export class BookingsService {
+  private readonly logger = new Logger(BookingsService.name)
+
   constructor(
     @InjectModel(Booking.name)
     private readonly bookingModel: Model<BookingDocument>,
@@ -67,6 +71,7 @@ export class BookingsService {
     private readonly instructorModel: Model<InstructorDocument>,
     @InjectModel(AvailabilityEntry.name)
     private readonly availabilityEntryModel: Model<AvailabilityEntryDocument>,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   // True when [startTime, endTime] fits entirely inside one of the student's
@@ -184,24 +189,60 @@ export class BookingsService {
 
     const time = `${input.startTime} - ${input.endTime}`
 
-    await this.calendarEventModel.create({
-      type: 'booking',
-      date: input.date,
-      time,
-      tailNumber: aircraft?.arcid,
-      flightLines: input.comments ? [input.comments] : undefined,
-      studentId: input.studentId,
-    })
+    // Booking (denormalized, read by /schedule, /bookings, homepage) and
+    // CalendarEvent (proper ids, read by conflict detection above) both
+    // represent this one lesson — a session transaction keeps them in sync:
+    // if either write fails, both roll back instead of leaving an orphaned
+    // CalendarEvent with no matching Booking.
+    const session = await this.connection.startSession()
+    try {
+      let booking: BookingDocument
+      try {
+        await session.withTransaction(async () => {
+          await this.calendarEventModel.create(
+            [
+              {
+                type: 'booking',
+                date: input.date,
+                time,
+                tailNumber: aircraft?.arcid,
+                flightLines: input.comments ? [input.comments] : undefined,
+                studentId: input.studentId,
+              },
+            ],
+            { session },
+          )
 
-    return this.bookingModel.create({
-      type: input.lessonType,
-      date: toDisplayDate(input.date),
-      tail: aircraft?.arcid,
-      person: student.name,
-      time,
-      studentId: input.studentId,
-      instructorId: input.instructorId,
-      comments: input.comments?.trim() || undefined,
-    })
+          const [created] = await this.bookingModel.create(
+            [
+              {
+                type: input.lessonType,
+                date: toDisplayDate(input.date),
+                tail: aircraft?.arcid,
+                person: student.name,
+                time,
+                studentId: input.studentId,
+                instructorId: input.instructorId,
+                comments: input.comments?.trim() || undefined,
+              },
+            ],
+            { session },
+          )
+          booking = created
+        })
+      } catch (error) {
+        this.logger.error(
+          `Booking transaction failed for student ${input.studentId} on ${input.date}`,
+          error instanceof Error ? error.stack : error,
+        )
+        throw new InternalServerErrorException(
+          'Could not save the booking — please try again.',
+        )
+      }
+
+      return booking!
+    } finally {
+      await session.endSession()
+    }
   }
 }

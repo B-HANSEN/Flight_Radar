@@ -1,10 +1,11 @@
 import {
   BadRequestException,
   ConflictException,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-import { getModelToken } from '@nestjs/mongoose'
+import { getConnectionToken, getModelToken } from '@nestjs/mongoose'
 import { BookingsService } from './bookings.service'
 import { Booking } from './schemas/booking.schema'
 import { Student } from '../students/schemas/student.schema'
@@ -37,6 +38,8 @@ describe('BookingsService', () => {
   const instructorModel = { findById: jest.fn() }
   const calendarEventModel = { find: jest.fn(), create: jest.fn() }
   const availabilityEntryModel = { find: jest.fn() }
+  const mockSession = { withTransaction: jest.fn(), endSession: jest.fn() }
+  const connection = { startSession: jest.fn() }
 
   const input = {
     studentId: 'student-1',
@@ -63,11 +66,18 @@ describe('BookingsService', () => {
     calendarEventModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue([]),
     })
-    calendarEventModel.create.mockResolvedValue({})
+    calendarEventModel.create.mockResolvedValue([{}])
     availabilityEntryModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue([availabilityCoveringInput]),
     })
-    bookingModel.create.mockResolvedValue({ id: 'booking-1', ...input })
+    bookingModel.create.mockResolvedValue([{ id: 'booking-1', ...input }])
+    connection.startSession.mockResolvedValue(mockSession)
+    mockSession.withTransaction.mockImplementation(
+      async (fn: () => Promise<void>) => {
+        await fn()
+      },
+    )
+    mockSession.endSession.mockResolvedValue(undefined)
 
     const app: TestingModule = await Test.createTestingModule({
       providers: [
@@ -87,6 +97,7 @@ describe('BookingsService', () => {
           provide: getModelToken(AvailabilityEntry.name),
           useValue: availabilityEntryModel,
         },
+        { provide: getConnectionToken(), useValue: connection },
       ],
     }).compile()
 
@@ -128,36 +139,47 @@ describe('BookingsService', () => {
   it('creates a booking-type calendar event so the slot no longer shows as open', async () => {
     await service.create(input)
 
-    expect(calendarEventModel.create).toHaveBeenCalledWith({
-      type: 'booking',
-      date: '2026-08-27',
-      time: '09:00 - 11:00',
-      tailNumber: 'EC-JOB',
-      flightLines: ['Cover steep turns'],
-      studentId: 'student-1',
-    })
+    expect(calendarEventModel.create).toHaveBeenCalledWith(
+      [
+        {
+          type: 'booking',
+          date: '2026-08-27',
+          time: '09:00 - 11:00',
+          tailNumber: 'EC-JOB',
+          flightLines: ['Cover steep turns'],
+          studentId: 'student-1',
+        },
+      ],
+      { session: mockSession },
+    )
   })
 
   it('creates a booking with the display-formatted date and resolved student/aircraft/instructor', async () => {
     await service.create(input)
 
-    expect(bookingModel.create).toHaveBeenCalledWith({
-      type: 'Dual instruction',
-      date: '27/08/2026',
-      tail: 'EC-JOB',
-      person: 'Jamie Torres',
-      time: '09:00 - 11:00',
-      studentId: 'student-1',
-      instructorId: 'instructor-1',
-      comments: 'Cover steep turns',
-    })
+    expect(bookingModel.create).toHaveBeenCalledWith(
+      [
+        {
+          type: 'Dual instruction',
+          date: '27/08/2026',
+          tail: 'EC-JOB',
+          person: 'Jamie Torres',
+          time: '09:00 - 11:00',
+          studentId: 'student-1',
+          instructorId: 'instructor-1',
+          comments: 'Cover steep turns',
+        },
+      ],
+      { session: mockSession },
+    )
   })
 
   it('stores no comments when the note is blank', async () => {
     await service.create({ ...input, comments: '   ' })
 
     expect(bookingModel.create).toHaveBeenCalledWith(
-      expect.objectContaining({ comments: undefined }),
+      [expect.objectContaining({ comments: undefined })],
+      { session: mockSession },
     )
   })
 
@@ -174,10 +196,12 @@ describe('BookingsService', () => {
 
     expect(aircraftModel.findById).not.toHaveBeenCalled()
     expect(bookingModel.create).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'Theory', tail: undefined }),
+      [expect.objectContaining({ type: 'Theory', tail: undefined })],
+      { session: mockSession },
     )
     expect(calendarEventModel.create).toHaveBeenCalledWith(
-      expect.objectContaining({ tailNumber: undefined }),
+      [expect.objectContaining({ tailNumber: undefined })],
+      { session: mockSession },
     )
   })
 
@@ -374,5 +398,32 @@ describe('BookingsService', () => {
       cancelled: { $ne: true },
       $or: [{ studentId: 'student-1' }, { tailNumber: 'EC-JOB' }],
     })
+  })
+
+  it('writes the calendar event and the booking inside the same session', async () => {
+    await service.create(input)
+
+    expect(connection.startSession).toHaveBeenCalled()
+    expect(mockSession.withTransaction).toHaveBeenCalled()
+    expect(calendarEventModel.create).toHaveBeenCalledWith(expect.any(Array), {
+      session: mockSession,
+    })
+    expect(bookingModel.create).toHaveBeenCalledWith(expect.any(Array), {
+      session: mockSession,
+    })
+    expect(mockSession.endSession).toHaveBeenCalled()
+  })
+
+  it('wraps a write failure inside the transaction in a clear error, and still ends the session', async () => {
+    bookingModel.create.mockRejectedValue(new Error('write conflict'))
+
+    await expect(service.create(input)).rejects.toThrow(
+      InternalServerErrorException,
+    )
+    await expect(service.create(input)).rejects.toThrow(
+      'Could not save the booking — please try again.',
+    )
+
+    expect(mockSession.endSession).toHaveBeenCalled()
   })
 })
