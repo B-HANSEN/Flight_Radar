@@ -28,14 +28,18 @@ function studentRowName(student: (typeof DUMMY_STUDENTS)[number]) {
 }
 
 function instructorRowName(instructor: (typeof DUMMY_INSTRUCTORS)[number]) {
-  return `${instructor.name} (Instructor)`
+  return `${instructor.name} (${
+    instructor.isChief ? 'Chief Flight Instructor' : 'Instructor'
+  })`
 }
 
 describe('RoleSwitcher', () => {
   it('shows the first instructor as the trigger label and keeps the menu closed by default', () => {
     renderRoleSwitcher()
     expect(
-      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield · Chief Flight Instructor',
+      }),
     ).toBeInTheDocument()
     expect(screen.queryByText('Switch view')).not.toBeInTheDocument()
   })
@@ -46,7 +50,9 @@ describe('RoleSwitcher', () => {
       screen.getByRole('button', { name: DUMMY_STUDENTS[0].name }),
     ).toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.queryByRole('button', {
+        name: 'James Whitfield · Chief Flight Instructor',
+      }),
     ).not.toBeInTheDocument()
   })
 
@@ -60,7 +66,9 @@ describe('RoleSwitcher', () => {
   it('opens the menu on click and lists every instructor plus every student', () => {
     renderRoleSwitcher()
     fireEvent.click(
-      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield · Chief Flight Instructor',
+      }),
     )
 
     const panel = getPanel()
@@ -79,7 +87,9 @@ describe('RoleSwitcher', () => {
   it('marks the active instructor row as current when no student is selected', () => {
     renderRoleSwitcher({ selectedStudentId: null })
     fireEvent.click(
-      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield · Chief Flight Instructor',
+      }),
     )
 
     const panel = getPanel()
@@ -123,7 +133,9 @@ describe('RoleSwitcher', () => {
     const onSelectStudent = vi.fn()
     renderRoleSwitcher({ onSelectStudent })
     fireEvent.click(
-      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield · Chief Flight Instructor',
+      }),
     )
     fireEvent.click(
       within(getPanel()).getByRole('button', {
@@ -157,7 +169,7 @@ describe('RoleSwitcher', () => {
   it('toggles the menu closed on a second trigger click', () => {
     renderRoleSwitcher()
     const trigger = screen.getByRole('button', {
-      name: 'James Whitfield · Instructor',
+      name: 'James Whitfield · Chief Flight Instructor',
     })
 
     fireEvent.click(trigger)
@@ -170,7 +182,7 @@ describe('RoleSwitcher', () => {
   it('closes the menu when Escape is pressed and returns focus to the trigger', () => {
     renderRoleSwitcher()
     const trigger = screen.getByRole('button', {
-      name: 'James Whitfield · Instructor',
+      name: 'James Whitfield · Chief Flight Instructor',
     })
     fireEvent.click(trigger)
 
@@ -182,7 +194,9 @@ describe('RoleSwitcher', () => {
   it('closes the menu on an outside click', () => {
     renderRoleSwitcher()
     fireEvent.click(
-      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield · Chief Flight Instructor',
+      }),
     )
     expect(screen.getByText('Switch view')).toBeInTheDocument()
 
@@ -193,13 +207,13 @@ describe('RoleSwitcher', () => {
   it('renders an abbreviated trigger label alongside the full label, keeping the full text as the accessible name', () => {
     renderRoleSwitcher()
     const trigger = screen.getByRole('button', {
-      name: 'James Whitfield · Instructor',
+      name: 'James Whitfield · Chief Flight Instructor',
     })
     expect(
       within(trigger).getByText('J.Whitfield', { selector: 'span' }),
     ).toBeInTheDocument()
     expect(
-      within(trigger).getByText('James Whitfield · Instructor', {
+      within(trigger).getByText('James Whitfield · Chief Flight Instructor', {
         selector: 'span',
       }),
     ).toBeInTheDocument()
@@ -208,7 +222,9 @@ describe('RoleSwitcher', () => {
   it('renders an abbreviated name alongside the full name/role text for each row, for narrow viewports', () => {
     renderRoleSwitcher()
     fireEvent.click(
-      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield · Chief Flight Instructor',
+      }),
     )
 
     const panel = getPanel()
@@ -225,7 +241,7 @@ describe('RoleSwitcher', () => {
   it("renders an instructor's photo instead of initials when one is given", () => {
     renderRoleSwitcher()
     const trigger = screen.getByRole('button', {
-      name: 'James Whitfield · Instructor',
+      name: 'James Whitfield · Chief Flight Instructor',
     })
     expect(trigger.querySelector('img')).toHaveAttribute(
       'src',

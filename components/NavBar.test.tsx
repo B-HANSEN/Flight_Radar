@@ -196,7 +196,9 @@ describe('NavBar', () => {
     renderNavBar({ students: DUMMY_STUDENTS, instructors: DUMMY_INSTRUCTORS })
     fireEvent.click(screen.getByRole('button', { name: 'Jamie Torres' }))
     fireEvent.click(
-      screen.getByRole('button', { name: 'James Whitfield (Instructor)' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield (Chief Flight Instructor)',
+      }),
     )
 
     expect(screen.getByRole('link', { name: 'Scheduling' })).toHaveAttribute(
@@ -227,8 +229,11 @@ describe('NavBar', () => {
 
   it('honors an explicit initialSelectedStudentId of null (instructor) even when students are available', () => {
     renderNavBar({ students: DUMMY_STUDENTS, initialSelectedStudentId: null })
+    // No instructors prop here, so NavBar's fallback stub (no isChief) is used.
     expect(
-      screen.getByRole('button', { name: 'James Whitfield · Instructor' }),
+      screen.getByRole('button', {
+        name: 'James Whitfield · Instructor',
+      }),
     ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Scheduling' })).toBeInTheDocument()
   })

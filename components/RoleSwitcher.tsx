@@ -77,6 +77,9 @@ export default function RoleSwitcher({
 }: Props) {
   const t = useTranslations('RoleSwitcher')
   const [open, setOpen] = useState(false)
+
+  const roleLabel = (instructor: Instructor) =>
+    instructor.isChief ? t('chiefInstructor') : t('instructor')
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
 
@@ -124,7 +127,7 @@ export default function RoleSwitcher({
   const triggerLabel = selectedStudent
     ? selectedStudent.name
     : activeInstructor
-      ? `${activeInstructor.name} · ${t('instructor')}`
+      ? `${activeInstructor.name} · ${roleLabel(activeInstructor)}`
       : ''
   const triggerAbbreviated = selectedStudent
     ? abbreviateName(selectedStudent.name)
@@ -183,7 +186,7 @@ export default function RoleSwitcher({
                     type='button'
                     onClick={() => handleSelectInstructor(instructor)}
                     aria-current={isSelected ? 'true' : undefined}
-                    aria-label={`${instructor.name} (${t('instructor')})`}
+                    aria-label={`${instructor.name} (${roleLabel(instructor)})`}
                     className={menuItemClass(isSelected)}
                   >
                     <Avatar
@@ -196,7 +199,7 @@ export default function RoleSwitcher({
                         {abbreviateName(instructor.name)}
                       </span>
                       <span className='hidden md:inline'>
-                        {instructor.name} ({t('instructor')})
+                        {instructor.name} ({roleLabel(instructor)})
                       </span>
                     </span>
                   </button>

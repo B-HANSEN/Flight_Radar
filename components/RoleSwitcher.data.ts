@@ -9,7 +9,7 @@ export const DUMMY_INSTRUCTORS: Instructor[] = [
     email: 'james.whitfield@example.com',
     phone: '+34 600 111 222',
     birthday: '8 September 1985',
-    info: 'Chief Flight Instructor · Since 2015',
+    info: 'ATPL holder · CFI',
     photoSrc: '/instructors/james-whitfield.webp',
     isChief: true,
   },
@@ -21,7 +21,7 @@ export const DUMMY_INSTRUCTORS: Instructor[] = [
     email: 'kate.ashford@example.com',
     phone: '+34 600 222 333',
     birthday: '19 April 1990',
-    info: 'Deputy Chief Flight Instructor · Since 2019',
+    info: 'CPL holder · Senior Flight Instructor',
     photoSrc: '/instructors/kate-ashford.webp',
   },
 ]
@@ -36,7 +36,7 @@ export const DUMMY_STUDENTS: Student[] = [
     email: 'alex.moreau@example.com',
     phone: '+34 600 234 567',
     birthday: '22 June 1998',
-    info: 'IR online · Q3 2025',
+    info: 'PPL holder · IR student',
   },
   {
     id: 'student-2',
@@ -47,7 +47,7 @@ export const DUMMY_STUDENTS: Student[] = [
     email: 'jamie.torres@example.com',
     phone: '+34 600 123 456',
     birthday: '14 March 1994',
-    info: 'PPL online · Q1 2025',
+    info: 'PPL student',
   },
   {
     id: 'student-3',
@@ -58,7 +58,7 @@ export const DUMMY_STUDENTS: Student[] = [
     email: 'priya.shah@example.com',
     phone: '+34 600 345 678',
     birthday: '5 November 1996',
-    info: 'CPL online · Q2 2025',
+    info: 'PPL holder · CPL student',
   },
   {
     id: 'student-4',
@@ -69,6 +69,6 @@ export const DUMMY_STUDENTS: Student[] = [
     email: 'noah.becker@example.com',
     phone: '+34 600 456 789',
     birthday: '30 January 2000',
-    info: 'PPL online · Q4 2025',
+    info: 'PPL student',
   },
 ]
