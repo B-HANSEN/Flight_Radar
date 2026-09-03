@@ -139,6 +139,31 @@ export default function TimePickerModal({
             className='relative rounded-full bg-black-100/60'
             style={{ width: DIAL_SIZE, height: DIAL_SIZE }}
           >
+            <div
+              aria-hidden='true'
+              className='absolute bg-blue-300'
+              style={{
+                left: CENTER,
+                top: CENTER,
+                width: handLength,
+                height: 2,
+                transformOrigin: '0 0',
+                transform: `rotate(${handAngle}rad)`,
+              }}
+            />
+            <div
+              aria-hidden='true'
+              className='absolute size-1.5 rounded-full bg-blue-300'
+              style={{ left: CENTER - 3, top: CENTER - 3 }}
+            />
+            <div
+              aria-hidden='true'
+              className='absolute flex size-9 items-center justify-center rounded-full bg-blue-300 font-secondary text-sm font-semibold text-white'
+              style={{ left: selected.x - 18, top: selected.y - 18 }}
+            >
+              {selected.label}
+            </div>
+
             {step === 'hour'
               ? hourPositions.map(({ outer, inner }) => (
                   <div key={`hour-${outer.value}-${inner.value}`}>
@@ -195,30 +220,6 @@ export default function TimePickerModal({
                     </span>
                   </button>
                 ))}
-            <div
-              aria-hidden='true'
-              className='absolute bg-blue-300'
-              style={{
-                left: CENTER,
-                top: CENTER,
-                width: handLength,
-                height: 2,
-                transformOrigin: '0 0',
-                transform: `rotate(${handAngle}rad)`,
-              }}
-            />
-            <div
-              aria-hidden='true'
-              className='absolute size-1.5 rounded-full bg-blue-300'
-              style={{ left: CENTER - 3, top: CENTER - 3 }}
-            />
-            <div
-              aria-hidden='true'
-              className='absolute flex size-9 items-center justify-center rounded-full bg-blue-300 font-secondary text-sm font-semibold text-white'
-              style={{ left: selected.x - 18, top: selected.y - 18 }}
-            >
-              {selected.label}
-            </div>
           </div>
         </div>
 
