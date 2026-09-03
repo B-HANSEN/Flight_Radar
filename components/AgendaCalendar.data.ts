@@ -1,21 +1,17 @@
-import type { CalendarEvent } from './AgendaCalendar.types'
+import {
+  MINUTES_PER_DAY,
+  computeUnavailableGaps,
+  expandAvailability,
+  formatMinutes,
+} from '@/lib/availabilityExpansion'
+import { DUMMY_AVAILABILITY_ENTRIES } from './Availability.data'
+import type { BookingEvent, CalendarEvent } from './AgendaCalendar.types'
 
-export const DUMMY_AGENDA_EVENTS: CalendarEvent[] = [
-  { id: 'ev-1', type: 'unavailability', date: '2026-07-28', allDay: true },
-  { id: 'ev-2', type: 'unavailability', date: '2026-07-29', allDay: true },
-  { id: 'ev-3', type: 'unavailability', date: '2026-07-30', allDay: true },
-  { id: 'ev-4', type: 'unavailability', date: '2026-07-31', allDay: true },
-  { id: 'ev-5', type: 'unavailability', date: '2026-08-01', allDay: true },
-  { id: 'ev-6', type: 'unavailability', date: '2026-08-02', allDay: true },
+// Lessons aren't derivable from declared availability, unlike the
+// unavailability blocks below — kept hand-authored.
+const DUMMY_BOOKING_EVENTS: BookingEvent[] = [
   {
-    id: 'ev-7',
-    type: 'unavailability',
-    date: '2026-08-03',
-    allDay: false,
-    timeRange: '08:00 - 14:00',
-  },
-  {
-    id: 'ev-8',
+    id: 'booking-1',
     type: 'booking',
     date: '2026-08-04',
     time: '18:10 - 20:20',
@@ -26,14 +22,7 @@ export const DUMMY_AGENDA_EVENTS: CalendarEvent[] = [
     trainingCode: 'VTD01',
   },
   {
-    id: 'ev-9',
-    type: 'unavailability',
-    date: '2026-08-05',
-    allDay: false,
-    timeRange: '09:00 - 13:00',
-  },
-  {
-    id: 'ev-10',
+    id: 'booking-2',
     type: 'booking',
     date: '2026-08-07',
     time: '13:10 - 15:20',
@@ -44,7 +33,7 @@ export const DUMMY_AGENDA_EVENTS: CalendarEvent[] = [
     trainingCode: 'VBD15',
   },
   {
-    id: 'ev-11',
+    id: 'booking-3',
     type: 'booking',
     date: '2026-08-12',
     time: '09:00 - 12:30',
@@ -56,14 +45,7 @@ export const DUMMY_AGENDA_EVENTS: CalendarEvent[] = [
     cancelled: true,
   },
   {
-    id: 'ev-12',
-    type: 'unavailability',
-    date: '2026-08-19',
-    allDay: false,
-    timeRange: '07:00 - 10:00',
-  },
-  {
-    id: 'ev-13',
+    id: 'booking-4',
     type: 'booking',
     date: '2026-08-16',
     time: '18:00 - 19:30',
@@ -73,7 +55,7 @@ export const DUMMY_AGENDA_EVENTS: CalendarEvent[] = [
     comments: 'Navigation theory — map reading and drift',
   },
   {
-    id: 'ev-14',
+    id: 'booking-5',
     type: 'booking',
     date: '2026-09-02',
     time: '10:00 - 11:15',
@@ -84,3 +66,63 @@ export const DUMMY_AGENDA_EVENTS: CalendarEvent[] = [
     trainingCode: 'VBD03',
   },
 ]
+
+// Spans every date DUMMY_AVAILABILITY_ENTRIES declares anything for (31 Jul
+// – 30 Aug 2026), so the derived unavailability below can't drift out of
+// sync with that fixture or with the real expansion logic it wraps.
+const RANGE_START = new Date(2026, 6, 31)
+const RANGE_END = new Date(2026, 7, 30)
+
+function toISODate(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function addDays(date: Date, days: number): Date {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
+function deriveUnavailabilityEvents(): CalendarEvent[] {
+  const coverageByDate = expandAvailability(
+    DUMMY_AVAILABILITY_ENTRIES,
+    RANGE_START,
+    RANGE_END,
+  )
+  const events: CalendarEvent[] = []
+
+  for (let date = RANGE_START; date <= RANGE_END; date = addDays(date, 1)) {
+    const iso = toISODate(date)
+    const gaps = computeUnavailableGaps(coverageByDate.get(iso) ?? [])
+
+    gaps.forEach((gap, index) => {
+      const isFullDay = gap.start === 0 && gap.end === MINUTES_PER_DAY
+      events.push(
+        isFullDay
+          ? {
+              id: `unavailability-${iso}-${index}`,
+              type: 'unavailability',
+              date: iso,
+              allDay: true,
+            }
+          : {
+              id: `unavailability-${iso}-${index}`,
+              type: 'unavailability',
+              date: iso,
+              allDay: false,
+              timeRange: `${formatMinutes(gap.start)} - ${formatMinutes(gap.end)}`,
+            },
+      )
+    })
+  }
+
+  return events
+}
+
+export const DUMMY_AGENDA_EVENTS: CalendarEvent[] = [
+  ...deriveUnavailabilityEvents(),
+  ...DUMMY_BOOKING_EVENTS,
+].sort((a, b) => a.date.localeCompare(b.date))
