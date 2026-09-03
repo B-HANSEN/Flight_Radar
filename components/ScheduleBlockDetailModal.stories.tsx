@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useArgs } from 'storybook/preview-api'
+import StoryOpenButton from '../.storybook/StoryOpenButton'
 import ScheduleBlockDetailModal from './ScheduleBlockDetailModal'
 import type { ScheduleBlockDetail } from './ScheduleBoard.types'
 
@@ -21,7 +22,7 @@ const meta: Meta<typeof ScheduleBlockDetailModal> = {
   component: ScheduleBlockDetailModal,
   title: 'Components/Modals/ScheduleBlockDetailModal',
   args: {
-    detail: SAMPLE_DETAIL,
+    detail: null,
   },
 }
 export default meta
@@ -29,6 +30,14 @@ export default meta
 export const Default: StoryObj<typeof ScheduleBlockDetailModal> = {
   render: (args) => {
     const [, updateArgs] = useArgs()
+    if (!args.detail) {
+      return (
+        <StoryOpenButton
+          label='Open schedule block'
+          onClick={() => updateArgs({ detail: SAMPLE_DETAIL })}
+        />
+      )
+    }
     return (
       <ScheduleBlockDetailModal
         {...args}

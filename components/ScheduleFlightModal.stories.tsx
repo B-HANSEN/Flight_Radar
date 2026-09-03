@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { useArgs } from 'storybook/preview-api'
 import { fn } from 'storybook/test'
+import StoryOpenButton from '../.storybook/StoryOpenButton'
 import ScheduleFlightModal from './ScheduleFlightModal'
 import {
   DUMMY_SCHEDULE_FLIGHT_AIRCRAFT,
@@ -9,15 +11,31 @@ import {
 
 const meta: Meta<typeof ScheduleFlightModal> = {
   component: ScheduleFlightModal,
-  title: 'Components/ScheduleFlightModal',
+  title: 'Components/Modals/ScheduleFlightModal',
   args: {
-    target: DUMMY_SCHEDULE_FLIGHT_TARGET,
+    target: null,
     instructorName: 'James Whitfield',
     currentInstructorId: 'instructor-1',
     instructors: DUMMY_SCHEDULE_FLIGHT_INSTRUCTORS,
     aircraft: DUMMY_SCHEDULE_FLIGHT_AIRCRAFT,
-    onClose: fn(),
     onConfirm: fn(),
+  },
+  render: (args) => {
+    const [, updateArgs] = useArgs()
+    if (!args.target) {
+      return (
+        <StoryOpenButton
+          label='Open schedule flight'
+          onClick={() => updateArgs({ target: DUMMY_SCHEDULE_FLIGHT_TARGET })}
+        />
+      )
+    }
+    return (
+      <ScheduleFlightModal
+        {...args}
+        onClose={() => updateArgs({ target: null })}
+      />
+    )
   },
 }
 export default meta

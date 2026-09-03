@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useArgs } from 'storybook/preview-api'
+import StoryOpenButton from '../.storybook/StoryOpenButton'
 import Modal from './Modal'
 
 const meta: Meta<typeof Modal> = {
@@ -11,7 +12,7 @@ const meta: Meta<typeof Modal> = {
     closeLabel: { control: 'text' },
   },
   args: {
-    isOpen: true,
+    isOpen: false,
     title: 'Booking details',
     closeLabel: 'Close',
   },
@@ -21,6 +22,14 @@ export default meta
 export const Default: StoryObj<typeof Modal> = {
   render: (args) => {
     const [, updateArgs] = useArgs()
+    if (!args.isOpen) {
+      return (
+        <StoryOpenButton
+          label='Open modal'
+          onClick={() => updateArgs({ isOpen: true })}
+        />
+      )
+    }
     return (
       <Modal {...args} onClose={() => updateArgs({ isOpen: false })}>
         <p className='font-secondary text-xs font-semibold text-black-200'>

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useArgs } from 'storybook/preview-api'
+import StoryOpenButton from '../.storybook/StoryOpenButton'
 import CertificateDocumentModal from './CertificateDocumentModal'
 import type { Certificate } from './CertificateList.types'
 
@@ -19,7 +20,7 @@ const meta: Meta<typeof CertificateDocumentModal> = {
   component: CertificateDocumentModal,
   title: 'Components/Modals/CertificateDocumentModal',
   args: {
-    certificate: SAMPLE_CERTIFICATE,
+    certificate: null,
   },
 }
 export default meta
@@ -27,6 +28,14 @@ export default meta
 export const Default: StoryObj<typeof CertificateDocumentModal> = {
   render: (args) => {
     const [, updateArgs] = useArgs()
+    if (!args.certificate) {
+      return (
+        <StoryOpenButton
+          label='Open certificate'
+          onClick={() => updateArgs({ certificate: SAMPLE_CERTIFICATE })}
+        />
+      )
+    }
     return (
       <CertificateDocumentModal
         {...args}

@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useArgs } from 'storybook/preview-api'
+import StoryOpenButton from '../.storybook/StoryOpenButton'
 import EmergencyContactModal from './EmergencyContactModal'
 
 const meta: Meta<typeof EmergencyContactModal> = {
   component: EmergencyContactModal,
   title: 'Components/Modals/EmergencyContactModal',
   args: {
-    isOpen: true,
+    isOpen: false,
     emergencyContact: {
       name: 'Jane Doe',
       relation: 'Sister',
@@ -23,6 +24,14 @@ export default meta
 export const Default: StoryObj<typeof EmergencyContactModal> = {
   render: (args) => {
     const [, updateArgs] = useArgs()
+    if (!args.isOpen) {
+      return (
+        <StoryOpenButton
+          label='Open emergency contact'
+          onClick={() => updateArgs({ isOpen: true })}
+        />
+      )
+    }
     return (
       <EmergencyContactModal
         {...args}

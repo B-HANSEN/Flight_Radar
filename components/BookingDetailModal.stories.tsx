@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useArgs } from 'storybook/preview-api'
+import StoryOpenButton from '../.storybook/StoryOpenButton'
 import BookingDetailModal from './BookingDetailModal'
 import type { BookingEvent } from './AgendaCalendar.types'
 
@@ -30,7 +31,7 @@ const meta: Meta<typeof BookingDetailModal> = {
   component: BookingDetailModal,
   title: 'Components/Modals/BookingDetailModal',
   args: {
-    event: FLIGHT_EVENT,
+    event: null,
   },
   argTypes: {
     event: {
@@ -41,6 +42,14 @@ const meta: Meta<typeof BookingDetailModal> = {
   },
   render: (args) => {
     const [, updateArgs] = useArgs()
+    if (!args.event) {
+      return (
+        <StoryOpenButton
+          label='Open booking detail'
+          onClick={() => updateArgs({ event: FLIGHT_EVENT })}
+        />
+      )
+    }
     return (
       <BookingDetailModal
         {...args}
@@ -51,7 +60,9 @@ const meta: Meta<typeof BookingDetailModal> = {
 }
 export default meta
 
-export const Flight: StoryObj<typeof BookingDetailModal> = {}
+export const Flight: StoryObj<typeof BookingDetailModal> = {
+  args: { event: FLIGHT_EVENT },
+}
 
 export const Theory: StoryObj<typeof BookingDetailModal> = {
   args: { event: THEORY_EVENT },
