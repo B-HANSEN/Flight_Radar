@@ -188,6 +188,7 @@
     "lastUpdated": "Actualizado {time}",
     "allDay": "Todo el día",
     "notAvailable": "No disponible",
+    "onLeave": "De baja",
     "theoryLabel": "Teoría"
   },
   "AgendaPage": {

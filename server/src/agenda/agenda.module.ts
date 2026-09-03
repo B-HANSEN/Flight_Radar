@@ -11,6 +11,10 @@ import {
   Instructor,
   InstructorSchema,
 } from '../instructors/schemas/instructor.schema'
+import {
+  InstructorTimeOff,
+  InstructorTimeOffSchema,
+} from '../instructor-time-off/schemas/instructor-time-off.schema'
 import { Student, StudentSchema } from '../students/schemas/student.schema'
 
 @Module({
@@ -19,6 +23,7 @@ import { Student, StudentSchema } from '../students/schemas/student.schema'
       { name: AvailabilityEntry.name, schema: AvailabilityEntrySchema },
       { name: Booking.name, schema: BookingSchema },
       { name: Instructor.name, schema: InstructorSchema },
+      { name: InstructorTimeOff.name, schema: InstructorTimeOffSchema },
       { name: Student.name, schema: StudentSchema },
     ]),
   ],

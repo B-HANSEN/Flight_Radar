@@ -188,6 +188,7 @@
     "lastUpdated": "Aktualisiert {time}",
     "allDay": "Ganztägig",
     "notAvailable": "Nicht verfügbar",
+    "onLeave": "Abwesend",
     "theoryLabel": "Theorie"
   },
   "AgendaPage": {

@@ -99,6 +99,15 @@ it('renders derived unavailability blocks', () => {
   expect(screen.getAllByText('Not available').length).toBeGreaterThan(0)
 })
 
+it('greys out the day and labels it "On leave" for an instructor day off', () => {
+  renderCalendar({ perspective: 'instructor' })
+  expect(screen.getByText('On leave')).toBeInTheDocument()
+  expect(screen.queryByText('Not available')).not.toBeInTheDocument()
+  expect(
+    screen.getByText('On leave').closest('[class*="bg-black-100/30"]'),
+  ).not.toBeNull()
+})
+
 it('opens the detail modal when a booking is clicked', () => {
   renderCalendar()
   fireEvent.click(screen.getByText(/VBD15 · Final check before first solo/))

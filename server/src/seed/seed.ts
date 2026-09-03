@@ -18,6 +18,7 @@ import { DocumentFolder } from '../documents/schemas/document-folder.schema'
 import { EmergencyContact } from '../emergency-contact/schemas/emergency-contact.schema'
 import { FlightEvaluation } from '../flight-evaluations/schemas/flight-evaluation.schema'
 import { Instructor } from '../instructors/schemas/instructor.schema'
+import { InstructorTimeOff } from '../instructor-time-off/schemas/instructor-time-off.schema'
 import { LogbookEntry } from '../logbook/schemas/logbook-entry.schema'
 import { MailboxEmail } from '../mailbox/schemas/mailbox-email.schema'
 import { NewsItem } from '../news/schemas/news-item.schema'
@@ -1203,7 +1204,7 @@ function withResolvedStudentId(
 
 // Flight evaluations double as the source of the "missing signatures"
 // shown on the homepage: 3847780, 3956214 and 4041369 are unsigned, and
-// 4041369 is also referenced by the 07/08/2026 booking in calendarEvents.
+// 4041369 is also referenced by the 09/10/2026 booking in calendarEvents.
 const flightEvaluationCourse = 'PPL Flight Phase (A_1_PPL(A)_v2_FLT)'
 const flightEvaluationRoute = 'LELL - LELL'
 
@@ -1618,7 +1619,7 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
   },
   {
     sessionId: '4041369',
-    date: '07/08/2026',
+    date: '09/10/2026',
     type: 'Instruction',
     signed: false,
     student: 'Jamie Torres',
@@ -1987,7 +1988,7 @@ const LESSON_PLANS: LessonPlan[] = [
     studentName: 'Jamie Torres',
     instructors: ['James Whitfield', 'Kate Ashford'],
     tails: ['EC-ERV', 'EC-EXL', 'EC-FED'],
-    firstMonday: '2026-08-03',
+    firstMonday: '2026-09-07',
     weeks: 8,
     slots: [
       { weekday: 1, start: '09:00', end: '11:00' },
@@ -1999,7 +2000,7 @@ const LESSON_PLANS: LessonPlan[] = [
     studentName: 'Alex Moreau',
     instructors: ['James Whitfield', 'Kate Ashford'],
     tails: ['EC-ERV', 'EC-EXL', 'EC-FED'],
-    firstMonday: '2026-08-03',
+    firstMonday: '2026-09-07',
     weeks: 8,
     slots: [
       { weekday: 2, start: '09:00', end: '11:00' },
@@ -2012,7 +2013,7 @@ const LESSON_PLANS: LessonPlan[] = [
     studentName: 'Noah Becker',
     instructors: ['Kate Ashford', 'James Whitfield'],
     tails: ['EC-EXL', 'EC-FED', 'EC-ERV'],
-    firstMonday: '2026-08-10',
+    firstMonday: '2026-09-14',
     weeks: 7,
     slots: [
       { weekday: 3, start: '09:00', end: '10:30' },
@@ -2124,7 +2125,7 @@ const EXPLICIT_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   {
     studentName: 'Jamie Torres',
     instructorName: 'James Whitfield',
-    date: '2026-08-04',
+    date: '2026-10-06',
     startTime: '18:10',
     endTime: '20:20',
     tail: 'EC-EXL',
@@ -2134,7 +2135,7 @@ const EXPLICIT_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   {
     studentName: 'Jamie Torres',
     instructorName: 'Kate Ashford',
-    date: '2026-08-07',
+    date: '2026-10-09',
     startTime: '13:10',
     endTime: '15:20',
     tail: 'EC-ERV',
@@ -2144,7 +2145,7 @@ const EXPLICIT_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   {
     studentName: 'Jamie Torres',
     instructorName: 'James Whitfield',
-    date: '2026-08-12',
+    date: '2026-10-14',
     startTime: '09:00',
     endTime: '12:30',
     tail: 'EC-KLM',
@@ -2468,10 +2469,120 @@ const EXPLICIT_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   },
 ]
 
-const STUDENT_FLIGHTS: StudentFlightSeed[] = applyMonthlyCancellations([
-  ...LESSON_PLANS.flatMap(generatePlanFlights),
-  ...EXPLICIT_STUDENT_FLIGHTS,
-])
+type InstructorTimeOffSeed = { instructorName: string; date: string }
+
+// Deterministic PRNG (mulberry32) so re-running the seed script reproduces
+// the same days off instead of reshuffling them on every run.
+function mulberry32(seed: number): () => number {
+  let state = seed
+  return function random() {
+    state |= 0
+    state = (state + 0x6d2b79f5) | 0
+    let t = Math.imul(state ^ (state >>> 15), 1 | state)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function pickTwoDistinctWeekdays(rng: () => number, pool: number[]): number[] {
+  const remaining = [...pool]
+  const first = remaining.splice(Math.floor(rng() * remaining.length), 1)[0]
+  const second = remaining.splice(Math.floor(rng() * remaining.length), 1)[0]
+  return [first, second]
+}
+
+// Generates each instructor's days off, one week at a time, so a fixed rule
+// (Kate's Monday) can coexist with choices that vary week to week. 1 = Monday
+// … 7 = Sunday, matching LessonPlan.slots. Kate is always off Monday plus one
+// more day that moves around; James gets 2 days off, usually consecutive.
+// Never lets both instructors be off on the same date, so the school always
+// has someone available.
+function generateInstructorTimeOff(
+  firstMonday: string,
+  weeks: number,
+  seed: number,
+): InstructorTimeOffSeed[] {
+  const rng = mulberry32(seed)
+  const entries: InstructorTimeOffSeed[] = []
+  const allWeekdays = [1, 2, 3, 4, 5, 6, 7]
+
+  for (let week = 0; week < weeks; week += 1) {
+    const weekMonday = isoAddDays(firstMonday, week * 7)
+
+    const kateSecondWeekday = 2 + Math.floor(rng() * 6) // 2..7 (Tue..Sun)
+    const kateWeekdays = [1, kateSecondWeekday]
+
+    const jamesPool = allWeekdays.filter((day) => !kateWeekdays.includes(day))
+    const consecutivePairs = jamesPool
+      .filter((day) => jamesPool.includes(day + 1))
+      .map((day) => [day, day + 1])
+    const jamesWeekdays =
+      consecutivePairs.length > 0 && rng() < 0.7
+        ? consecutivePairs[Math.floor(rng() * consecutivePairs.length)]
+        : pickTwoDistinctWeekdays(rng, jamesPool)
+
+    for (const weekday of kateWeekdays) {
+      entries.push({
+        instructorName: 'Kate Ashford',
+        date: isoAddDays(weekMonday, weekday - 1),
+      })
+    }
+    for (const weekday of jamesWeekdays) {
+      entries.push({
+        instructorName: 'James Whitfield',
+        date: isoAddDays(weekMonday, weekday - 1),
+      })
+    }
+  }
+
+  return entries
+}
+
+// Covers the whole window the agenda can browse to from today (3 months
+// ahead, see AGENDA_MONTHS_AHEAD in agenda.service.ts) plus some slack.
+const INSTRUCTOR_TIME_OFF: InstructorTimeOffSeed[] = generateInstructorTimeOff(
+  '2026-09-07',
+  17,
+  20260907,
+)
+
+// Reassigns a flight to the other instructor whenever the one it's booked
+// with is off that date — generateInstructorTimeOff guarantees the two
+// instructors are never both off on the same day, so a swap target always
+// exists.
+function reassignAwayFromInstructorTimeOff(
+  flights: StudentFlightSeed[],
+  timeOff: InstructorTimeOffSeed[],
+): StudentFlightSeed[] {
+  const timeOffSet = new Set(
+    timeOff.map((entry) => `${entry.instructorName}|${entry.date}`),
+  )
+  const otherInstructor: Record<string, string> = {
+    'James Whitfield': 'Kate Ashford',
+    'Kate Ashford': 'James Whitfield',
+  }
+
+  return flights.map((flight) => {
+    if (!timeOffSet.has(`${flight.instructorName}|${flight.date}`)) {
+      return flight
+    }
+    const swapped = otherInstructor[flight.instructorName]
+    if (!swapped || timeOffSet.has(`${swapped}|${flight.date}`)) {
+      console.warn(
+        `Seed: no instructor available for ${flight.studentName} on ${flight.date} — leaving ${flight.instructorName} assigned`,
+      )
+      return flight
+    }
+    return { ...flight, instructorName: swapped }
+  })
+}
+
+const STUDENT_FLIGHTS: StudentFlightSeed[] = applyMonthlyCancellations(
+  reassignAwayFromInstructorTimeOff(
+    [...LESSON_PLANS.flatMap(generatePlanFlights), ...EXPLICIT_STUDENT_FLIGHTS],
+    INSTRUCTOR_TIME_OFF,
+  ),
+)
 
 function flightTrainingCode(flight: StudentFlightSeed): string | undefined {
   if (flight.trainingCode) return flight.trainingCode
@@ -2957,6 +3068,9 @@ async function seed() {
   const instructorModel = app.get<Model<Instructor>>(
     getModelToken(Instructor.name),
   )
+  const instructorTimeOffModel = app.get<Model<InstructorTimeOff>>(
+    getModelToken(InstructorTimeOff.name),
+  )
   const logbookEntryModel = app.get<Model<LogbookEntry>>(
     getModelToken(LogbookEntry.name),
   )
@@ -3011,6 +3125,15 @@ async function seed() {
 
   const instructorIdByName = Object.fromEntries(
     instructorDocs.map((doc) => [doc.name, doc._id.toString()]),
+  )
+
+  await seedMany(
+    instructorTimeOffModel,
+    INSTRUCTOR_TIME_OFF.map((entry) => ({
+      instructorId: instructorIdByName[entry.instructorName],
+      date: entry.date,
+    })),
+    'instructor time off entries',
   )
 
   const studentFlights = buildStudentFlights(

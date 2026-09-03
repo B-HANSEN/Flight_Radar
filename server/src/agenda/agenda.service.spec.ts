@@ -4,6 +4,7 @@ import { AgendaService } from './agenda.service'
 import { AvailabilityEntry } from '../availability/schemas/availability-entry.schema'
 import { Booking } from '../bookings/schemas/booking.schema'
 import { Instructor } from '../instructors/schemas/instructor.schema'
+import { InstructorTimeOff } from '../instructor-time-off/schemas/instructor-time-off.schema'
 import { Student } from '../students/schemas/student.schema'
 
 function toISODate(date: Date): string {
@@ -67,12 +68,16 @@ describe('AgendaService', () => {
   async function buildService(overrides?: {
     bookings?: unknown[]
     availabilityEntries?: unknown[]
+    instructorTimeOff?: unknown[]
   }) {
     const bookingModel = { find: findMock(overrides?.bookings ?? bookings) }
     const availabilityEntryModel = {
       find: findMock(overrides?.availabilityEntries ?? availabilityEntries),
     }
     const instructorModel = { find: findMock(instructors) }
+    const instructorTimeOffModel = {
+      find: findMock(overrides?.instructorTimeOff ?? []),
+    }
     const studentModel = { find: findMock(students) }
 
     const app: TestingModule = await Test.createTestingModule({
@@ -84,6 +89,10 @@ describe('AgendaService', () => {
         },
         { provide: getModelToken(Booking.name), useValue: bookingModel },
         { provide: getModelToken(Instructor.name), useValue: instructorModel },
+        {
+          provide: getModelToken(InstructorTimeOff.name),
+          useValue: instructorTimeOffModel,
+        },
         { provide: getModelToken(Student.name), useValue: studentModel },
       ],
     }).compile()
@@ -92,6 +101,7 @@ describe('AgendaService', () => {
       service: app.get<AgendaService>(AgendaService),
       bookingModel,
       availabilityEntryModel,
+      instructorTimeOffModel,
     }
   }
 
@@ -172,7 +182,7 @@ describe('AgendaService', () => {
     ).toBe(false)
   })
 
-  it('for an instructor view returns only bookings, no unavailability', async () => {
+  it('for an instructor view with no time off returns only bookings', async () => {
     const { service, bookingModel, availabilityEntryModel } =
       await buildService()
     const result = await service.findAll({ instructorId: 'instructor-1' })
@@ -182,5 +192,23 @@ describe('AgendaService', () => {
     })
     expect(availabilityEntryModel.find).not.toHaveBeenCalled()
     expect(result.every((event) => event.type === 'booking')).toBe(true)
+  })
+
+  it('for an instructor view derives a full-day block for each time-off date', async () => {
+    const { service, instructorTimeOffModel } = await buildService({
+      instructorTimeOff: [{ instructorId: 'instructor-1', date: '2026-09-07' }],
+    })
+    const result = await service.findAll({ instructorId: 'instructor-1' })
+
+    expect(instructorTimeOffModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ instructorId: 'instructor-1' }),
+    )
+    expect(result).toContainEqual(
+      expect.objectContaining({
+        type: 'unavailability',
+        date: '2026-09-07',
+        allDay: true,
+      }),
+    )
   })
 })

@@ -215,11 +215,14 @@ export default function AgendaCalendar({
               const inMonth = date.getMonth() === month.month
               const isToday = iso === todayISO
               const dayEvents = eventsByDate.get(iso) ?? []
+              const isDayOff = dayEvents.some(
+                (event) => event.type === 'unavailability' && event.allDay,
+              )
 
               return (
                 <div
                   key={iso}
-                  className='flex min-h-24 flex-col gap-0.75 border-r border-b border-black-200 pb-1.5 last:border-r-0'
+                  className={`flex min-h-24 flex-col gap-0.75 border-r border-b border-black-200 pb-1.5 last:border-r-0 ${isDayOff ? 'bg-black-100/30' : ''}`}
                 >
                   <div className='px-2.5 pt-2 pb-1'>
                     {isToday ? (
@@ -246,7 +249,9 @@ export default function AgendaCalendar({
                             {event.allDay ? t('allDay') : event.timeRange}
                           </div>
                           <div className='truncate font-secondary text-xs text-black-300'>
-                            {t('notAvailable')}
+                            {perspective === 'instructor'
+                              ? t('onLeave')
+                              : t('notAvailable')}
                           </div>
                         </div>
                       ) : (

@@ -10,6 +10,10 @@ import {
   Instructor,
   InstructorDocument,
 } from '../instructors/schemas/instructor.schema'
+import {
+  InstructorTimeOff,
+  InstructorTimeOffDocument,
+} from '../instructor-time-off/schemas/instructor-time-off.schema'
 import { Student, StudentDocument } from '../students/schemas/student.schema'
 import {
   MINUTES_PER_DAY,
@@ -74,6 +78,8 @@ export class AgendaService {
     private readonly bookingModel: Model<BookingDocument>,
     @InjectModel(Instructor.name)
     private readonly instructorModel: Model<InstructorDocument>,
+    @InjectModel(InstructorTimeOff.name)
+    private readonly instructorTimeOffModel: Model<InstructorTimeOffDocument>,
     @InjectModel(Student.name)
     private readonly studentModel: Model<StudentDocument>,
   ) {}
@@ -125,19 +131,38 @@ export class AgendaService {
       })
     }
 
-    // Instructors are available by default — no unavailability derivation
-    // (the "2 days off per week" model is a TODO). They just see bookings.
+    const monthStart = startOfCurrentMonth()
+    const rangeStart = monthStart
+    const rangeEnd = addMonths(new Date(), AGENDA_MONTHS_AHEAD)
+
     if (isInstructorView) {
-      return bookingEvents.sort((a, b) => a.date.localeCompare(b.date))
+      const timeOffEntries = await this.instructorTimeOffModel
+        .find({
+          instructorId: query.instructorId,
+          date: {
+            $gte: formatISODate(rangeStart),
+            $lte: formatISODate(rangeEnd),
+          },
+        })
+        .exec()
+
+      const derivedUnavailability: DerivedUnavailabilityEvent[] =
+        timeOffEntries.map((entry) => ({
+          id: `time-off-${entry.date}`,
+          type: 'unavailability',
+          date: entry.date,
+          allDay: true,
+        }))
+
+      return [...bookingEvents, ...derivedUnavailability].sort((a, b) =>
+        a.date.localeCompare(b.date),
+      )
     }
 
-    const monthStart = startOfCurrentMonth()
     const availabilityEntries = (
       await this.availabilityEntryModel.find({ studentId }).exec()
     ).filter((entry) => isEntryInOrAfterMonth(entry, monthStart))
 
-    const rangeStart = monthStart
-    const rangeEnd = addMonths(new Date(), AGENDA_MONTHS_AHEAD)
     const coverageByDate = expandAvailability(
       availabilityEntries,
       rangeStart,
