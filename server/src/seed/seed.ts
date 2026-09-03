@@ -27,8 +27,10 @@ import { Student } from '../students/schemas/student.schema'
 import { toDisplayDate } from '../common/date'
 import { DocumentKind, generateDocumentFile } from './document-files'
 
-// Single demo student — no Users module / auth yet, see TODO-BE-setup.md.
-const studentId = 'student-1'
+// The demo persona whose past lessons, mailbox and course progress the
+// fixtures below all belong to. Resolved to a real seeded student id at
+// seed time (studentIdByName), same as every other collection.
+const demoStudentName = 'Jamie Torres'
 const AESA = 'AESA — Agencia Estatal de Seguridad Aérea'
 const academy = 'Flight Radar Academy'
 
@@ -518,7 +520,7 @@ function buildCertificates(
   }))
 }
 
-const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
+const mailboxEmails: Omit<MailboxEmail, '_id' | 'studentId'>[] = [
   {
     sender: 'Training Office',
     subject: 'We value your feedback',
@@ -538,7 +540,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
     },
     automatic: true,
     read: false,
-    studentId,
   },
   {
     sender: 'Operations Desk',
@@ -556,7 +557,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
       org: academy,
     },
     read: false,
-    studentId,
   },
   {
     sender: 'Training Office',
@@ -574,7 +574,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
       org: academy,
     },
     automatic: true,
-    studentId,
   },
   {
     sender: 'Exams Office',
@@ -587,7 +586,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
     ],
     linkText: 'Download the calendar',
     signOff: { name: 'Exams Office', role: 'Academics', org: academy },
-    studentId,
   },
   {
     sender: 'Training Office',
@@ -605,7 +603,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
       org: academy,
     },
     automatic: true,
-    studentId,
   },
   {
     sender: 'Training Office',
@@ -623,7 +620,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
       org: academy,
     },
     automatic: true,
-    studentId,
   },
   {
     sender: 'Alumni Network',
@@ -636,7 +632,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
     ],
     linkText: 'Join the alumni network',
     signOff: { name: 'Alumni Network', role: 'Community Team', org: academy },
-    studentId,
   },
   {
     sender: 'Training Office',
@@ -654,7 +649,6 @@ const mailboxEmails: Omit<MailboxEmail, '_id'>[] = [
       org: academy,
     },
     automatic: true,
-    studentId,
   },
 ]
 
@@ -851,7 +845,7 @@ function buildAvailabilityEntries(
   )
 }
 
-const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
+const logbookEntries: Omit<LogbookEntry, '_id' | 'studentId'>[] = [
   {
     date: '19/07/2025',
     depPlace: 'LELL',
@@ -865,7 +859,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'J. Whitfield',
     landingsDay: 3,
     remarks: 'Circuit and landing practice',
-    studentId,
   },
   {
     date: '20/07/2025',
@@ -880,7 +873,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'J. Whitfield',
     landingsDay: 4,
     remarks: 'Steep turns and stalls',
-    studentId,
   },
   {
     date: '06/09/2025',
@@ -895,7 +887,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'J. Whitfield',
     landingsDay: 3,
     remarks: 'Emergency procedures',
-    studentId,
   },
   {
     date: '07/09/2025',
@@ -911,7 +902,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'J. Whitfield',
     landingsDay: 2,
     remarks: 'First cross-country navigation exercise',
-    studentId,
   },
   {
     date: '05/04/2026',
@@ -926,7 +916,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 5,
     remarks: 'Circuit consolidation',
-    studentId,
   },
   {
     date: '08/04/2026',
@@ -942,7 +931,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     landingsDay: 2,
     night: true,
     remarks: 'Introduction to night flying',
-    studentId,
   },
   {
     date: '09/04/2026',
@@ -957,7 +945,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 4,
     remarks: 'Crosswind landings',
-    studentId,
   },
   {
     date: '19/05/2026',
@@ -972,7 +959,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 3,
     remarks: 'Precision approaches',
-    studentId,
   },
   {
     date: '23/05/2026',
@@ -987,7 +973,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 6,
     remarks: 'Short field landings',
-    studentId,
   },
   {
     date: '24/05/2026',
@@ -1002,7 +987,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 5,
     remarks: 'Go-around practice',
-    studentId,
   },
   {
     date: '30/06/2026',
@@ -1017,7 +1001,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 5,
     remarks: 'Solo consolidation prep',
-    studentId,
   },
   {
     date: '03/07/2026',
@@ -1033,7 +1016,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'M. Whitcombe',
     landingsDay: 4,
     remarks: 'Cross-country to LEVD',
-    studentId,
   },
   {
     date: '07/07/2026',
@@ -1048,7 +1030,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 4,
     remarks: 'Circuit revision',
-    studentId,
   },
   {
     date: '10/07/2026',
@@ -1063,7 +1044,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 3,
     remarks: 'Flapless landings',
-    studentId,
   },
   {
     date: '13/07/2026',
@@ -1078,7 +1058,6 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     pic: 'R. Sinclair',
     landingsDay: 5,
     remarks: 'Steep turns revision',
-    studentId,
   },
   {
     date: '18/07/2026',
@@ -1094,15 +1073,27 @@ const logbookEntries: Omit<LogbookEntry, '_id'>[] = [
     landingsDay: 2,
     night: true,
     remarks: 'Night circuits',
-    studentId,
   },
 ]
+
+// Logbook entries, mailbox emails and course progress are all the demo
+// persona's own records and carry no per-row name, so they resolve to the
+// one real seeded student id rather than a per-entry lookup.
+function withDemoStudentId<T extends object>(
+  entries: T[],
+  studentIdByName: Record<string, string>,
+): (T & { studentId: string })[] {
+  return entries.map((entry) => ({
+    ...entry,
+    studentId: studentIdByName[demoStudentName],
+  }))
+}
 
 // `person` holds the student's name (matching BookingsService.create, see
 // toDisplayDate's callers) and `instructorName` the full instructor name
 // used to resolve a real instructorId. These are the demo student's own
 // past lessons, so `person` is the same student throughout.
-type LegacyBookingSeed = Omit<Booking, '_id' | 'instructorId'> & {
+type LegacyBookingSeed = Omit<Booking, '_id' | 'instructorId' | 'studentId'> & {
   instructorName: string
 }
 
@@ -1113,7 +1104,6 @@ const bookings: LegacyBookingSeed[] = [
     tail: 'EC-ERV',
     person: 'Jamie Torres',
     time: '10:00 - 11:30',
-    studentId,
     instructorName: 'James Whitfield',
     trainingCode: 'VBD10',
   },
@@ -1123,7 +1113,6 @@ const bookings: LegacyBookingSeed[] = [
     tail: 'EC-ERV',
     person: 'Jamie Torres',
     time: '15:00 - 17:00',
-    studentId,
     instructorName: 'Kate Ashford',
     trainingCode: 'VBD11',
   },
@@ -1133,7 +1122,6 @@ const bookings: LegacyBookingSeed[] = [
     tail: 'EC-ERV',
     person: 'Jamie Torres',
     time: '09:00 - 10:30',
-    studentId,
     instructorName: 'James Whitfield',
     trainingCode: 'VBD12',
   },
@@ -1143,15 +1131,13 @@ const bookings: LegacyBookingSeed[] = [
     tail: 'EC-ERV',
     person: 'Jamie Torres',
     time: '13:00 - 14:30',
-    studentId,
     instructorName: 'James Whitfield',
     trainingCode: 'VBD13',
   },
 ]
 
 // Resolves the real per-student and per-instructor ids for the legacy demo
-// bookings, which are otherwise pinned to the `studentId` placeholder (see
-// line 24). `person` holds the student's name, `instructorName` the
+// bookings. `person` holds the student's name, `instructorName` the
 // instructor's — both keyed off the seeded docs so the homepage's
 // per-student booking filter matches the default demo persona.
 function withResolvedIds(
@@ -1162,7 +1148,7 @@ function withResolvedIds(
 ): Omit<Booking, '_id'>[] {
   return entries.map(({ instructorName, ...entry }) => ({
     ...entry,
-    studentId: studentIdByName[entry.person] ?? entry.studentId,
+    studentId: studentIdByName[entry.person],
     instructorId: instructorIdByName[instructorName],
     aircraftId: toAircraftObjectId(
       entry.tail ? aircraftIdByArcid[entry.tail] : undefined,
@@ -1170,16 +1156,16 @@ function withResolvedIds(
   }))
 }
 
-// The legacy flight evaluations are pinned to the same `studentId`
-// placeholder; resolve each to its real student id (keyed by the `student`
-// name) so the homepage's per-student signature filter matches.
+// Resolves each legacy flight evaluation to its real student id (keyed by
+// the `student` name) so the homepage's per-student signature filter
+// matches.
 function withResolvedStudentId(
-  entries: Omit<FlightEvaluation, '_id'>[],
+  entries: Omit<FlightEvaluation, '_id' | 'studentId'>[],
   studentIdByName: Record<string, string>,
 ): Omit<FlightEvaluation, '_id'>[] {
   return entries.map((entry) => ({
     ...entry,
-    studentId: studentIdByName[entry.student] ?? entry.studentId,
+    studentId: studentIdByName[entry.student],
   }))
 }
 
@@ -1189,7 +1175,7 @@ function withResolvedStudentId(
 const flightEvaluationCourse = 'PPL Flight Phase (A_1_PPL(A)_v2_FLT)'
 const flightEvaluationRoute = 'LELL - LELL'
 
-const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
+const flightEvaluations: Omit<FlightEvaluation, '_id' | 'studentId'>[] = [
   {
     sessionId: '3267346',
     date: '19/07/2025',
@@ -1221,7 +1207,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 2,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3860899',
@@ -1249,7 +1234,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3864603',
@@ -1277,7 +1261,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3423871',
@@ -1307,7 +1290,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3878920',
@@ -1335,7 +1317,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 4,
     finalScore: 4,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3611298',
@@ -1363,7 +1344,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3875338',
@@ -1391,7 +1371,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3779076',
@@ -1422,7 +1401,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 2,
     finalScore: 2,
     finalNote: 'NO APTO, no pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3745219',
@@ -1450,7 +1428,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3839383',
@@ -1481,7 +1458,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 2,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3856112',
@@ -1509,7 +1485,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3847780',
@@ -1540,7 +1515,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3901447',
@@ -1568,7 +1542,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '3956214',
@@ -1596,7 +1569,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
   {
     sessionId: '4041369',
@@ -1627,7 +1599,6 @@ const flightEvaluations: Omit<FlightEvaluation, '_id'>[] = [
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   },
 ]
 
@@ -1642,7 +1613,7 @@ function pendingEvaluation(
   instructor: string,
   sessionTitle: string,
   aircraft: string,
-): Omit<FlightEvaluation, '_id'> {
+): Omit<FlightEvaluation, '_id' | 'studentId'> {
   return {
     sessionId,
     date,
@@ -1668,11 +1639,10 @@ function pendingEvaluation(
     scoreAssimilation: 3,
     finalScore: 3,
     finalNote: 'APTO, pasa a la siguiente fase',
-    studentId,
   }
 }
 
-const pendingEvaluations: Omit<FlightEvaluation, '_id'>[] = [
+const pendingEvaluations: Omit<FlightEvaluation, '_id' | 'studentId'>[] = [
   pendingEvaluation(
     'Alex Moreau',
     '4102233',
@@ -1892,9 +1862,9 @@ const instructors: Omit<Instructor, '_id'>[] = [
 ]
 
 // Real per-student September bookings — distinct from the `bookings`/
-// `calendarEvents` arrays above (which are all keyed to the hardcoded
-// single-demo-persona placeholder `studentId`, see line 23) — these feed
-// the scheduling modal's "already scheduled that day" list and buffer check
+// `calendarEvents` arrays above (all the one demo persona, resolved from
+// `demoStudentName`) — these feed the scheduling modal's "already
+// scheduled that day" list and buffer check
 // (GET /schedule/student-flights), which need a real per-student id to
 // query against. Kept clear of each other by at least the 90 min buffer
 // BookingsService.create now enforces.
@@ -2791,7 +2761,7 @@ async function buildDocumentFolders(): Promise<Omit<DocumentFolder, '_id'>[]> {
   )
 }
 
-const courseProgress: Omit<CourseProgress, '_id'> = {
+const courseProgress: Omit<CourseProgress, '_id' | 'studentId'> = {
   overallActualHours: '26:02',
   overallTargetHours: '45:00',
   overallPct: 58,
@@ -2895,7 +2865,6 @@ const courseProgress: Omit<CourseProgress, '_id'> = {
       detail: 'Skills test preparation and final progress check.',
     },
   ],
-  studentId,
 }
 
 type PersonEmergencyContactSeed = {
@@ -3225,7 +3194,10 @@ async function seed() {
     console.log('Skipped course progress (already has data)')
   } else {
     await courseProgressModel.deleteMany({})
-    await courseProgressModel.insertOne(courseProgress)
+    await courseProgressModel.insertOne({
+      ...courseProgress,
+      studentId: studentIdByName[demoStudentName],
+    })
     console.log('Seeded course progress')
   }
 
@@ -3246,8 +3218,16 @@ async function seed() {
     ),
     'flight evaluations',
   )
-  await seedMany(logbookEntryModel, logbookEntries, 'logbook entries')
-  await seedMany(mailboxEmailModel, mailboxEmails, 'mailbox emails')
+  await seedMany(
+    logbookEntryModel,
+    withDemoStudentId(logbookEntries, studentIdByName),
+    'logbook entries',
+  )
+  await seedMany(
+    mailboxEmailModel,
+    withDemoStudentId(mailboxEmails, studentIdByName),
+    'mailbox emails',
+  )
   await seedMany(
     bookingModel,
     [
