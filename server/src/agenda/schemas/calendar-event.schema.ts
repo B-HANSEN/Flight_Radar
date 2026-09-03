@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
+import { HydratedDocument, Types } from 'mongoose'
+import { Aircraft } from '../../aircraft/schemas/aircraft.schema'
 
 export type CalendarEventType = 'unavailability' | 'booking'
 
@@ -33,8 +34,11 @@ export class CalendarEvent {
   @Prop()
   time?: string
 
-  @Prop()
-  tailNumber?: string
+  // Real relational link to the aircraft, used by BookingsService to detect
+  // an aircraft double-booking. This event isn't read for display anywhere,
+  // so unlike Booking.tail there's no separate denormalized string.
+  @Prop({ type: Types.ObjectId, ref: Aircraft.name })
+  aircraftId?: Types.ObjectId
 
   @Prop()
   pilotInCommand?: string

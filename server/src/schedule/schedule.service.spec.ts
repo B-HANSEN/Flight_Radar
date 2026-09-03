@@ -72,7 +72,7 @@ describe('ScheduleService', () => {
           _id: { toString: () => 'booking-1' },
           type: 'Dual instruction',
           date: '24/08/2026',
-          tail: 'EC-DKN',
+          aircraftId: { toString: () => 'aircraft-2' },
           person: 'Alex Moreau',
           time: '13:00 - 14:30',
           studentId: 'student-1',
@@ -124,7 +124,7 @@ describe('ScheduleService', () => {
           _id: { toString: () => 'booking-1' },
           type: 'Dual instruction',
           date: '24/08/2026',
-          tail: 'EC-DKN',
+          aircraftId: { toString: () => 'aircraft-2' },
           person: 'Alex Moreau',
           time: '13:00 - 14:30',
           studentId: 'student-1',
@@ -151,7 +151,7 @@ describe('ScheduleService', () => {
           _id: { toString: () => 'booking-1' },
           type: 'Theory',
           date: '24/08/2026',
-          tail: 'EC-DKN',
+          aircraftId: { toString: () => 'aircraft-2' },
           person: 'Alex Moreau',
           time: '13:00 - 14:30',
           studentId: 'student-1',
@@ -226,7 +226,7 @@ describe('ScheduleService', () => {
             _id: { toString: () => 'booking-1' },
             type: 'Dual instruction',
             date: '24/08/2026',
-            tail: 'EC-DKN',
+            aircraftId: { toString: () => 'aircraft-2' },
             person: 'Alex Moreau',
             time: '13:00 - 14:30',
             studentId: 'student-1',
@@ -355,14 +355,14 @@ describe('ScheduleService', () => {
     })
   })
 
-  it('skips a booking whose aircraft tail is not in the fleet', async () => {
+  it('skips a booking whose aircraft is not (or no longer) in the fleet', async () => {
     bookingModel.find.mockReturnValue({
       exec: jest.fn().mockResolvedValue([
         {
           _id: { toString: () => 'booking-1' },
           type: 'Dual instruction',
           date: '24/08/2026',
-          tail: 'EC-UNKNOWN',
+          aircraftId: { toString: () => 'aircraft-deleted' },
           person: 'Alex Moreau',
           time: '13:00 - 14:30',
           studentId: 'student-1',

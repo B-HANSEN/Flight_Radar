@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
+import { HydratedDocument, Types } from 'mongoose'
+import { Aircraft } from '../../aircraft/schemas/aircraft.schema'
 
 export type BookingDocument = HydratedDocument<Booking>
 
@@ -20,7 +21,15 @@ export class Booking {
   @Prop({ required: true })
   date!: string
 
-  // Absent for a Theory (ground-school) lesson, which uses no aircraft.
+  // Real relational link to the aircraft, used to join against
+  // schedule/conflict data. Absent for a Theory (ground-school) lesson,
+  // which uses no aircraft.
+  @Prop({ type: Types.ObjectId, ref: Aircraft.name })
+  aircraftId?: Types.ObjectId
+
+  // Denormalized copy of the aircraft's tail number for display (agenda,
+  // homepage) without a populate() round trip. Not used for joins — see
+  // aircraftId above.
   @Prop()
   tail?: string
 

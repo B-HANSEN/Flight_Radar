@@ -135,7 +135,7 @@ export class BookingsService {
         cancelled: { $ne: true },
         $or: [
           { studentId: input.studentId },
-          ...(aircraft ? [{ tailNumber: aircraft.arcid }] : []),
+          ...(aircraft ? [{ aircraftId: aircraft._id }] : []),
         ],
       })
       .exec()
@@ -168,7 +168,12 @@ export class BookingsService {
     }
     if (
       aircraft &&
-      overlapping.some((event) => event.tailNumber === aircraft.arcid)
+      overlapping.some(
+        (event) =>
+          event.aircraftId &&
+          (event.aircraftId as { toString(): string }).toString() ===
+            (aircraft._id as { toString(): string }).toString(),
+      )
     ) {
       throw new ConflictException(
         `Aircraft ${aircraft.arcid} is already booked overlapping ${input.startTime}-${input.endTime} on ${input.date}`,
@@ -205,7 +210,7 @@ export class BookingsService {
                 type: 'booking',
                 date: input.date,
                 time,
-                tailNumber: aircraft?.arcid,
+                aircraftId: aircraft?._id,
                 flightLines: input.comments ? [input.comments] : undefined,
                 studentId: input.studentId,
               },
@@ -218,6 +223,7 @@ export class BookingsService {
               {
                 type: input.lessonType,
                 date: toDisplayDate(input.date),
+                aircraftId: aircraft?._id,
                 tail: aircraft?.arcid,
                 person: student.name,
                 time,

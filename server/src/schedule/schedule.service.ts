@@ -90,11 +90,10 @@ export class ScheduleService {
       this.instructorModel.find().exec(),
     ])
 
-    const aircraftIdByTail = new Map(
-      aircraft.map((a) => [
-        a.arcid,
-        (a._id as { toString(): string }).toString(),
-      ]),
+    // Guards against a Booking.aircraftId left over from a since-deleted
+    // aircraft — same defensive intent as the old arcid lookup it replaces.
+    const aircraftIds = new Set(
+      aircraft.map((a) => (a._id as { toString(): string }).toString()),
     )
 
     const instructorNameById = new Map(
@@ -106,11 +105,15 @@ export class ScheduleService {
 
     const bookingBlocks: BookingScheduleBlock[] = []
     for (const booking of bookings) {
-      // A Theory lesson has no tail, so it maps to no aircraft row and is
-      // skipped here (it still shows in the student's day / calendar).
-      const aircraftId = booking.tail
-        ? aircraftIdByTail.get(booking.tail)
+      // A Theory lesson has no aircraft, so it maps to no aircraft row and
+      // is skipped here (it still shows in the student's day / calendar).
+      const bookingAircraftId = booking.aircraftId
+        ? (booking.aircraftId as { toString(): string }).toString()
         : undefined
+      const aircraftId =
+        bookingAircraftId && aircraftIds.has(bookingAircraftId)
+          ? bookingAircraftId
+          : undefined
       const date = toISODate(booking.date)
       const range = parseTimeRange(booking.time)
       if (!aircraftId || !date || !range) continue

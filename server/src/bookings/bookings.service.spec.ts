@@ -145,7 +145,7 @@ describe('BookingsService', () => {
           type: 'booking',
           date: '2026-08-27',
           time: '09:00 - 11:00',
-          tailNumber: 'EC-JOB',
+          aircraftId: 'aircraft-1',
           flightLines: ['Cover steep turns'],
           studentId: 'student-1',
         },
@@ -162,6 +162,7 @@ describe('BookingsService', () => {
         {
           type: 'Dual instruction',
           date: '27/08/2026',
+          aircraftId: 'aircraft-1',
           tail: 'EC-JOB',
           person: 'Jamie Torres',
           time: '09:00 - 11:00',
@@ -200,7 +201,7 @@ describe('BookingsService', () => {
       { session: mockSession },
     )
     expect(calendarEventModel.create).toHaveBeenCalledWith(
-      [expect.objectContaining({ tailNumber: undefined })],
+      [expect.objectContaining({ aircraftId: undefined })],
       { session: mockSession },
     )
   })
@@ -328,7 +329,7 @@ describe('BookingsService', () => {
         {
           type: 'booking',
           studentId: 'student-2',
-          tailNumber: 'EC-JOB',
+          aircraftId: 'aircraft-1',
           date: '2026-08-27',
           time: '10:00 - 12:00',
         },
@@ -396,7 +397,7 @@ describe('BookingsService', () => {
       type: 'booking',
       date: '2026-08-27',
       cancelled: { $ne: true },
-      $or: [{ studentId: 'student-1' }, { tailNumber: 'EC-JOB' }],
+      $or: [{ studentId: 'student-1' }, { aircraftId: 'aircraft-1' }],
     })
   })
 
