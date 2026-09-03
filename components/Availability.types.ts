@@ -12,16 +12,13 @@ export const WEEKDAY_ORDER: Weekday[] = [
 
 export type AvailabilityEntry = {
   id: string
-  dateLabel: string
   dateMode: 'on' | 'range'
   onDate?: string
   fromDate?: string
   toDate?: string
-  timeLabel: string
   timeMode: 'allDay' | 'between'
   startTime?: string
   endTime?: string
-  recurrence: string
   recurrenceMode: 'everyday' | 'days'
   recurrenceDays?: Weekday[]
 }

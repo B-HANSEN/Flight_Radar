@@ -4,10 +4,10 @@ import { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { PenLine, Plus, Trash2 } from 'lucide-react'
 import { fetchApi } from '@/lib/api'
+import { availabilityLabels } from '@/lib/availabilityLabels'
 import { focusRing } from '@/lib/styles'
 import AvailabilityFormModal from './AvailabilityFormModal'
 import Toast from './Toast'
-import { WEEKDAY_ORDER } from './Availability.types'
 import type {
   AvailabilityEntry,
   AvailabilityFormValues,
@@ -105,34 +105,7 @@ export default function Availability({
   const isFormOpen = isAddModalOpen || editingEntry !== null
   const weekdayNames = formT.raw('weekdayNames') as string[]
 
-  function labelsFor(values: AvailabilityFormValues) {
-    const dateLabel =
-      values.date.mode === 'on'
-        ? t('dateOn', { date: values.date.date })
-        : t('dateRange', { from: values.date.from, to: values.date.to })
-
-    const timeLabel =
-      values.time.mode === 'allDay'
-        ? t('timeAllDay')
-        : t('timeBetween', {
-            start: values.time.start,
-            end: values.time.end,
-          })
-
-    const recurrenceLabel =
-      values.recurrence.mode === 'everyday'
-        ? t('recurrenceEveryday')
-        : t('recurrenceDays', {
-            days: values.recurrence.days
-              .map((day) => weekdayNames[WEEKDAY_ORDER.indexOf(day)])
-              .join(', '),
-          })
-
-    return { dateLabel, timeLabel, recurrenceLabel }
-  }
-
   async function handleSave(values: AvailabilityFormValues) {
-    const { dateLabel, timeLabel, recurrenceLabel } = labelsFor(values)
     const fields = formValuesToApiFields(values)
 
     try {
@@ -142,12 +115,7 @@ export default function Availability({
           {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              dateLabel,
-              timeLabel,
-              recurrence: recurrenceLabel,
-              ...fields,
-            }),
+            body: JSON.stringify(fields),
             cache: 'no-store',
           },
         )
@@ -163,9 +131,6 @@ export default function Availability({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          dateLabel,
-          timeLabel,
-          recurrence: recurrenceLabel,
           ...fields,
           ...(studentId ? { studentId } : {}),
         }),
@@ -227,40 +192,44 @@ export default function Availability({
                 <div aria-hidden='true' />
               </div>
 
-              {sortedEntries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className={`${gridColumnsClassName} border-b border-black-200 py-4`}
-                >
-                  <div className='font-secondary text-sm text-black-300'>
-                    {entry.dateLabel}
+              {sortedEntries.map((entry) => {
+                const { dateLabel, timeLabel, recurrenceLabel } =
+                  availabilityLabels(entry, t, weekdayNames)
+                return (
+                  <div
+                    key={entry.id}
+                    className={`${gridColumnsClassName} border-b border-black-200 py-4`}
+                  >
+                    <div className='font-secondary text-sm text-black-300'>
+                      {dateLabel}
+                    </div>
+                    <div className='font-secondary text-sm text-black-200'>
+                      {timeLabel}
+                    </div>
+                    <div className='font-secondary text-sm text-black-200'>
+                      {recurrenceLabel}
+                    </div>
+                    <div className='flex items-center gap-1'>
+                      <button
+                        type='button'
+                        onClick={() => setEditingEntryId(entry.id)}
+                        aria-label={t('editLabel', { date: dateLabel })}
+                        className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 hover:text-blue-300 ${focusRing}`}
+                      >
+                        <PenLine size={16} aria-hidden='true' />
+                      </button>
+                      <button
+                        type='button'
+                        onClick={() => handleDelete(entry.id)}
+                        aria-label={t('deleteLabel', { date: dateLabel })}
+                        className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 hover:text-red-300 ${focusRing}`}
+                      >
+                        <Trash2 size={16} aria-hidden='true' />
+                      </button>
+                    </div>
                   </div>
-                  <div className='font-secondary text-sm text-black-200'>
-                    {entry.timeLabel}
-                  </div>
-                  <div className='font-secondary text-sm text-black-200'>
-                    {entry.recurrence}
-                  </div>
-                  <div className='flex items-center gap-1'>
-                    <button
-                      type='button'
-                      onClick={() => setEditingEntryId(entry.id)}
-                      aria-label={t('editLabel', { date: entry.dateLabel })}
-                      className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 hover:text-blue-300 ${focusRing}`}
-                    >
-                      <PenLine size={16} aria-hidden='true' />
-                    </button>
-                    <button
-                      type='button'
-                      onClick={() => handleDelete(entry.id)}
-                      aria-label={t('deleteLabel', { date: entry.dateLabel })}
-                      className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 hover:text-red-300 ${focusRing}`}
-                    >
-                      <Trash2 size={16} aria-hidden='true' />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}

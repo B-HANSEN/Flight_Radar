@@ -52,14 +52,11 @@ describe('AgendaService', () => {
 
   const availabilityEntries = [
     {
-      dateLabel: `On ${toDMY(today)}`,
       dateMode: 'on',
       onDate: toDMY(today),
-      timeLabel: 'Between 09:00 and 12:00',
       timeMode: 'between',
       startTime: '09:00',
       endTime: '12:00',
-      recurrence: 'Everyday',
       recurrenceMode: 'everyday',
       studentId: 'student-1',
     },
@@ -161,12 +158,9 @@ describe('AgendaService', () => {
       bookings: [],
       availabilityEntries: [
         {
-          dateLabel: `On ${toDMY(today)}`,
           dateMode: 'on',
           onDate: toDMY(today),
-          timeLabel: 'All day',
           timeMode: 'allDay',
-          recurrence: 'Everyday',
           recurrenceMode: 'everyday',
           studentId: 'student-1',
         },

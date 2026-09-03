@@ -678,16 +678,6 @@ type StudentAvailabilitySeed = {
   recurrenceDays?: AvailabilityWeekday[]
 }
 
-const WEEKDAY_LABELS: Record<AvailabilityWeekday, string> = {
-  mon: 'Monday',
-  tue: 'Tuesday',
-  wed: 'Wednesday',
-  thu: 'Thursday',
-  fri: 'Friday',
-  sat: 'Saturday',
-  sun: 'Sunday',
-}
-
 const STUDENT_AVAILABILITY: Record<string, StudentAvailabilitySeed[]> = {
   'Jamie Torres': [
     {
@@ -842,39 +832,18 @@ const STUDENT_AVAILABILITY: Record<string, StudentAvailabilitySeed[]> = {
   ],
 }
 
-function availabilityDateLabel(seed: StudentAvailabilitySeed): string {
-  return seed.dateMode === 'on'
-    ? `On ${seed.onDate}`
-    : `From ${seed.fromDate} to ${seed.toDate}`
-}
-
-function availabilityTimeLabel(seed: StudentAvailabilitySeed): string {
-  return seed.timeMode === 'allDay'
-    ? 'All day'
-    : `Between ${seed.startTime} and ${seed.endTime}`
-}
-
-function availabilityRecurrenceLabel(seed: StudentAvailabilitySeed): string {
-  if (seed.recurrenceMode === 'everyday') return 'Everyday'
-  const days = (seed.recurrenceDays ?? []).map((day) => WEEKDAY_LABELS[day])
-  return `On ${days.join(', ')}`
-}
-
 function buildAvailabilityEntries(
   studentIdByName: Record<string, string>,
 ): Omit<AvailabilityEntry, '_id'>[] {
   return Object.entries(STUDENT_AVAILABILITY).flatMap(([name, seeds]) =>
     seeds.map((seed) => ({
-      dateLabel: availabilityDateLabel(seed),
       dateMode: seed.dateMode,
       onDate: seed.onDate,
       fromDate: seed.fromDate,
       toDate: seed.toDate,
-      timeLabel: availabilityTimeLabel(seed),
       timeMode: seed.timeMode,
       startTime: seed.startTime,
       endTime: seed.endTime,
-      recurrence: availabilityRecurrenceLabel(seed),
       recurrenceMode: seed.recurrenceMode,
       recurrenceDays: seed.recurrenceDays,
       studentId: studentIdByName[name],

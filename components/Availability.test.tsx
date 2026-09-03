@@ -65,13 +65,10 @@ describe('Availability', () => {
   it('adds a new entry to the top of the list from the modal', async () => {
     vi.mocked(fetchApi).mockResolvedValueOnce({
       id: 'new-entry',
-      dateLabel: 'From 20/08/2026 to 25/08/2026',
       dateMode: 'range',
       fromDate: '20/08/2026',
       toDate: '25/08/2026',
-      timeLabel: 'All day',
       timeMode: 'allDay',
-      recurrence: 'Everyday',
       recurrenceMode: 'everyday',
     })
 
@@ -101,9 +98,6 @@ describe('Availability', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        dateLabel: 'From 20/08/2026 to 25/08/2026',
-        timeLabel: 'All day',
-        recurrence: 'Everyday',
         dateMode: 'range',
         onDate: undefined,
         fromDate: '20/08/2026',
@@ -139,12 +133,9 @@ describe('Availability', () => {
   it('adds a specific-date entry using the typed dd/mm/yyyy value', async () => {
     vi.mocked(fetchApi).mockResolvedValueOnce({
       id: 'new-entry',
-      dateLabel: 'On 27/08/2026',
       dateMode: 'on',
       onDate: '27/08/2026',
-      timeLabel: 'All day',
       timeMode: 'allDay',
-      recurrence: 'Everyday',
       recurrenceMode: 'everyday',
     })
 
@@ -163,15 +154,12 @@ describe('Availability', () => {
   it('edits an entry, pre-filling the form with its current values', async () => {
     vi.mocked(fetchApi).mockResolvedValueOnce({
       id: 'avail-1',
-      dateLabel: 'From 01/09/2026 to 30/08/2026',
       dateMode: 'range',
       fromDate: '01/09/2026',
       toDate: '30/08/2026',
-      timeLabel: 'Between 18:00 and 21:00',
       timeMode: 'between',
       startTime: '18:00',
       endTime: '21:00',
-      recurrence: 'Everyday',
       recurrenceMode: 'everyday',
     })
 
@@ -205,9 +193,6 @@ describe('Availability', () => {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        dateLabel: 'From 01/09/2026 to 30/08/2026',
-        timeLabel: 'Between 18:00 and 21:00',
-        recurrence: 'Everyday',
         dateMode: 'range',
         onDate: undefined,
         fromDate: '01/09/2026',
@@ -225,13 +210,10 @@ describe('Availability', () => {
   it('edits recurrence, pre-filling "these days" and saving a new selection', async () => {
     vi.mocked(fetchApi).mockResolvedValueOnce({
       id: 'avail-days',
-      dateLabel: 'From 20/08/2026 to 25/08/2026',
       dateMode: 'range',
       fromDate: '20/08/2026',
       toDate: '25/08/2026',
-      timeLabel: 'All day',
       timeMode: 'allDay',
-      recurrence: 'On Monday, Tuesday, Thursday',
       recurrenceMode: 'days',
       recurrenceDays: ['mon', 'tue', 'thu'],
     })
@@ -240,13 +222,10 @@ describe('Availability', () => {
       entries: [
         {
           id: 'avail-days',
-          dateLabel: 'From 20/08/2026 to 25/08/2026',
           dateMode: 'range',
           fromDate: '20/08/2026',
           toDate: '25/08/2026',
-          timeLabel: 'All day',
           timeMode: 'allDay',
-          recurrence: 'On Monday, Tuesday',
           recurrenceMode: 'days',
           recurrenceDays: ['mon', 'tue'],
         },
@@ -279,9 +258,6 @@ describe('Availability', () => {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        dateLabel: 'From 20/08/2026 to 25/08/2026',
-        timeLabel: 'All day',
-        recurrence: 'On Monday, Tuesday, Thursday',
         dateMode: 'range',
         onDate: undefined,
         fromDate: '20/08/2026',
@@ -301,13 +277,10 @@ describe('Availability', () => {
       entries: [
         {
           id: 'avail-days',
-          dateLabel: 'From 20/08/2026 to 25/08/2026',
           dateMode: 'range',
           fromDate: '20/08/2026',
           toDate: '25/08/2026',
-          timeLabel: 'All day',
           timeMode: 'allDay',
-          recurrence: 'On Monday, Tuesday',
           recurrenceMode: 'days',
           recurrenceDays: ['mon', 'tue'],
         },
@@ -328,13 +301,10 @@ describe('Availability', () => {
   it('collapses to "everyday" on the page and on reopen when all seven days are selected', async () => {
     vi.mocked(fetchApi).mockResolvedValueOnce({
       id: 'avail-days',
-      dateLabel: 'From 20/08/2026 to 25/08/2026',
       dateMode: 'range',
       fromDate: '20/08/2026',
       toDate: '25/08/2026',
-      timeLabel: 'All day',
       timeMode: 'allDay',
-      recurrence: 'Everyday',
       recurrenceMode: 'everyday',
     })
 
@@ -342,13 +312,10 @@ describe('Availability', () => {
       entries: [
         {
           id: 'avail-days',
-          dateLabel: 'From 20/08/2026 to 25/08/2026',
           dateMode: 'range',
           fromDate: '20/08/2026',
           toDate: '25/08/2026',
-          timeLabel: 'All day',
           timeMode: 'allDay',
-          recurrence: 'On Monday, Tuesday, Wednesday, Thursday, Friday',
           recurrenceMode: 'days',
           recurrenceDays: ['mon', 'tue', 'wed', 'thu', 'fri'],
         },

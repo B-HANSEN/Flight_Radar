@@ -20,9 +20,9 @@ export type AvailabilityWeekday =
   },
 })
 export class AvailabilityEntry {
-  @Prop({ required: true })
-  dateLabel!: string
-
+  // Human-readable date/time/recurrence labels are derived on the client from
+  // the structured fields below (see lib/availabilityLabels.ts) so they stay
+  // localised — they are deliberately not persisted here.
   @Prop({ required: true, enum: ['on', 'range'] })
   dateMode!: AvailabilityDateMode
 
@@ -35,9 +35,6 @@ export class AvailabilityEntry {
   @Prop()
   toDate?: string
 
-  @Prop({ required: true })
-  timeLabel!: string
-
   @Prop({ required: true, enum: ['allDay', 'between'] })
   timeMode!: AvailabilityTimeMode
 
@@ -46,9 +43,6 @@ export class AvailabilityEntry {
 
   @Prop()
   endTime?: string
-
-  @Prop({ required: true })
-  recurrence!: string
 
   @Prop({ required: true, enum: ['everyday', 'days'] })
   recurrenceMode!: AvailabilityRecurrenceMode

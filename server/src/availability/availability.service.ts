@@ -12,16 +12,13 @@ import {
 import { startOfCurrentMonth } from '../common/date'
 
 export type AvailabilityEntryInput = {
-  dateLabel: string
   dateMode: AvailabilityDateMode
   onDate?: string
   fromDate?: string
   toDate?: string
-  timeLabel: string
   timeMode: AvailabilityTimeMode
   startTime?: string
   endTime?: string
-  recurrence: string
   recurrenceMode: AvailabilityRecurrenceMode
   recurrenceDays?: AvailabilityWeekday[]
 }
