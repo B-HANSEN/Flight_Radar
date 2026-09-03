@@ -11,6 +11,8 @@
   "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "css.lint.unknownAtRules": "ignore",
   "css.colorDecorators.enable": false,
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
   "eslint.options": {
     "overrideConfigFile": "config/eslint.config.mjs"
   }
