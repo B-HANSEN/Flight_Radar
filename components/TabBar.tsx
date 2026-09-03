@@ -21,7 +21,6 @@ type TabItem = {
 
 type Props = {
   activePath?: string
-  hideAvailability?: boolean
   onItemClick?: (href: string) => void
 }
 
@@ -35,18 +34,11 @@ const items: TabItem[] = [
   { key: 'emails', href: '/me/emails' },
 ]
 
-export default function TabBar({
-  activePath,
-  hideAvailability = false,
-  onItemClick,
-}: Props) {
+export default function TabBar({ activePath, onItemClick }: Props) {
   const t = useTranslations('RecordTabBar')
   const pathname = usePathname() ?? items[0].href
   const currentPath = activePath ?? pathname
   const { isDragging, dragHandlers } = useDragScroll<HTMLUListElement>()
-  const visibleItems = hideAvailability
-    ? items.filter((item) => item.key !== 'availability')
-    : items
 
   return (
     <nav aria-label={t('label')} className='border-b border-black-100'>
@@ -56,7 +48,7 @@ export default function TabBar({
         className={`flex list-none gap-1 overflow-x-auto px-1 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
         {...dragHandlers}
       >
-        {visibleItems.map(({ key, href }) => {
+        {items.map(({ key, href }) => {
           const isActive = currentPath === href
           return (
             <li key={key} className='flex-none'>

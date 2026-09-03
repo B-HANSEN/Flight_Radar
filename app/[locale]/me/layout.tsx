@@ -93,7 +93,7 @@ export default async function MeLayout({
     <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12 2xl:px-20'>
       <div className='flex flex-col gap-6 lg:flex-row lg:items-start 2xl:mx-auto 2xl:max-w-[1800px]'>
         <div className='lg:min-w-0 lg:flex-1'>
-          <TabBar hideAvailability={isInstructorView} />
+          <TabBar />
           <div className='mt-6'>{children}</div>
         </div>
         <div className='lg:w-122 lg:flex-none 2xl:w-lg'>

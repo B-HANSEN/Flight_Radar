@@ -16,6 +16,7 @@
   "RoleSwitcher": {
     "switchView": "Cambiar vista",
     "instructor": "Instructor",
+    "chiefInstructor": "Instructor jefe",
     "studentTrack": "Estudiante de {track}"
   },
   "Homepage": {
@@ -189,7 +190,8 @@
     "allDay": "Todo el día",
     "notAvailable": "No disponible",
     "onLeave": "De baja",
-    "theoryLabel": "Teoría"
+    "theoryLabel": "Teoría",
+    "leaveRequested": "Permiso solicitado"
   },
   "AgendaPage": {
     "title": "Agenda"
@@ -625,5 +627,49 @@
       "photoBeforeAlt": "Compartimento del motor con el tapón de aceite retirado",
       "photoAfterAlt": "Compartimento del motor con el tapón de aceite colocado, marcado con una flecha"
     }
+  },
+  "InstructorAvailability": {
+    "myDaysOffHeading": "Mis días libres",
+    "noEntries": "Aún no se han solicitado días libres.",
+    "typeRegular": "Día libre habitual",
+    "typePersonal": "Permiso personal",
+    "status": {
+      "approved": "Aprobado",
+      "pending": "Pendiente de aprobación del CFI",
+      "denied": "Denegado"
+    },
+    "requestLabel": "Solicitar un día libre",
+    "cancelLabel": "Cancelar el día libre del {date}",
+    "reviewHeading": "Solicitudes de permiso por revisar",
+    "anInstructor": "Un instructor",
+    "approve": "Aprobar",
+    "deny": "Denegar",
+    "approveLabel": "Aprobar el permiso de {name} del {date}",
+    "denyLabel": "Denegar el permiso de {name} del {date}",
+    "requestedApprovedToast": "Día libre añadido",
+    "requestedPendingToast": "Solicitud enviada al CFI para su aprobación",
+    "cancelledToast": "Día libre cancelado",
+    "approvedToast": "Permiso aprobado",
+    "deniedToast": "Permiso denegado",
+    "errorToast": "Algo salió mal. Inténtalo de nuevo.",
+    "weekLabel": "Semana {number}",
+    "weekDayCount": "{count, plural, one {# día libre} other {# días libres}}",
+    "weekRequestCount": "{count, plural, one {# solicitud} other {# solicitudes}}",
+    "allowanceNote": "Hasta 2 días libres por semana natural se aprueban automáticamente. Cualquier día adicional necesita la aprobación del Jefe de Instructores."
+  },
+  "InstructorTimeOffFormModal": {
+    "title": "Solicitar un día libre",
+    "close": "Cerrar",
+    "save": "Enviar solicitud",
+    "dateLegend": "Fecha",
+    "dateLabel": "Fecha",
+    "openCalendarLabel": "Abrir calendario",
+    "invalidDateError": "Introduce una fecha válida (dd/mm/aaaa) dentro de los próximos 6 meses.",
+    "typeLegend": "Tipo",
+    "typeRegular": "Día libre habitual",
+    "typePersonal": "Permiso personal",
+    "weeklyHint": "Puedes tomar hasta 2 días libres habituales por semana. El permiso personal necesita la aprobación del Jefe de Instructores.",
+    "reasonLegend": "Motivo",
+    "reasonLabel": "Motivo del permiso personal"
   }
 }

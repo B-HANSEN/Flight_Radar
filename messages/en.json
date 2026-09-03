@@ -16,6 +16,7 @@
   "RoleSwitcher": {
     "switchView": "Switch view",
     "instructor": "Instructor",
+    "chiefInstructor": "Chief Flight Instructor",
     "studentTrack": "{track} student"
   },
   "Homepage": {
@@ -189,7 +190,8 @@
     "allDay": "All day",
     "notAvailable": "Not available",
     "onLeave": "On leave",
-    "theoryLabel": "Theory"
+    "theoryLabel": "Theory",
+    "leaveRequested": "Leave requested"
   },
   "AgendaPage": {
     "title": "Agenda"
@@ -625,5 +627,49 @@
       "photoBeforeAlt": "Engine bay with the oil cap removed",
       "photoAfterAlt": "Engine bay with the oil cap reinstalled, marked with an arrow"
     }
+  },
+  "InstructorAvailability": {
+    "myDaysOffHeading": "My days off",
+    "noEntries": "No days off requested yet.",
+    "typeRegular": "Regular day off",
+    "typePersonal": "Personal leave",
+    "status": {
+      "approved": "Approved",
+      "pending": "Pending CFI approval",
+      "denied": "Denied"
+    },
+    "requestLabel": "Request a day off",
+    "cancelLabel": "Cancel day off on {date}",
+    "reviewHeading": "Leave requests to review",
+    "anInstructor": "An instructor",
+    "approve": "Approve",
+    "deny": "Deny",
+    "approveLabel": "Approve {name}'s leave on {date}",
+    "denyLabel": "Deny {name}'s leave on {date}",
+    "requestedApprovedToast": "Day off added",
+    "requestedPendingToast": "Request sent to the CFI for approval",
+    "cancelledToast": "Day off cancelled",
+    "approvedToast": "Leave approved",
+    "deniedToast": "Leave denied",
+    "errorToast": "Something went wrong. Please try again.",
+    "weekLabel": "Week {number}",
+    "weekDayCount": "{count, plural, one {# day off} other {# days off}}",
+    "weekRequestCount": "{count, plural, one {# request} other {# requests}}",
+    "allowanceNote": "Up to 2 days off per calendar week are approved automatically. Anything beyond that needs the Chief Flight Instructor's approval."
+  },
+  "InstructorTimeOffFormModal": {
+    "title": "Request a day off",
+    "close": "Close",
+    "save": "Submit request",
+    "dateLegend": "Date",
+    "dateLabel": "Date",
+    "openCalendarLabel": "Open calendar",
+    "invalidDateError": "Enter a valid date (dd/mm/yyyy) within the next 6 months.",
+    "typeLegend": "Type",
+    "typeRegular": "Regular day off",
+    "typePersonal": "Personal leave",
+    "weeklyHint": "You can take up to 2 regular days off per week. Personal leave needs the Chief Flight Instructor's approval.",
+    "reasonLegend": "Reason",
+    "reasonLabel": "Reason for personal leave"
   }
 }

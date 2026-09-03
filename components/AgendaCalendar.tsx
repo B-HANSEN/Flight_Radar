@@ -216,7 +216,10 @@ export default function AgendaCalendar({
               const isToday = iso === todayISO
               const dayEvents = eventsByDate.get(iso) ?? []
               const isDayOff = dayEvents.some(
-                (event) => event.type === 'unavailability' && event.allDay,
+                (event) =>
+                  event.type === 'unavailability' &&
+                  event.allDay &&
+                  !event.pending,
               )
 
               return (
@@ -243,15 +246,21 @@ export default function AgendaCalendar({
                       event.type === 'unavailability' ? (
                         <div
                           key={event.id}
-                          className='bg-black-100/50 px-2 py-1.25'
+                          className={`px-2 py-1.25 ${
+                            event.pending
+                              ? 'border border-dashed border-yellow-300 bg-yellow-100'
+                              : 'bg-black-100/50'
+                          }`}
                         >
                           <div className='truncate font-secondary text-xs font-bold text-black-300'>
                             {event.allDay ? t('allDay') : event.timeRange}
                           </div>
                           <div className='truncate font-secondary text-xs text-black-300'>
-                            {perspective === 'instructor'
-                              ? t('onLeave')
-                              : t('notAvailable')}
+                            {event.pending
+                              ? t('leaveRequested')
+                              : perspective === 'instructor'
+                                ? t('onLeave')
+                                : t('notAvailable')}
                           </div>
                         </div>
                       ) : (

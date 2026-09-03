@@ -38,6 +38,13 @@ const EVENTS: CalendarEvent[] = [
     date: '2026-08-14',
     allDay: true,
   },
+  {
+    id: 'pending-1',
+    type: 'unavailability',
+    date: '2026-08-20',
+    allDay: true,
+    pending: true,
+  },
 ]
 
 function renderCalendar(
@@ -106,6 +113,14 @@ it('greys out the day and labels it "On leave" for an instructor day off', () =>
   expect(
     screen.getByText('On leave').closest('[class*="bg-black-100/30"]'),
   ).not.toBeNull()
+})
+
+it('labels a not-yet-approved day off "Leave requested" without greying the day', () => {
+  renderCalendar({ perspective: 'instructor' })
+  const label = screen.getByText('Leave requested')
+  expect(label).toBeInTheDocument()
+  expect(label.closest('[class*="border-dashed"]')).not.toBeNull()
+  expect(label.closest('[class*="bg-black-100/30"]')).toBeNull()
 })
 
 it('opens the detail modal when a booking is clicked', () => {

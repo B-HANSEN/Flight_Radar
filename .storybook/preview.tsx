@@ -12,6 +12,13 @@ const preview: Preview = {
     ),
   ],
   parameters: {
+    // Every route lives under app/[locale]/ (see CLAUDE.md), so components
+    // using next/navigation's useRouter (e.g. via @/i18n/navigation) need the
+    // App Router context, not the Pages Router one Storybook mounts by default.
+    nextjs: {
+      appDirectory: true,
+    },
+
     options: {
       storySort: {
         order: [],

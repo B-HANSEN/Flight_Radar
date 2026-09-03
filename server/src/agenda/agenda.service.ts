@@ -57,6 +57,9 @@ export type DerivedUnavailabilityEvent = {
   id: string
   type: 'unavailability'
   date: string
+  // Set on an instructor's time off that the CFI has not approved yet — the
+  // UI renders it as a request rather than a confirmed day off.
+  pending?: boolean
 } & ({ allDay: true } | { allDay: false; timeRange: string })
 
 function addMonths(date: Date, months: number): Date {
@@ -139,6 +142,7 @@ export class AgendaService {
       const timeOffEntries = await this.instructorTimeOffModel
         .find({
           instructorId: query.instructorId,
+          status: { $in: ['approved', 'pending'] },
           date: {
             $gte: formatISODate(rangeStart),
             $lte: formatISODate(rangeEnd),
@@ -152,6 +156,7 @@ export class AgendaService {
           type: 'unavailability',
           date: entry.date,
           allDay: true,
+          ...(entry.status === 'pending' ? { pending: true } : {}),
         }))
 
       return [...bookingEvents, ...derivedUnavailability].sort((a, b) =>

@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { getModelToken } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { AppModule } from '../app.module'
 import { CalendarEvent } from '../agenda/schemas/calendar-event.schema'
 import { Aircraft } from '../aircraft/schemas/aircraft.schema'
@@ -31,6 +31,14 @@ import { DocumentKind, generateDocumentFile } from './document-files'
 const studentId = 'student-1'
 const AESA = 'AESA — Agencia Estatal de Seguridad Aérea'
 const academy = 'Flight Radar Academy'
+
+// Turns an aircraft _id string (from aircraftIdByArcid) into a real
+// ObjectId for Booking.aircraftId / CalendarEvent.aircraftId.
+function toAircraftObjectId(
+  id: string | undefined,
+): Types.ObjectId | undefined {
+  return id ? new Types.ObjectId(id) : undefined
+}
 
 const aircraft: Omit<Aircraft, '_id'>[] = [
   {
@@ -1181,11 +1189,15 @@ function withResolvedIds(
   entries: LegacyBookingSeed[],
   studentIdByName: Record<string, string>,
   instructorIdByName: Record<string, string>,
+  aircraftIdByArcid: Record<string, string>,
 ): Omit<Booking, '_id'>[] {
   return entries.map(({ instructorName, ...entry }) => ({
     ...entry,
     studentId: studentIdByName[entry.person] ?? entry.studentId,
     instructorId: instructorIdByName[instructorName],
+    aircraftId: toAircraftObjectId(
+      entry.tail ? aircraftIdByArcid[entry.tail] : undefined,
+    ),
   }))
 }
 
@@ -1837,7 +1849,7 @@ const students: Omit<Student, '_id'>[] = [
     email: 'alex.moreau@example.com',
     phone: '+34 600 234 567',
     birthday: '22 June 1998',
-    info: 'IR online · Q3 2025',
+    info: 'PPL holder · IR student',
     photoSrc: '/students/alex-moreau.webp',
   },
   {
@@ -1849,7 +1861,7 @@ const students: Omit<Student, '_id'>[] = [
     email: 'jamie.torres@example.com',
     phone: '+34 600 123 456',
     birthday: '14 March 1994',
-    info: 'PPL online · Q1 2025',
+    info: 'PPL student',
     // Reuses the photo already used for her profile card sidebar —
     // app/[locale]/me/layout.tsx's default persona.
     photoSrc: '/me/jamie-torres.webp',
@@ -1863,7 +1875,7 @@ const students: Omit<Student, '_id'>[] = [
     email: 'priya.shah@example.com',
     phone: '+34 600 345 678',
     birthday: '5 November 1996',
-    info: 'CPL online · Q2 2025',
+    info: 'PPL holder · CPL student',
     photoSrc: '/students/priya-shah.webp',
   },
   {
@@ -1875,7 +1887,7 @@ const students: Omit<Student, '_id'>[] = [
     email: 'noah.becker@example.com',
     phone: '+34 600 456 789',
     birthday: '30 January 2000',
-    info: 'PPL online · Q4 2025',
+    info: 'PPL student',
     photoSrc: '/students/noah-becker.webp',
   },
 ]
@@ -1895,7 +1907,7 @@ const instructors: Omit<Instructor, '_id'>[] = [
     email: 'james.whitfield@example.com',
     phone: '+34 600 111 222',
     birthday: '8 September 1985',
-    info: 'Chief Flight Instructor · Since 2015',
+    info: 'ATPL holder · CFI',
     isChief: true,
   },
   {
@@ -1906,7 +1918,7 @@ const instructors: Omit<Instructor, '_id'>[] = [
     email: 'kate.ashford@example.com',
     phone: '+34 600 222 333',
     birthday: '19 April 1990',
-    info: 'Deputy Chief Flight Instructor · Since 2019',
+    info: 'CPL holder · Senior Flight Instructor',
   },
 ]
 
@@ -2469,7 +2481,13 @@ const EXPLICIT_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   },
 ]
 
-type InstructorTimeOffSeed = { instructorName: string; date: string }
+type InstructorTimeOffSeed = {
+  instructorName: string
+  date: string
+  type: 'regular' | 'personal'
+  status: 'approved' | 'pending' | 'denied'
+  reason?: string
+}
 
 // Deterministic PRNG (mulberry32) so re-running the seed script reproduces
 // the same days off instead of reshuffling them on every run.
@@ -2525,12 +2543,16 @@ function generateInstructorTimeOff(
       entries.push({
         instructorName: 'Kate Ashford',
         date: isoAddDays(weekMonday, weekday - 1),
+        type: 'regular',
+        status: 'approved',
       })
     }
     for (const weekday of jamesWeekdays) {
       entries.push({
         instructorName: 'James Whitfield',
         date: isoAddDays(weekMonday, weekday - 1),
+        type: 'regular',
+        status: 'approved',
       })
     }
   }
@@ -2538,13 +2560,79 @@ function generateInstructorTimeOff(
   return entries
 }
 
-// Covers the whole window the agenda can browse to from today (3 months
-// ahead, see AGENDA_MONTHS_AHEAD in agenda.service.ts) plus some slack.
-const INSTRUCTOR_TIME_OFF: InstructorTimeOffSeed[] = generateInstructorTimeOff(
-  '2026-09-07',
-  17,
-  20260907,
+// Personal leave on top of the standing weekly days off — enough to show
+// every state on the /me/availability page: the CFI's own leave is approved
+// on request, another instructor's requests wait for the CFI's decision, and
+// a batch of Kate's leave the CFI already signed off (nothing left to review).
+const EXPLICIT_INSTRUCTOR_LEAVE: InstructorTimeOffSeed[] = [
+  {
+    instructorName: 'James Whitfield',
+    date: '2026-09-24',
+    type: 'personal',
+    status: 'approved',
+    reason: 'Medical renewal in Madrid',
+  },
+  {
+    instructorName: 'Kate Ashford',
+    date: '2026-09-18',
+    type: 'personal',
+    status: 'pending',
+    reason: "Daughter's graduation",
+  },
+  {
+    instructorName: 'Kate Ashford',
+    date: '2026-10-02',
+    type: 'personal',
+    status: 'pending',
+    reason: 'Family wedding',
+  },
+  {
+    instructorName: 'Kate Ashford',
+    date: '2026-09-08',
+    type: 'personal',
+    status: 'approved',
+    reason: 'Dentist appointment',
+  },
+  {
+    instructorName: 'Kate Ashford',
+    date: '2026-09-11',
+    type: 'personal',
+    status: 'approved',
+    reason: 'House move',
+  },
+  {
+    instructorName: 'Kate Ashford',
+    date: '2026-09-29',
+    type: 'personal',
+    status: 'approved',
+    reason: 'Family visit',
+  },
+  {
+    instructorName: 'Kate Ashford',
+    date: '2026-10-19',
+    type: 'personal',
+    status: 'approved',
+    reason: 'Type-rating refresher',
+  },
+]
+
+// generateInstructorTimeOff also assigns regular weekly days off; drop any
+// that collide with an explicit personal-leave date so an instructor is
+// never shown two overlapping entries for the same day (the explicit one
+// wins). Covers the whole window the agenda can browse to (3 months, see
+// AGENDA_MONTHS_AHEAD in agenda.service.ts) plus slack.
+const EXPLICIT_LEAVE_KEYS = new Set(
+  EXPLICIT_INSTRUCTOR_LEAVE.map(
+    (entry) => `${entry.instructorName}|${entry.date}`,
+  ),
 )
+const INSTRUCTOR_TIME_OFF: InstructorTimeOffSeed[] = [
+  ...generateInstructorTimeOff('2026-09-07', 17, 20260907).filter(
+    (entry) =>
+      !EXPLICIT_LEAVE_KEYS.has(`${entry.instructorName}|${entry.date}`),
+  ),
+  ...EXPLICIT_INSTRUCTOR_LEAVE,
+]
 
 // Reassigns a flight to the other instructor whenever the one it's booked
 // with is off that date — generateInstructorTimeOff guarantees the two
@@ -2554,8 +2642,12 @@ function reassignAwayFromInstructorTimeOff(
   flights: StudentFlightSeed[],
   timeOff: InstructorTimeOffSeed[],
 ): StudentFlightSeed[] {
+  // Only approved time off moves a booking — a pending request hasn't
+  // freed the instructor yet.
   const timeOffSet = new Set(
-    timeOff.map((entry) => `${entry.instructorName}|${entry.date}`),
+    timeOff
+      .filter((entry) => entry.status === 'approved')
+      .map((entry) => `${entry.instructorName}|${entry.date}`),
   )
   const otherInstructor: Record<string, string> = {
     'James Whitfield': 'Kate Ashford',
@@ -2592,6 +2684,7 @@ function flightTrainingCode(flight: StudentFlightSeed): string | undefined {
 function buildStudentFlights(
   studentIdByName: Record<string, string>,
   instructorIdByName: Record<string, string>,
+  aircraftIdByArcid: Record<string, string>,
 ): {
   bookings: Omit<Booking, '_id'>[]
   calendarEvents: Omit<CalendarEvent, '_id'>[]
@@ -2605,10 +2698,14 @@ function buildStudentFlights(
     if (!flightStudentId || !flightInstructorId) continue
     const time = `${flight.startTime} - ${flight.endTime}`
     const trainingCode = flightTrainingCode(flight)
+    const aircraftId = toAircraftObjectId(
+      flight.tail ? aircraftIdByArcid[flight.tail] : undefined,
+    )
 
     bookings.push({
       type: flight.lessonType,
       date: toDisplayDate(flight.date),
+      aircraftId,
       tail: flight.tail,
       person: flight.studentName,
       time,
@@ -2623,7 +2720,7 @@ function buildStudentFlights(
       type: 'booking',
       date: flight.date,
       time,
-      tailNumber: flight.tail,
+      aircraftId,
       flightLines: [
         flight.comments
           ? `${flight.lessonType} · ${flight.comments}`
@@ -3132,6 +3229,9 @@ async function seed() {
     INSTRUCTOR_TIME_OFF.map((entry) => ({
       instructorId: instructorIdByName[entry.instructorName],
       date: entry.date,
+      type: entry.type,
+      status: entry.status,
+      ...(entry.reason ? { reason: entry.reason } : {}),
     })),
     'instructor time off entries',
   )
@@ -3139,6 +3239,7 @@ async function seed() {
   const studentFlights = buildStudentFlights(
     studentIdByName,
     instructorIdByName,
+    aircraftIdByArcid,
   )
 
   await seedMany(
@@ -3181,7 +3282,12 @@ async function seed() {
   await seedMany(
     bookingModel,
     [
-      ...withResolvedIds(bookings, studentIdByName, instructorIdByName),
+      ...withResolvedIds(
+        bookings,
+        studentIdByName,
+        instructorIdByName,
+        aircraftIdByArcid,
+      ),
       ...studentFlights.bookings,
     ],
     'bookings',

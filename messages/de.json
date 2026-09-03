@@ -16,6 +16,7 @@
   "RoleSwitcher": {
     "switchView": "Ansicht wechseln",
     "instructor": "Fluglehrer",
+    "chiefInstructor": "Leitender Fluglehrer",
     "studentTrack": "{track}-Flugschüler"
   },
   "Homepage": {
@@ -189,7 +190,8 @@
     "allDay": "Ganztägig",
     "notAvailable": "Nicht verfügbar",
     "onLeave": "Abwesend",
-    "theoryLabel": "Theorie"
+    "theoryLabel": "Theorie",
+    "leaveRequested": "Urlaub beantragt"
   },
   "AgendaPage": {
     "title": "Agenda"
@@ -625,5 +627,49 @@
       "photoBeforeAlt": "Motorraum mit entferntem Öleinfülldeckel",
       "photoAfterAlt": "Motorraum mit wieder eingesetztem Öleinfülldeckel, mit Pfeil markiert"
     }
+  },
+  "InstructorAvailability": {
+    "myDaysOffHeading": "Meine freien Tage",
+    "noEntries": "Noch keine freien Tage beantragt.",
+    "typeRegular": "Regulärer freier Tag",
+    "typePersonal": "Persönlicher Urlaub",
+    "status": {
+      "approved": "Genehmigt",
+      "pending": "Warten auf CFI-Genehmigung",
+      "denied": "Abgelehnt"
+    },
+    "requestLabel": "Freien Tag beantragen",
+    "cancelLabel": "Freien Tag am {date} stornieren",
+    "reviewHeading": "Zu prüfende Urlaubsanträge",
+    "anInstructor": "Eine Fluglehrkraft",
+    "approve": "Genehmigen",
+    "deny": "Ablehnen",
+    "approveLabel": "Urlaub von {name} am {date} genehmigen",
+    "denyLabel": "Urlaub von {name} am {date} ablehnen",
+    "requestedApprovedToast": "Freier Tag hinzugefügt",
+    "requestedPendingToast": "Antrag zur Genehmigung an den CFI gesendet",
+    "cancelledToast": "Freier Tag storniert",
+    "approvedToast": "Urlaub genehmigt",
+    "deniedToast": "Urlaub abgelehnt",
+    "errorToast": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "weekLabel": "KW {number}",
+    "weekDayCount": "{count, plural, one {# freier Tag} other {# freie Tage}}",
+    "weekRequestCount": "{count, plural, one {# Antrag} other {# Anträge}}",
+    "allowanceNote": "Bis zu 2 freie Tage pro Kalenderwoche werden automatisch genehmigt. Alles darüber hinaus muss vom Chief Flight Instructor genehmigt werden."
+  },
+  "InstructorTimeOffFormModal": {
+    "title": "Freien Tag beantragen",
+    "close": "Schließen",
+    "save": "Antrag senden",
+    "dateLegend": "Datum",
+    "dateLabel": "Datum",
+    "openCalendarLabel": "Kalender öffnen",
+    "invalidDateError": "Geben Sie ein gültiges Datum (TT/MM/JJJJ) innerhalb der nächsten 6 Monate ein.",
+    "typeLegend": "Art",
+    "typeRegular": "Regulärer freier Tag",
+    "typePersonal": "Persönlicher Urlaub",
+    "weeklyHint": "Sie können bis zu 2 reguläre freie Tage pro Woche nehmen. Persönlicher Urlaub muss vom Chief Flight Instructor genehmigt werden.",
+    "reasonLegend": "Grund",
+    "reasonLabel": "Grund für den persönlichen Urlaub"
   }
 }

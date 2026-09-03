@@ -23,6 +23,25 @@ export function toISODate(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
+// ISO 8601 week number (1–53): weeks start on Monday and week 1 is the one
+// containing the year's first Thursday. Matches the "Kalenderwoche" /
+// "week commencing" numbering shown on European calendars.
+export function isoWeekNumber(date: Date): number {
+  const thursday = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  )
+  // Shift to the Thursday of this ISO week (Mon=0 … Sun=6).
+  const dayIndex = (thursday.getUTCDay() + 6) % 7
+  thursday.setUTCDate(thursday.getUTCDate() - dayIndex + 3)
+  const firstThursday = new Date(Date.UTC(thursday.getUTCFullYear(), 0, 4))
+  const firstDayIndex = (firstThursday.getUTCDay() + 6) % 7
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDayIndex + 3)
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000
+  return (
+    1 + Math.round((thursday.getTime() - firstThursday.getTime()) / msPerWeek)
+  )
+}
+
 // "24 – 30 August 2026", or "28 August – 03 September 2026" when the week
 // spans two months.
 export function formatWeekRangeLabel(weekStart: Date, locale: string): string {

@@ -92,18 +92,4 @@ describe('TabBar', () => {
     fireEvent.click(screen.getByRole('link', { name: 'Courses' }))
     expect(onItemClick).toHaveBeenCalledWith('/me/courses')
   })
-
-  it('hides the Availability tab when hideAvailability is set', () => {
-    renderTabBar({ hideAvailability: true })
-    expect(
-      screen.queryByRole('link', { name: 'Availability' }),
-    ).not.toBeInTheDocument()
-  })
-
-  it('shows the Availability tab by default', () => {
-    renderTabBar()
-    expect(
-      screen.getByRole('link', { name: 'Availability' }),
-    ).toBeInTheDocument()
-  })
 })

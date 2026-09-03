@@ -5,6 +5,9 @@ export type CalendarEventBase = {
 
 export type UnavailabilityEvent = CalendarEventBase & {
   type: 'unavailability'
+  // An instructor's day off the CFI hasn't approved yet — shown as a
+  // request ("Leave requested") rather than a confirmed day off.
+  pending?: boolean
 } & ({ allDay: true } | { allDay: false; timeRange: string })
 
 export type BookingEvent = CalendarEventBase & {

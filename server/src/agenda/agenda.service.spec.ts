@@ -196,18 +196,54 @@ describe('AgendaService', () => {
 
   it('for an instructor view derives a full-day block for each time-off date', async () => {
     const { service, instructorTimeOffModel } = await buildService({
-      instructorTimeOff: [{ instructorId: 'instructor-1', date: '2026-09-07' }],
+      instructorTimeOff: [
+        {
+          instructorId: 'instructor-1',
+          date: '2026-09-07',
+          type: 'regular',
+          status: 'approved',
+        },
+      ],
     })
     const result = await service.findAll({ instructorId: 'instructor-1' })
 
     expect(instructorTimeOffModel.find).toHaveBeenCalledWith(
-      expect.objectContaining({ instructorId: 'instructor-1' }),
+      expect.objectContaining({
+        instructorId: 'instructor-1',
+        status: { $in: ['approved', 'pending'] },
+      }),
     )
     expect(result).toContainEqual(
       expect.objectContaining({
         type: 'unavailability',
         date: '2026-09-07',
         allDay: true,
+      }),
+    )
+    expect(result).not.toContainEqual(
+      expect.objectContaining({ date: '2026-09-07', pending: true }),
+    )
+  })
+
+  it('for an instructor view flags a not-yet-approved day off as pending', async () => {
+    const { service } = await buildService({
+      instructorTimeOff: [
+        {
+          instructorId: 'instructor-1',
+          date: '2026-09-07',
+          type: 'personal',
+          status: 'pending',
+        },
+      ],
+    })
+    const result = await service.findAll({ instructorId: 'instructor-1' })
+
+    expect(result).toContainEqual(
+      expect.objectContaining({
+        type: 'unavailability',
+        date: '2026-09-07',
+        allDay: true,
+        pending: true,
       }),
     )
   })
