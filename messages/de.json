@@ -166,6 +166,11 @@
     "body": "Wir haben den gesamten Luftraum abgesucht und konnten sie nicht finden. Vielleicht wurde sie verschoben oder ist nie gestartet.",
     "cta": "Zurück zur Startseite"
   },
+  "ErrorPage": {
+    "title": "Etwas hat uns vom Kurs abgebracht.",
+    "body": "Ein unerwarteter Fehler hat diese Seite unterbrochen. Versuch es noch einmal – meist klappt es beim zweiten Anlauf.",
+    "cta": "Erneut versuchen"
+  },
   "RecordTabBar": {
     "label": "Aktenbereiche",
     "agenda": "Agenda",

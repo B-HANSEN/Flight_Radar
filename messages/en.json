@@ -166,6 +166,11 @@
     "body": "We scanned the whole airspace and couldn't find it. It may have moved, or never took off.",
     "cta": "Back to Home"
   },
+  "ErrorPage": {
+    "title": "Something knocked us off course.",
+    "body": "An unexpected error interrupted this page. Give it another try — it often clears up on a second attempt.",
+    "cta": "Try again"
+  },
   "RecordTabBar": {
     "label": "Record sections",
     "agenda": "Agenda",

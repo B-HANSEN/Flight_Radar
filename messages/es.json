@@ -166,6 +166,11 @@
     "body": "Escaneamos todo el espacio aéreo y no pudimos encontrarla. Puede que se haya movido, o que nunca haya despegado.",
     "cta": "Volver al inicio"
   },
+  "ErrorPage": {
+    "title": "Algo nos sacó de rumbo.",
+    "body": "Un error inesperado interrumpió esta página. Vuelve a intentarlo: suele resolverse al segundo intento.",
+    "cta": "Reintentar"
+  },
   "RecordTabBar": {
     "label": "Secciones del expediente",
     "agenda": "Agenda",
