@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import {
@@ -11,6 +11,7 @@ import {
   InstructorDocument,
 } from '../instructors/schemas/instructor.schema'
 import { formatISODate, startOfCurrentMonth } from '../common/date'
+import { withErrorLogging } from '../common/logging'
 
 export type CreateInstructorTimeOffInput = {
   instructorId: string
@@ -21,6 +22,8 @@ export type CreateInstructorTimeOffInput = {
 
 @Injectable()
 export class InstructorTimeOffService {
+  private readonly logger = new Logger(InstructorTimeOffService.name)
+
   constructor(
     @InjectModel(InstructorTimeOff.name)
     private readonly instructorTimeOffModel: Model<InstructorTimeOffDocument>,
@@ -52,13 +55,22 @@ export class InstructorTimeOffService {
         .exec()
       status = instructor?.isChief ? 'approved' : 'pending'
     }
-    return this.instructorTimeOffModel.create({ ...input, status })
+    return withErrorLogging(
+      this.logger,
+      `Create time off for instructor ${input.instructorId}`,
+      () => this.instructorTimeOffModel.create({ ...input, status }),
+    )
   }
 
   async setStatus(id: string, status: 'approved' | 'denied') {
-    const entry = await this.instructorTimeOffModel
-      .findByIdAndUpdate(id, { status }, { returnDocument: 'after' })
-      .exec()
+    const entry = await withErrorLogging(
+      this.logger,
+      `Set instructor time off ${id} to ${status}`,
+      () =>
+        this.instructorTimeOffModel
+          .findByIdAndUpdate(id, { status }, { returnDocument: 'after' })
+          .exec(),
+    )
 
     if (!entry) {
       throw new NotFoundException(`Instructor time off ${id} not found`)
@@ -68,7 +80,11 @@ export class InstructorTimeOffService {
   }
 
   async remove(id: string) {
-    const entry = await this.instructorTimeOffModel.findByIdAndDelete(id).exec()
+    const entry = await withErrorLogging(
+      this.logger,
+      `Delete instructor time off ${id}`,
+      () => this.instructorTimeOffModel.findByIdAndDelete(id).exec(),
+    )
 
     if (!entry) {
       throw new NotFoundException(`Instructor time off ${id} not found`)

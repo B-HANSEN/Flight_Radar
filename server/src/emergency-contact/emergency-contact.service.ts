@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import {
   EmergencyContact,
   EmergencyContactDocument,
 } from './schemas/emergency-contact.schema'
+import { withErrorLogging } from '../common/logging'
 
 export type EmergencyContactInput = {
   name: string
@@ -14,6 +15,8 @@ export type EmergencyContactInput = {
 
 @Injectable()
 export class EmergencyContactService {
+  private readonly logger = new Logger(EmergencyContactService.name)
+
   constructor(
     @InjectModel(EmergencyContact.name)
     private readonly emergencyContactModel: Model<EmergencyContactDocument>,
@@ -28,23 +31,33 @@ export class EmergencyContactService {
   }
 
   async update(personId: string, input: EmergencyContactInput) {
-    return this.emergencyContactModel
-      .findOneAndUpdate(
-        { personId },
-        { ...input, personId },
-        { returnDocument: 'after', upsert: true },
-      )
-      .exec()
+    return withErrorLogging(
+      this.logger,
+      `Update emergency contact for ${personId}`,
+      () =>
+        this.emergencyContactModel
+          .findOneAndUpdate(
+            { personId },
+            { ...input, personId },
+            { returnDocument: 'after', upsert: true },
+          )
+          .exec(),
+    )
   }
 
   async clear(personId: string) {
-    const emergencyContact = await this.emergencyContactModel
-      .findOneAndUpdate(
-        { personId },
-        { name: '', relation: '', phone: '' },
-        { returnDocument: 'after' },
-      )
-      .exec()
+    const emergencyContact = await withErrorLogging(
+      this.logger,
+      `Clear emergency contact for ${personId}`,
+      () =>
+        this.emergencyContactModel
+          .findOneAndUpdate(
+            { personId },
+            { name: '', relation: '', phone: '' },
+            { returnDocument: 'after' },
+          )
+          .exec(),
+    )
 
     if (!emergencyContact) {
       throw new NotFoundException(`Emergency contact for ${personId} not found`)

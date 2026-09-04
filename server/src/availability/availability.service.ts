@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import {
@@ -10,6 +10,7 @@ import {
   AvailabilityWeekday,
 } from './schemas/availability-entry.schema'
 import { startOfCurrentMonth } from '../common/date'
+import { withErrorLogging } from '../common/logging'
 
 export type AvailabilityEntryInput = {
   dateMode: AvailabilityDateMode
@@ -57,6 +58,8 @@ export function isEntryInOrAfterMonth(
 
 @Injectable()
 export class AvailabilityService {
+  private readonly logger = new Logger(AvailabilityService.name)
+
   constructor(
     @InjectModel(AvailabilityEntry.name)
     private readonly availabilityEntryModel: Model<AvailabilityEntryDocument>,
@@ -72,13 +75,22 @@ export class AvailabilityService {
     input: CreateAvailabilityEntryInput,
     studentId: string = DEFAULT_STUDENT_ID,
   ) {
-    return this.availabilityEntryModel.create({ ...input, studentId })
+    return withErrorLogging(
+      this.logger,
+      `Create availability entry for ${studentId}`,
+      () => this.availabilityEntryModel.create({ ...input, studentId }),
+    )
   }
 
   async update(id: string, input: UpdateAvailabilityEntryInput) {
-    const entry = await this.availabilityEntryModel
-      .findByIdAndUpdate(id, input, { returnDocument: 'after' })
-      .exec()
+    const entry = await withErrorLogging(
+      this.logger,
+      `Update availability entry ${id}`,
+      () =>
+        this.availabilityEntryModel
+          .findByIdAndUpdate(id, input, { returnDocument: 'after' })
+          .exec(),
+    )
 
     if (!entry) {
       throw new NotFoundException(`Availability entry ${id} not found`)
@@ -88,7 +100,11 @@ export class AvailabilityService {
   }
 
   async remove(id: string) {
-    const entry = await this.availabilityEntryModel.findByIdAndDelete(id).exec()
+    const entry = await withErrorLogging(
+      this.logger,
+      `Delete availability entry ${id}`,
+      () => this.availabilityEntryModel.findByIdAndDelete(id).exec(),
+    )
 
     if (!entry) {
       throw new NotFoundException(`Availability entry ${id} not found`)
