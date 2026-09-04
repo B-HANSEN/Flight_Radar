@@ -9,9 +9,10 @@ import {
   PenLine,
   XCircle,
 } from 'lucide-react'
-import { fetchApi } from '@/lib/api'
+import { apiErrorMessage, fetchApi } from '@/lib/api'
 import { focusRing } from '@/lib/styles'
 import FlightEvaluationModal from './FlightEvaluationModal'
+import Toast from './Toast'
 import type { FlightEvaluation } from './Signatures.types'
 
 type Props = {
@@ -25,6 +26,7 @@ export default function Signatures({ flights: initialFlights = [] }: Props) {
   const t = useTranslations('Signatures')
   const [flights, setFlights] = useState(() => [...initialFlights].reverse())
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const pending = useMemo(
     () => flights.filter((flight) => !flight.signed),
@@ -44,12 +46,20 @@ export default function Signatures({ flights: initialFlights = [] }: Props) {
   }
 
   async function handleSign(flight: FlightEvaluation) {
-    await signFlight(flight)
-    setSelectedId(null)
+    try {
+      await signFlight(flight)
+      setSelectedId(null)
+    } catch (error) {
+      setErrorMessage(apiErrorMessage(error, t('signError')))
+    }
   }
 
   async function handleSignAll() {
-    await Promise.all(pending.map((flight) => signFlight(flight)))
+    try {
+      await Promise.all(pending.map((flight) => signFlight(flight)))
+    } catch (error) {
+      setErrorMessage(apiErrorMessage(error, t('signError')))
+    }
   }
 
   return (
@@ -173,6 +183,13 @@ export default function Signatures({ flights: initialFlights = [] }: Props) {
         flight={selectedFlight}
         onClose={() => setSelectedId(null)}
         onSign={handleSign}
+      />
+
+      <Toast
+        message={errorMessage ?? ''}
+        open={errorMessage !== null}
+        onClose={() => setErrorMessage(null)}
+        variant='error'
       />
     </>
   )

@@ -8,7 +8,7 @@ import {
   startOfWeek,
   toISODate,
 } from '@/lib/weekGrid'
-import { fetchApi } from '@/lib/api'
+import { apiErrorMessage, fetchApi } from '@/lib/api'
 import InstructorSchedulePanel from './InstructorSchedulePanel'
 import ScheduleFlightModal from './ScheduleFlightModal'
 import Toast from './Toast'
@@ -127,7 +127,10 @@ export default function InstructorScheduleView({
         cache: 'no-store',
       })
     } catch (error) {
-      setToast({ message: t('bookingError'), variant: 'error' })
+      setToast({
+        message: apiErrorMessage(error, t('bookingError')),
+        variant: 'error',
+      })
       throw error
     }
 

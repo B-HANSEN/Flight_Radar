@@ -2,10 +2,13 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import Signatures from './Signatures'
 import type { FlightEvaluation } from './Signatures.types'
-import { fetchApi } from '@/lib/api'
+import { fetchApi, FlightRadarApiError } from '@/lib/api'
 import enMessages from '@/messages/en.json'
 
-vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
+vi.mock('@/lib/api', async (importActual) => ({
+  ...(await importActual<typeof import('@/lib/api')>()),
+  fetchApi: vi.fn(),
+}))
 
 const BASE = {
   type: 'Instruction',
@@ -140,6 +143,39 @@ describe('Signatures', () => {
       await screen.findByRole('button', { name: 'Sign all' }),
     ).toBeDisabled()
     expect(screen.queryByText('2 missing signatures')).not.toBeInTheDocument()
+  })
+
+  it('surfaces an error toast when a sign request fails', async () => {
+    vi.mocked(fetchApi).mockRejectedValue(new Error('network down'))
+    renderSignatures()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Open evaluation for flight 1002' }),
+    )
+    fireEvent.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: 'Sign' }),
+    )
+
+    expect(
+      await screen.findByText("Couldn't sign the flight. Please try again."),
+    ).toBeInTheDocument()
+  })
+
+  it('shows the backend message when the sign request is rejected with one', async () => {
+    vi.mocked(fetchApi).mockRejectedValue(
+      new FlightRadarApiError('Evaluation already signed', {
+        path: '/flight-evaluations/f2/sign',
+        statusCode: 409,
+        serverMessage: 'Evaluation already signed',
+      }),
+    )
+    renderSignatures()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sign all' }))
+
+    expect(
+      await screen.findByText('Evaluation already signed'),
+    ).toBeInTheDocument()
   })
 
   it('closes the modal without signing when the close button is clicked', () => {

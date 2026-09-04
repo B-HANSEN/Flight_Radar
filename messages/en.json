@@ -268,7 +268,8 @@
     "pass": "Pass",
     "signed": "Signed",
     "openLabel": "Open evaluation for flight {id}",
-    "noFlights": "No flights to show."
+    "noFlights": "No flights to show.",
+    "signError": "Couldn't sign the flight. Please try again."
   },
   "FlightEvaluationModal": {
     "title": "Evaluation #{id}",

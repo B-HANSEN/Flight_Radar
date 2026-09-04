@@ -5,7 +5,10 @@ import { DUMMY_AVAILABILITY_ENTRIES } from './Availability.data'
 import { fetchApi } from '@/lib/api'
 import enMessages from '@/messages/en.json'
 
-vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
+vi.mock('@/lib/api', async (importActual) => ({
+  ...(await importActual<typeof import('@/lib/api')>()),
+  fetchApi: vi.fn(),
+}))
 
 function renderAvailability(
   props: Partial<React.ComponentProps<typeof Availability>> = {},

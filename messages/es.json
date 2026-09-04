@@ -268,7 +268,8 @@
     "pass": "Apto",
     "signed": "Firmado",
     "openLabel": "Abrir evaluación del vuelo {id}",
-    "noFlights": "No hay vuelos que mostrar."
+    "noFlights": "No hay vuelos que mostrar.",
+    "signError": "No se pudo firmar el vuelo. Inténtalo de nuevo."
   },
   "FlightEvaluationModal": {
     "title": "Evaluación n.º {id}",

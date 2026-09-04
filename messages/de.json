@@ -268,7 +268,8 @@
     "pass": "Bestanden",
     "signed": "Unterschrieben",
     "openLabel": "Bewertung für Flug {id} öffnen",
-    "noFlights": "Keine Flüge vorhanden."
+    "noFlights": "Keine Flüge vorhanden.",
+    "signError": "Der Flug konnte nicht signiert werden. Bitte versuche es erneut."
   },
   "FlightEvaluationModal": {
     "title": "Bewertung Nr. {id}",

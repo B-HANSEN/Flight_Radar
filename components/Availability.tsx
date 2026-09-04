@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { PenLine, Plus, Trash2 } from 'lucide-react'
-import { fetchApi } from '@/lib/api'
+import { apiErrorMessage, fetchApi } from '@/lib/api'
 import { availabilityLabels } from '@/lib/availabilityLabels'
 import { focusRing } from '@/lib/styles'
 import AvailabilityFormModal from './AvailabilityFormModal'
@@ -141,7 +141,10 @@ export default function Availability({
       setIsAddModalOpen(false)
       setToast({ message: t('createdToast'), variant: 'success' })
     } catch (error) {
-      setToast({ message: t('errorToast'), variant: 'error' })
+      setToast({
+        message: apiErrorMessage(error, t('errorToast')),
+        variant: 'error',
+      })
       throw error
     }
   }
@@ -160,8 +163,11 @@ export default function Availability({
       setEntries((current) => current.filter((entry) => entry.id !== id))
       setToast({ message: t('deletedToast'), variant: 'success' })
       addButtonRef.current?.focus()
-    } catch {
-      setToast({ message: t('errorToast'), variant: 'error' })
+    } catch (error) {
+      setToast({
+        message: apiErrorMessage(error, t('errorToast')),
+        variant: 'error',
+      })
     }
   }
 

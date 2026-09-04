@@ -12,7 +12,10 @@ import {
 import { fetchApi } from '@/lib/api'
 import enMessages from '@/messages/en.json'
 
-vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
+vi.mock('@/lib/api', async (importActual) => ({
+  ...(await importActual<typeof import('@/lib/api')>()),
+  fetchApi: vi.fn(),
+}))
 
 function renderView(
   props: Partial<React.ComponentProps<typeof InstructorScheduleView>> = {},
