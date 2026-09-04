@@ -301,7 +301,8 @@
     "failNote": "Nicht zufriedenstellend, geht nicht zur nächsten Phase über"
   },
   "LogbookPage": {
-    "title": "Logbook"
+    "title": "Logbook",
+    "underDevelopment": "Das Ausbilder-Flugbuch befindet sich noch in Entwicklung."
   },
   "Logbook": {
     "title": "Logbook",

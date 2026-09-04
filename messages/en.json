@@ -301,7 +301,8 @@
     "failNote": "Unsatisfactory, does not advance to the next phase"
   },
   "LogbookPage": {
-    "title": "Logbook"
+    "title": "Logbook",
+    "underDevelopment": "The instructor logbook is still under development."
   },
   "Logbook": {
     "title": "Logbook",

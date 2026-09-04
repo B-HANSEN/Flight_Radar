@@ -39,4 +39,9 @@ describe('LogbookController', () => {
     await expect(controller.findAll()).resolves.toBe(entries)
     expect(logbookService.findAll).toHaveBeenCalled()
   })
+
+  it('forwards the studentId query to the service', async () => {
+    await controller.findAll('student-1')
+    expect(logbookService.findAll).toHaveBeenCalledWith('student-1')
+  })
 })

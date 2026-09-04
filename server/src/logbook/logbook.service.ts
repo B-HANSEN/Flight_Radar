@@ -13,7 +13,7 @@ export class LogbookService {
     private readonly logbookEntryModel: Model<LogbookEntryDocument>,
   ) {}
 
-  findAll() {
-    return this.logbookEntryModel.find().exec()
+  findAll(studentId?: string) {
+    return this.logbookEntryModel.find(studentId ? { studentId } : {}).exec()
   }
 }

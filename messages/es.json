@@ -301,7 +301,8 @@
     "failNote": "NO APTO, no pasa a la siguiente fase"
   },
   "LogbookPage": {
-    "title": "Logbook"
+    "title": "Logbook",
+    "underDevelopment": "El libro de vuelo del instructor todavía está en desarrollo."
   },
   "Logbook": {
     "title": "Logbook",
