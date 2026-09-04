@@ -222,7 +222,8 @@
     "regulatoryNote": "Emitido conforme a los requisitos de licencia de EASA y nacionales aplicables. Debe llevarse junto con una licencia de piloto válida y una identificación con fotografía."
   },
   "CoursesPage": {
-    "title": "Cursos"
+    "title": "Cursos",
+    "underDevelopment": "La vista de curso del instructor todavía está en desarrollo."
   },
   "Courses": {
     "title": "Progreso del curso",

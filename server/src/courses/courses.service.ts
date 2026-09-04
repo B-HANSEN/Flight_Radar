@@ -13,7 +13,9 @@ export class CoursesService {
     private readonly courseProgressModel: Model<CourseProgressDocument>,
   ) {}
 
-  findOne() {
-    return this.courseProgressModel.findOne().exec()
+  findOne(studentId?: string) {
+    return this.courseProgressModel
+      .findOne(studentId ? { studentId } : {})
+      .exec()
   }
 }

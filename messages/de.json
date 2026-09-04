@@ -222,7 +222,8 @@
     "regulatoryNote": "Ausgestellt gemäß den geltenden EASA- und nationalen Lizenzierungsanforderungen. Zusammen mit einer gültigen Pilotenlizenz und einem Lichtbildausweis mitzuführen."
   },
   "CoursesPage": {
-    "title": "Kurse"
+    "title": "Kurse",
+    "underDevelopment": "Die Ausbilder-Kursansicht befindet sich noch in Entwicklung."
   },
   "Courses": {
     "title": "Kursfortschritt",

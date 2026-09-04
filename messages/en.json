@@ -222,7 +222,8 @@
     "regulatoryNote": "Issued under the applicable EASA and national licensing requirements. Carry together with a valid pilot licence and photographic identification."
   },
   "CoursesPage": {
-    "title": "Courses"
+    "title": "Courses",
+    "underDevelopment": "The instructor course view is still under development."
   },
   "Courses": {
     "title": "Course progress",

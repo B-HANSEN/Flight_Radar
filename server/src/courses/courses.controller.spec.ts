@@ -31,4 +31,9 @@ describe('CoursesController', () => {
     await expect(controller.findOne()).resolves.toBe(progress)
     expect(coursesService.findOne).toHaveBeenCalled()
   })
+
+  it('forwards the studentId query to the service', async () => {
+    await controller.findOne('student-1')
+    expect(coursesService.findOne).toHaveBeenCalledWith('student-1')
+  })
 })
