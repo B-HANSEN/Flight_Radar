@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import { Model, isValidObjectId } from 'mongoose'
 import { Certificate, CertificateDocument } from './schemas/certificate.schema'
 
 // issued is a display string in DD/MM/YYYY (see seed.ts), not sortable as
@@ -22,5 +22,19 @@ export class CertificatesService {
     return certificates.sort(
       (a, b) => parseIssuedDate(b.issued) - parseIssuedDate(a.issued),
     )
+  }
+
+  async findById(id: string): Promise<CertificateDocument> {
+    // A malformed id would make findById throw a CastError (→ 500); treat
+    // anything that isn't a valid ObjectId as simply not found.
+    const certificate = isValidObjectId(id)
+      ? await this.certificateModel.findById(id).exec()
+      : null
+
+    if (!certificate) {
+      throw new NotFoundException(`Certificate ${id} not found`)
+    }
+
+    return certificate
   }
 }

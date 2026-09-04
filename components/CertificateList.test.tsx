@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import CertificateList from './CertificateList'
 import type { Certificate } from './CertificateList.types'
@@ -98,24 +98,16 @@ describe('CertificateList', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('opens the document modal for the clicked row and closes it again', () => {
+  it('links each row to its generated document download', () => {
     renderList({ certificates })
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: 'View document for Medical certificate class 2',
-      }),
+    const link = screen.getByRole('link', {
+      name: 'Download document for Medical certificate class 2',
+    })
+    expect(link).toHaveAttribute(
+      'href',
+      expect.stringContaining('/certificates/cert-2/document'),
     )
-
-    const dialog = screen.getByRole('dialog')
-    expect(
-      within(dialog).getByRole('heading', {
-        name: 'Medical certificate class 2',
-      }),
-    ).toBeInTheDocument()
-
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }))
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(link).toHaveAttribute('download', 'Medical certificate class 2.pdf')
   })
 })

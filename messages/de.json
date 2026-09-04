@@ -209,17 +209,7 @@
     "issued": "Ausgestellt",
     "renewed": "Erneuert",
     "expiration": "Ablauf",
-    "viewDocumentLabel": "Dokument anzeigen für {name}"
-  },
-  "CertificateDocumentModal": {
-    "title": "Zertifikatsdokument",
-    "close": "Schließen",
-    "holder": "Inhaber",
-    "documentNumber": "Dokumentennr.",
-    "issued": "Ausgestellt",
-    "renewed": "Erneuert",
-    "expiration": "Ablauf",
-    "regulatoryNote": "Ausgestellt gemäß den geltenden EASA- und nationalen Lizenzierungsanforderungen. Zusammen mit einer gültigen Pilotenlizenz und einem Lichtbildausweis mitzuführen."
+    "downloadDocumentLabel": "Dokument herunterladen für {name}"
   },
   "CoursesPage": {
     "title": "Kurse",

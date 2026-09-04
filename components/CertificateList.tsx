@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { Archive, Check, FileText } from 'lucide-react'
+import { Archive, Check, Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { apiUrl } from '@/lib/api'
 import { focusRing } from '@/lib/styles'
-import CertificateDocumentModal from './CertificateDocumentModal'
 import type { Certificate } from './CertificateList.types'
 
 type Props = {
@@ -24,13 +23,7 @@ function LabelValue({ label, value }: { label: string; value: string }) {
   )
 }
 
-function CertificateRow({
-  certificate,
-  onViewDocument,
-}: {
-  certificate: Certificate
-  onViewDocument: (certificate: Certificate) => void
-}) {
+function CertificateRow({ certificate }: { certificate: Certificate }) {
   const t = useTranslations('CertificateList')
   const archived = certificate.status === 'archived'
   const Icon = archived ? Archive : Check
@@ -63,14 +56,14 @@ function CertificateRow({
       <LabelValue label={t('expiration')} value={certificate.expiration} />
 
       <div className='flex items-center justify-end gap-2'>
-        <button
-          type='button'
-          onClick={() => onViewDocument(certificate)}
-          aria-label={t('viewDocumentLabel', { name: certificate.name })}
+        <a
+          href={apiUrl(`/certificates/${certificate.id}/document`)}
+          download={`${certificate.name}.pdf`}
+          aria-label={t('downloadDocumentLabel', { name: certificate.name })}
           className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 ${focusRing}`}
         >
-          <FileText size={16} aria-hidden='true' />
-        </button>
+          <Download size={16} aria-hidden='true' />
+        </a>
         {certificate.comment && (
           <span className='font-secondary text-xs text-black-200'>
             {certificate.comment}
@@ -86,13 +79,11 @@ function CertificateSection({
   heading,
   emptyLabel,
   certificates,
-  onViewDocument,
 }: {
   headingId: string
   heading: string
   emptyLabel: string
   certificates: Certificate[]
-  onViewDocument: (certificate: Certificate) => void
 }) {
   return (
     <section aria-labelledby={headingId}>
@@ -111,11 +102,7 @@ function CertificateSection({
         <div className='overflow-x-auto'>
           <div className='flex min-w-180 flex-col gap-2.5'>
             {certificates.map((certificate) => (
-              <CertificateRow
-                key={certificate.id}
-                certificate={certificate}
-                onViewDocument={onViewDocument}
-              />
+              <CertificateRow key={certificate.id} certificate={certificate} />
             ))}
           </div>
         </div>
@@ -130,8 +117,6 @@ const LICENCE_OR_RATING_CATEGORIES = new Set(['Licences', 'Ratings'])
 
 export default function CertificateList({ certificates = [] }: Props) {
   const t = useTranslations('CertificateList')
-  const [selectedCertificate, setSelectedCertificate] =
-    useState<Certificate | null>(null)
 
   const licencesAndRatings = certificates.filter((cert) =>
     LICENCE_OR_RATING_CATEGORIES.has(cert.category),
@@ -150,25 +135,18 @@ export default function CertificateList({ certificates = [] }: Props) {
         heading={t('licencesAndRatings')}
         emptyLabel={t('noLicencesAndRatings')}
         certificates={licencesAndRatings}
-        onViewDocument={setSelectedCertificate}
       />
       <CertificateSection
         headingId='certificate-list-medical-heading'
         heading={t('medical')}
         emptyLabel={t('noMedical')}
         certificates={medical}
-        onViewDocument={setSelectedCertificate}
       />
       <CertificateSection
         headingId='certificate-list-other-heading'
         heading={t('other')}
         emptyLabel={t('noOther')}
         certificates={other}
-        onViewDocument={setSelectedCertificate}
-      />
-      <CertificateDocumentModal
-        certificate={selectedCertificate}
-        onClose={() => setSelectedCertificate(null)}
       />
     </div>
   )

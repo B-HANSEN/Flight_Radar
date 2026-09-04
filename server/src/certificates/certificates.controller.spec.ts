@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import type { Response } from 'express'
 import { CertificatesController } from './certificates.controller'
 import { CertificatesService } from './certificates.service'
 import { Certificate } from './schemas/certificate.schema'
@@ -17,6 +18,7 @@ describe('CertificatesController', () => {
   ]
   const certificatesService = {
     findByPerson: jest.fn().mockResolvedValue(certificates),
+    findById: jest.fn().mockResolvedValue(certificates[0]),
   }
 
   beforeEach(async () => {
@@ -35,5 +37,24 @@ describe('CertificatesController', () => {
       certificates,
     )
     expect(certificatesService.findByPerson).toHaveBeenCalledWith('student-1')
+  })
+
+  it('streams a generated PDF for the certificate document', async () => {
+    const set = jest.fn().mockReturnThis()
+    const send = jest.fn().mockReturnThis()
+    const res = { set, send } as unknown as Response
+
+    await controller.document('cert-1', res)
+
+    expect(certificatesService.findById).toHaveBeenCalledWith('cert-1')
+    expect(set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        'Content-Type': 'application/pdf',
+        'Content-Disposition':
+          'attachment; filename="Medical certificate class 2.pdf"',
+      }),
+    )
+    const [pdf] = send.mock.calls[0] as [Buffer]
+    expect(pdf.subarray(0, 4).toString()).toBe('%PDF')
   })
 })

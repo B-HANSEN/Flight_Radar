@@ -209,17 +209,7 @@
     "issued": "Issued",
     "renewed": "Renewed",
     "expiration": "Expiration",
-    "viewDocumentLabel": "View document for {name}"
-  },
-  "CertificateDocumentModal": {
-    "title": "Certificate document",
-    "close": "Close",
-    "holder": "Holder",
-    "documentNumber": "Document no.",
-    "issued": "Issued",
-    "renewed": "Renewed",
-    "expiration": "Expiration",
-    "regulatoryNote": "Issued under the applicable EASA and national licensing requirements. Carry together with a valid pilot licence and photographic identification."
+    "downloadDocumentLabel": "Download document for {name}"
   },
   "CoursesPage": {
     "title": "Courses",

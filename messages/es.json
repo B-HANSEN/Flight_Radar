@@ -209,17 +209,7 @@
     "issued": "Emitido",
     "renewed": "Renovado",
     "expiration": "Vencimiento",
-    "viewDocumentLabel": "Ver documento de {name}"
-  },
-  "CertificateDocumentModal": {
-    "title": "Documento del certificado",
-    "close": "Cerrar",
-    "holder": "Titular",
-    "documentNumber": "N.º de documento",
-    "issued": "Emitido",
-    "renewed": "Renovado",
-    "expiration": "Vencimiento",
-    "regulatoryNote": "Emitido conforme a los requisitos de licencia de EASA y nacionales aplicables. Debe llevarse junto con una licencia de piloto válida y una identificación con fotografía."
+    "downloadDocumentLabel": "Descargar documento de {name}"
   },
   "CoursesPage": {
     "title": "Cursos",
