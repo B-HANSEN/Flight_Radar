@@ -1,5 +1,5 @@
-import PDFDocument from 'pdfkit'
 import ExcelJS from 'exceljs'
+import { pdfToBuffer } from '../common/pdf'
 
 // Generates the actual dummy PDF/XLSX bytes stored in DocumentFile.data —
 // content is invented (not real POH data) and clearly marked as such, since
@@ -124,20 +124,6 @@ const EMERGENCY_CHECKLIST: ChecklistPhase[] = [
     ],
   },
 ]
-
-function pdfToBuffer(
-  build: (doc: PDFKit.PDFDocument) => void,
-): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({ margin: 50, size: 'A5' })
-    const chunks: Buffer[] = []
-    doc.on('data', (chunk: Buffer) => chunks.push(chunk))
-    doc.on('end', () => resolve(Buffer.concat(chunks)))
-    doc.on('error', reject)
-    build(doc)
-    doc.end()
-  })
-}
 
 function drawHeader(
   doc: PDFKit.PDFDocument,
