@@ -18,6 +18,7 @@ Hit the per-file 80% lines/branches/functions/statements threshold defined in `v
 - Skip: snapshot tests, "renders without crashing" smoke tests with no real assertion, and tests that just restate the implementation.
 - If the component uses `useTranslations` (next-intl), wrap it in `NextIntlClientProvider` with the real `messages/en.json` (or the relevant namespace) rather than mocking translations away — this catches missing or renamed message keys for free.
 - If the component imports from `@/i18n/navigation` (Link, usePathname, etc.), mock that module minimally rather than trying to provide a full Next.js router context — follow the pattern in `components/Nav.test.tsx`.
+- If the component calls `fetchApi` and has a `catch` that shows an error `Toast`, that branch needs its own test: `vi.mocked(fetchApi).mockRejectedValue(...)` and assert the error message surfaces. Mock `@/lib/api` with `importActual` so the real `apiErrorMessage` still runs (`{ ...(await importActual<typeof import('@/lib/api')>()), fetchApi: vi.fn() }`); rejecting with a `new FlightRadarApiError(msg, { statusCode: 409, serverMessage: msg, path })` covers the "show the backend message" path, a plain `Error` covers the generic-fallback path. See `components/Signatures.test.tsx`.
 - No comments in test files unless something genuinely non-obvious justifies one — same rule as the rest of the codebase.
 
 ## After writing

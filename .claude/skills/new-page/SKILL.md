@@ -56,3 +56,7 @@ export default async function <Name>Page({
 7. Ask whether the page should be linked from the main nav before assuming it should be. If yes: add a `Link` entry in `components/Nav.tsx` using `t('<key>')` from the `Nav` namespace, and add that same key to the `Nav` namespace in all three message files.
 8. For any in-page links, import `Link` (and `usePathname`/`useRouter`/`redirect`/`getPathname` if needed) from `i18n/navigation.ts` — never from `next/link` or `next/navigation` directly.
 9. After creating the page, verify it renders at `/en/<route>` via `npm run dev`, and that the locale switcher in the nav correctly reaches `/de/<route>` and `/es/<route>`. Curl the page and check for exactly one `| Flight Radar` in the `<title>` tag, an `og:title` meta tag, and a `<link rel="canonical">` tag.
+
+## Read failures
+
+If the page (or a component it renders) does `await fetchApi(...)`, let a failure throw — don't wrap the page body in a defensive `try/catch` that swallows it. `app/[locale]/error.tsx` is a global boundary that catches any uncaught throw in the locale subtree and renders `components/ErrorCard` (translated via the `ErrorPage` namespace) with a retry button. Add a segment-scoped `app/[locale]/<route>/error.tsx` only if this route genuinely needs its own recovery UI. Mutation flows (a button click, not a page load) are the exception — those still need an inline `try/catch` + `Toast` in the client component, since there's no navigation for the boundary to catch; see the `design-to-component` command.
