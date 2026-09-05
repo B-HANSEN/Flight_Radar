@@ -40,3 +40,5 @@ Use Conventional Commits: `<type>(<scope>): <description>`.
 - Each component under `/components` needs a `*.test.tsx` covering it at ≥80% lines/branches/functions/statements (`npm run test:coverage`, configured per-file in `vitest.config.ts`). `*.stories.tsx` files are excluded from coverage.
 - A `/playwright` e2e folder is planned but not yet set up.
 - Raster images under `/public` must be `.webp` (`config/check-image-formats.mjs`, run as part of `npm run lint`, fails the build if a `.png`/`.jpg`/`.jpeg`/`.gif`/`.bmp`/`.tiff` is found) — `.svg`/`.ico` are exempt. Convert with `cwebp -q 90 in.png -o out.webp`.
+- Use `async`/`await`, not raw `.then()` chains.
+- Keep functions small and single-purpose; extract a helper before a function passes ~40 lines.
