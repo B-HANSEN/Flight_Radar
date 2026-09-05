@@ -520,137 +520,425 @@ function buildCertificates(
   }))
 }
 
-const mailboxEmails: Omit<MailboxEmail, '_id' | 'studentId'>[] = [
+// Mailbox fixtures. Desk/system mail (Operations, Exams, Training, Alumni,
+// automated notifications) is broadcast to whole audiences; the
+// person-to-person threads below carry a `from` name and resolve to a real
+// senderId, so they also show up in that sender's "Sent" view. Every entry
+// resolves `to` (and optional `from`) against personIdByName at seed time
+// and is dropped if a name doesn't resolve.
+type MailboxEmailSeed = Omit<
+  MailboxEmail,
+  '_id' | 'recipientId' | 'senderId'
+> & {
+  to: string
+  from?: string
+}
+
+const OPS_SIGN_OFF = {
+  name: 'Operations Desk',
+  role: 'Airfield Operations',
+  org: academy,
+}
+const EXAMS_SIGN_OFF = { name: 'Exams Office', role: 'Academics', org: academy }
+const TRAINING_SIGN_OFF = {
+  name: 'Training Office',
+  role: 'Head of Training',
+  org: academy,
+}
+const COMMUNITY_SIGN_OFF = {
+  name: 'Alumni Network',
+  role: 'Community Team',
+  org: academy,
+}
+const SYSTEM_SIGN_OFF = {
+  name: 'Flight Radar',
+  role: 'Automated notification',
+  org: academy,
+}
+
+const ALL_STUDENTS = [
+  'Jamie Torres',
+  'Alex Moreau',
+  'Priya Shah',
+  'Noah Becker',
+]
+const EVERYONE = [...ALL_STUDENTS, 'James Whitfield', 'Kate Ashford']
+
+// Fans one desk/system template out to a list of recipients.
+function broadcast(
+  recipients: string[],
+  email: Omit<MailboxEmailSeed, 'to'>,
+): MailboxEmailSeed[] {
+  return recipients.map((to) => ({ ...email, to }))
+}
+
+const MAILBOX_EMAILS: MailboxEmailSeed[] = [
+  ...broadcast(EVERYONE, {
+    sender: 'Operations Desk',
+    subject: 'Runway 07/25 closed for resurfacing, 12–19 Aug',
+    date: '24/07/2026',
+    dateFull: '24/07/2026 09:05',
+    sentAt: '2026-07-24T09:05:00.000Z',
+    preview: 'Scheduled maintenance work will close the main runway...',
+    body: [
+      'Scheduled resurfacing work will close runway 07/25 from 12 to 19 August. All flight operations will use runway 03/21 during this period.',
+      'Circuit training will be single-runway only — expect longer holds at the hold-short line and brief each other on the revised taxi routing before start-up.',
+    ],
+    signOff: OPS_SIGN_OFF,
+    category: 'operations',
+    action: {
+      type: 'view',
+      label: 'View the full NOTAM',
+      href: 'https://notams.example.com/lelt/07-25-resurfacing',
+    },
+    read: true,
+  }),
+  ...broadcast(EVERYONE, {
+    sender: 'Operations Desk',
+    subject: 'Apron works — expect extended taxi times this week',
+    date: '01/09/2026',
+    dateFull: '01/09/2026 07:40',
+    sentAt: '2026-09-01T07:40:00.000Z',
+    preview: 'Contractors are resurfacing the south apron stands 4–7...',
+    body: [
+      'Contractors are resurfacing the south apron (stands 4–7) through Friday. Aircraft based there have been moved to the grass tie-downs east of the fuel farm.',
+      'Add ten minutes to your pre-flight planning for the longer taxi and reduced manoeuvring room around the maintenance hangar.',
+    ],
+    signOff: OPS_SIGN_OFF,
+    category: 'operations',
+    automatic: true,
+    read: false,
+  }),
+  ...broadcast(ALL_STUDENTS, {
+    sender: 'Exams Office',
+    subject: 'Official Exams Calendar 2026',
+    date: '27/11/2025',
+    dateFull: '27/11/2025 11:45',
+    sentAt: '2025-11-27T11:45:00.000Z',
+    preview: 'Please find attached the official 2026 exams calendar...',
+    body: [
+      'Please find attached the official 2026 exams calendar covering theoretical knowledge and practical assessment windows.',
+      'Booking opens six weeks before each sitting. Slots are limited and allocated in the order requests are received.',
+    ],
+    signOff: EXAMS_SIGN_OFF,
+    category: 'exams',
+    action: { type: 'download', label: 'Download the calendar (PDF)' },
+    read: true,
+  }),
   {
+    to: 'Alex Moreau',
+    sender: 'Exams Office',
+    subject: 'Confirmed: IR theory sitting, 18 Sep 09:00',
+    date: '28/08/2026',
+    dateFull: '28/08/2026 15:30',
+    sentAt: '2026-08-28T15:30:00.000Z',
+    preview: 'Your seat for the IR theoretical knowledge exam is confirmed...',
+    body: [
+      'Your seat for the Instrument Rating theoretical knowledge exam is confirmed for 18 September at 09:00 in Exam Room 2.',
+      'Bring photo ID and arrive fifteen minutes early. Personal electronic devices are not permitted in the room.',
+    ],
+    signOff: EXAMS_SIGN_OFF,
+    category: 'exams',
+    action: {
+      type: 'view',
+      label: 'View exam details',
+      href: 'https://exams.example.com/bookings/ir-theory-2026-09-18',
+    },
+    read: false,
+  },
+  {
+    to: 'Priya Shah',
+    sender: 'Exams Office',
+    subject: 'CPL progress test result',
+    date: '12/08/2026',
+    dateFull: '12/08/2026 16:10',
+    sentAt: '2026-08-12T16:10:00.000Z',
+    preview: 'Your CPL navigation progress test has been marked...',
+    body: [
+      'Your CPL navigation progress test has been marked. Overall score: 82%. A pass, with weaker areas in mass-and-balance and fuel planning flagged for review with your instructor.',
+    ],
+    signOff: EXAMS_SIGN_OFF,
+    category: 'exams',
+    action: {
+      type: 'download',
+      label: 'Download your result sheet (PDF)',
+    },
+    read: true,
+  },
+  ...broadcast(ALL_STUDENTS, {
     sender: 'Training Office',
     subject: 'We value your feedback',
     date: '30/05/2026',
     dateFull: '30/05/2026 16:20',
+    sentAt: '2026-05-30T16:20:00.000Z',
     preview: 'A short survey on your recent training experience...',
     body: [
       'We are reaching out to invite you to complete our end-of-term training quality survey.',
       'Your answers are collected anonymously and help us understand where the school is doing well and where we need to improve, especially as our student numbers have grown this year.',
       'The survey takes about five minutes to complete.',
     ],
-    linkText: 'flightschoolsurvey.example.com/2026-q2',
-    signOff: {
-      name: 'Training Office',
-      role: 'Head of Training',
-      org: academy,
+    signOff: TRAINING_SIGN_OFF,
+    category: 'training',
+    action: {
+      type: 'view',
+      label: 'Open the survey',
+      href: 'https://flightschoolsurvey.example.com/2026-q2',
+    },
+    automatic: true,
+    read: true,
+  }),
+  ...broadcast(ALL_STUDENTS, {
+    sender: 'Training Office',
+    subject: 'We value your feedback',
+    date: '28/08/2026',
+    dateFull: '28/08/2026 10:15',
+    sentAt: '2026-08-28T10:15:00.000Z',
+    preview: 'A short survey on your recent training experience...',
+    body: [
+      'We are reaching out to invite you to complete our training quality survey for this term. The survey takes about five minutes to complete.',
+    ],
+    signOff: TRAINING_SIGN_OFF,
+    category: 'training',
+    action: {
+      type: 'view',
+      label: 'Open the survey',
+      href: 'https://flightschoolsurvey.example.com/2026-q3',
     },
     automatic: true,
     read: false,
-  },
-  {
-    sender: 'Operations Desk',
-    subject: 'Runway 07/25 closed for resurfacing, 12–19 Aug',
-    date: '24/03/2026',
-    dateFull: '24/03/2026 09:05',
-    preview: 'Scheduled maintenance work will close the main runway...',
-    body: [
-      'Scheduled resurfacing work will close runway 07/25 from 12 to 19 August. All flight operations will use runway 03/21 during this period.',
-    ],
-    linkText: 'View the full NOTAM',
-    signOff: {
-      name: 'Operations Desk',
-      role: 'Airfield Operations',
-      org: academy,
-    },
-    read: false,
-  },
-  {
-    sender: 'Training Office',
-    subject: 'We value your feedback',
-    date: '11/02/2026',
-    dateFull: '11/02/2026 14:10',
-    preview: 'A short survey on your recent training experience...',
-    body: [
-      'We are reaching out to invite you to complete our training quality survey for this term.',
-    ],
-    linkText: 'flightschoolsurvey.example.com/2026-q1',
-    signOff: {
-      name: 'Training Office',
-      role: 'Head of Training',
-      org: academy,
-    },
-    automatic: true,
-  },
-  {
-    sender: 'Exams Office',
-    subject: 'Official Exams Calendar 2026',
-    date: '27/11/2025',
-    dateFull: '27/11/2025 11:45',
-    preview: 'Please find attached the official 2026 exams calendar...',
-    body: [
-      'Please find attached the official 2026 exams calendar covering theoretical and practical assessment dates.',
-    ],
-    linkText: 'Download the calendar',
-    signOff: { name: 'Exams Office', role: 'Academics', org: academy },
-  },
-  {
-    sender: 'Training Office',
-    subject: 'We value your feedback',
-    date: '18/10/2025',
-    dateFull: '18/10/2025 10:30',
-    preview: 'A short survey on your recent training experience...',
-    body: [
-      'We are reaching out to invite you to complete our training quality survey for this term.',
-    ],
-    linkText: 'flightschoolsurvey.example.com/2025-q4',
-    signOff: {
-      name: 'Training Office',
-      role: 'Head of Training',
-      org: academy,
-    },
-    automatic: true,
-  },
-  {
-    sender: 'Training Office',
-    subject: 'We value your feedback',
-    date: '19/07/2025',
-    dateFull: '19/07/2025 13:15',
-    preview: 'A short survey on your recent training experience...',
-    body: [
-      'We are reaching out to invite you to complete our training quality survey for this term.',
-    ],
-    linkText: 'flightschoolsurvey.example.com/2025-q3',
-    signOff: {
-      name: 'Training Office',
-      role: 'Head of Training',
-      org: academy,
-    },
-    automatic: true,
-  },
-  {
+  }),
+  ...broadcast(ALL_STUDENTS, {
     sender: 'Alumni Network',
     subject: 'Together We Fly — Alumni Launch',
-    date: '02/05/2025',
-    dateFull: '02/05/2025 09:00',
+    date: '02/05/2026',
+    dateFull: '02/05/2026 09:00',
+    sentAt: '2026-05-02T09:00:00.000Z',
     preview: 'Introducing our new alumni network for graduates...',
     body: [
-      'We are excited to launch our new alumni network, connecting graduates across the industry.',
+      'We are launching an alumni network connecting graduates across the industry — airline first officers, bush pilots, flight instructors and dispatchers.',
+      'Final-year students are welcome to join early and start building contacts before your skills test.',
     ],
-    linkText: 'Join the alumni network',
-    signOff: { name: 'Alumni Network', role: 'Community Team', org: academy },
-  },
+    signOff: COMMUNITY_SIGN_OFF,
+    category: 'community',
+    action: {
+      type: 'join',
+      label: 'Join the alumni network',
+      href: 'https://alumni.example.com/join',
+    },
+    read: true,
+  }),
   {
-    sender: 'Training Office',
-    subject: 'We value your feedback',
-    date: '14/04/2025',
-    dateFull: '14/04/2025 15:50',
-    preview: 'A short survey on your recent training experience...',
+    to: 'Jamie Torres',
+    sender: 'Flight Radar',
+    subject: 'You have 2 unsigned flight evaluations',
+    date: '02/09/2026',
+    dateFull: '02/09/2026 18:00',
+    sentAt: '2026-09-02T18:00:00.000Z',
+    preview: 'Two evaluations are waiting for your signature...',
     body: [
-      'We are reaching out to invite you to complete our training quality survey for this term.',
+      'Two flight evaluations are waiting for your signature in the Signatures tab. Evaluations left unsigned for more than fourteen days are escalated to the Head of Training.',
     ],
-    linkText: 'flightschoolsurvey.example.com/2025-q2',
-    signOff: {
-      name: 'Training Office',
-      role: 'Head of Training',
-      org: academy,
+    signOff: SYSTEM_SIGN_OFF,
+    category: 'system',
+    action: {
+      type: 'view',
+      label: 'Open Signatures',
+      href: 'https://app.example.com/me/signatures',
     },
     automatic: true,
+    read: false,
+  },
+  {
+    to: 'Noah Becker',
+    sender: 'Flight Radar',
+    subject: 'Booking confirmed — VBD10 with K. Ashford, 6 Sep 14:00',
+    date: '31/08/2026',
+    dateFull: '31/08/2026 12:05',
+    sentAt: '2026-08-31T12:05:00.000Z',
+    preview: 'Your lesson booking has been confirmed...',
+    body: [
+      'Your lesson is confirmed: VBD10 (circuits) with Kate Ashford on 6 September at 14:00, aircraft EC-ERV.',
+      'Cancel or reschedule at least 24 hours ahead to avoid a late-cancellation fee.',
+    ],
+    signOff: SYSTEM_SIGN_OFF,
+    category: 'system',
+    automatic: true,
+    read: true,
+  },
+  {
+    to: 'Jamie Torres',
+    from: 'Kate Ashford',
+    sender: 'Kate Ashford',
+    subject: 'Prep for your solo cross-country',
+    date: '01/09/2026',
+    dateFull: '01/09/2026 19:22',
+    sentAt: '2026-09-01T19:22:00.000Z',
+    preview: 'Nice work in the circuit today — a few things before the XC...',
+    body: [
+      'Nice work in the circuit today. Before we sign you off for the solo cross-country I want to see one more dual navigation exercise, focusing on diversions.',
+      'Please prepare a full plan for LELT–LEGE–LELT: fuel, weight and balance, weather, NOTAMs and a diversion to Sabadell. Bring it to Thursday’s lesson and we’ll fly it if the plan checks out.',
+      'Read up on lost-procedure and the 1-in-60 rule as well.',
+    ],
+    signOff: {
+      name: 'Kate Ashford',
+      role: 'Senior Flight Instructor',
+      org: academy,
+    },
+    category: 'personal',
+    read: false,
+  },
+  {
+    to: 'Jamie Torres',
+    from: 'Kate Ashford',
+    sender: 'Kate Ashford',
+    subject: 'Debrief notes — 24 Aug circuits',
+    date: '24/08/2026',
+    dateFull: '24/08/2026 17:40',
+    sentAt: '2026-08-24T17:40:00.000Z',
+    preview: 'Writing up what we covered so you have it for your logbook...',
+    body: [
+      'Writing up today’s session so you have it for your logbook. Six circuits, two flapless, one glide approach. Landings much more consistent — you’re flaring at a sensible height now.',
+      'Work on: keeping the centreline on the roll-out, and don’t rush the after-landing checks. Next time we’ll add a simulated engine failure after take-off.',
+    ],
+    signOff: {
+      name: 'Kate Ashford',
+      role: 'Senior Flight Instructor',
+      org: academy,
+    },
+    category: 'personal',
+    read: true,
+  },
+  {
+    to: 'Alex Moreau',
+    from: 'James Whitfield',
+    sender: 'James Whitfield',
+    subject: 'IR skills test — you’re ready',
+    date: '30/08/2026',
+    dateFull: '30/08/2026 11:00',
+    sentAt: '2026-08-30T11:00:00.000Z',
+    preview: 'Your partial-panel work has come up to standard...',
+    body: [
+      'Your partial-panel and holds have come up to test standard over the last three sessions. I’m happy to recommend you for the IR skills test.',
+      'I’ve asked the Exams Office to offer you a date in the second half of September. Keep current on the sim in the meantime — one session a week is plenty.',
+    ],
+    signOff: {
+      name: 'James Whitfield',
+      role: 'Chief Flight Instructor',
+      org: academy,
+    },
+    category: 'personal',
+    read: false,
+  },
+  {
+    to: 'Kate Ashford',
+    from: 'James Whitfield',
+    sender: 'James Whitfield',
+    subject: 'Cover my Thursday afternoon slots?',
+    date: '02/09/2026',
+    dateFull: '02/09/2026 08:15',
+    sentAt: '2026-09-02T08:15:00.000Z',
+    preview: 'I’m at the CAA standardisation day Thursday...',
+    body: [
+      'I’m at the CAA standardisation day this Thursday and have two lessons booked in the afternoon — Priya at 13:00 (CPL nav) and a trial flight at 15:30.',
+      'Any chance you can take them? The trial flight brief is in the shared folder. I’ll cover one of your Saturdays in return.',
+    ],
+    signOff: {
+      name: 'James Whitfield',
+      role: 'Chief Flight Instructor',
+      org: academy,
+    },
+    category: 'personal',
+    read: true,
+  },
+  {
+    to: 'James Whitfield',
+    from: 'Kate Ashford',
+    sender: 'Kate Ashford',
+    subject: 'Re: Cover my Thursday afternoon slots?',
+    date: '02/09/2026',
+    dateFull: '02/09/2026 09:02',
+    sentAt: '2026-09-02T09:02:00.000Z',
+    preview: 'Yes to both — I’ll take Priya and the trial flight...',
+    body: [
+      'Yes to both. I’ll take Priya at 13:00 and the trial flight at 15:30. I’ve moved my own admin block to Friday morning.',
+      'I’ll hold you to that Saturday. Have a useful day at the CAA.',
+    ],
+    signOff: {
+      name: 'Kate Ashford',
+      role: 'Senior Flight Instructor',
+      org: academy,
+    },
+    category: 'personal',
+    read: false,
+  },
+  {
+    to: 'Kate Ashford',
+    from: 'James Whitfield',
+    sender: 'James Whitfield',
+    subject: 'Stage-check standardisation — 10 Sep, 16:00',
+    date: '27/08/2026',
+    dateFull: '27/08/2026 13:20',
+    sentAt: '2026-08-27T13:20:00.000Z',
+    preview: 'Short meeting to align how we’re grading stage checks...',
+    body: [
+      'Short meeting on the 10th at 16:00 to align how we’re grading stage checks — I’ve seen the same manoeuvre marked a grade apart between us twice this month.',
+      'Bring two or three of your recent evaluation forms and we’ll calibrate against the syllabus tolerances.',
+    ],
+    signOff: {
+      name: 'James Whitfield',
+      role: 'Chief Flight Instructor',
+      org: academy,
+    },
+    category: 'personal',
+    read: true,
+  },
+  {
+    to: 'Kate Ashford',
+    from: 'Jamie Torres',
+    sender: 'Jamie Torres',
+    subject: 'Question about crosswind limits for solo',
+    date: '31/08/2026',
+    dateFull: '31/08/2026 20:11',
+    sentAt: '2026-08-31T20:11:00.000Z',
+    preview: 'What crosswind should I treat as my personal limit solo?...',
+    body: [
+      'Quick question before Thursday — what crosswind component should I treat as my personal limit for the solo cross-country? The POH demonstrated value is 15 knots but that feels like a lot at my stage.',
+      'Also, if the forecast is marginal on the day, how late can we decide to switch it to a dual lesson instead?',
+    ],
+    signOff: { name: 'Jamie Torres', role: 'PPL student', org: academy },
+    category: 'personal',
+    read: true,
+  },
+  {
+    to: 'James Whitfield',
+    from: 'Priya Shah',
+    sender: 'Priya Shah',
+    subject: 'Requesting a mock CPL checkride',
+    date: '29/08/2026',
+    dateFull: '29/08/2026 12:48',
+    sentAt: '2026-08-29T12:48:00.000Z',
+    preview: 'Could we schedule a full mock checkride before I apply?...',
+    body: [
+      'Could we schedule a full mock CPL checkride in the next couple of weeks? I’d like a realistic run-through — full pre-flight oral, then the flight profile — before I put in the application.',
+      'I’m flexible on timing except Tuesday mornings.',
+    ],
+    signOff: { name: 'Priya Shah', role: 'CPL student', org: academy },
+    category: 'personal',
+    read: false,
   },
 ]
+
+function buildMailboxEmails(
+  personIdByName: Record<string, string>,
+): Omit<MailboxEmail, '_id'>[] {
+  return MAILBOX_EMAILS.flatMap(({ to, from, ...email }) => {
+    const recipientId = personIdByName[to]
+    const senderId = from ? personIdByName[from] : undefined
+    if (!recipientId) return []
+    if (from && !senderId) return []
+    return [{ ...email, recipientId, ...(senderId ? { senderId } : {}) }]
+  })
+}
 
 // One consolidated availability fixture per real student — this single set
 // now drives /me/availability, the "not available" blocks derived on
@@ -1685,19 +1973,6 @@ function buildLogbookEntries(
       })),
     ),
   ]
-}
-
-// Mailbox emails and course progress are the demo persona's own records
-// and carry no per-row name, so they resolve to the one real seeded
-// student id rather than a per-entry lookup.
-function withDemoStudentId<T extends object>(
-  entries: T[],
-  studentIdByName: Record<string, string>,
-): (T & { studentId: string })[] {
-  return entries.map((entry) => ({
-    ...entry,
-    studentId: studentIdByName[demoStudentName],
-  }))
 }
 
 // `person` holds the student's name (matching BookingsService.create, see
@@ -4946,7 +5221,7 @@ async function seed() {
   )
   await seedMany(
     mailboxEmailModel,
-    withDemoStudentId(mailboxEmails, studentIdByName),
+    buildMailboxEmails(personIdByName),
     'mailbox emails',
   )
   await seedMany(
