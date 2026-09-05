@@ -178,7 +178,7 @@ export default function InstructorTimeOffFormModal({
         <button
           type='button'
           onClick={handleClose}
-          className={`flex-1 cursor-pointer rounded-lg bg-black-100/60 px-3 py-2.5 font-primary text-sm font-bold text-black-200 ${focusRing}`}
+          className={`flex-1 cursor-pointer rounded-lg bg-black-100/60 px-3 py-2.5 font-primary text-sm font-bold text-black-300 ${focusRing}`}
         >
           {t('close')}
         </button>
