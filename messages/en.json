@@ -439,9 +439,40 @@
     "hideRead": "Hide read emails",
     "refreshLabel": "Refresh",
     "fetching": "Fetching…",
+    "compose": "Compose",
+    "folderLabel": "Mailbox folders",
+    "inbox": "Inbox",
+    "sent": "Sent",
     "to": "to {name}",
+    "toName": "To {name}",
+    "unknownRecipient": "an unknown recipient",
+    "sentToast": "Message sent",
+    "sendError": "Your message could not be sent. Please try again.",
+    "markReadError": "Could not update the read status.",
+    "opensNewTab": "(opens in a new tab)",
+    "opensDownload": "(downloads a PDF)",
     "noEmails": "No emails to show.",
     "noVisibleEmails": "No emails match the current filter."
+  },
+  "ComposeEmailModal": {
+    "title": "New message",
+    "close": "Close",
+    "send": "Send",
+    "recipientLabel": "To",
+    "recipientPlaceholder": "Select a recipient",
+    "sendAsLabel": "Send as",
+    "subjectLabel": "Subject",
+    "bodyLabel": "Message",
+    "kind": {
+      "student": "Student",
+      "instructor": "Instructor"
+    },
+    "sendAs": {
+      "self": "Yourself",
+      "operations": "Operations Desk",
+      "exams": "Exams Office",
+      "training": "Training Office"
+    }
   },
   "Toast": {
     "dismiss": "Dismiss"

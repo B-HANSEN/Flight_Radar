@@ -439,9 +439,40 @@
     "hideRead": "Ocultar correos leídos",
     "refreshLabel": "Actualizar",
     "fetching": "Cargando…",
+    "compose": "Redactar",
+    "folderLabel": "Carpetas del buzón",
+    "inbox": "Bandeja de entrada",
+    "sent": "Enviados",
     "to": "para {name}",
+    "toName": "Para {name}",
+    "unknownRecipient": "un destinatario desconocido",
+    "sentToast": "Mensaje enviado",
+    "sendError": "No se pudo enviar tu mensaje. Inténtalo de nuevo.",
+    "markReadError": "No se pudo actualizar el estado de lectura.",
+    "opensNewTab": "(se abre en una pestaña nueva)",
+    "opensDownload": "(descarga un PDF)",
     "noEmails": "No hay correos que mostrar.",
     "noVisibleEmails": "Ningún correo coincide con el filtro actual."
+  },
+  "ComposeEmailModal": {
+    "title": "Nuevo mensaje",
+    "close": "Cerrar",
+    "send": "Enviar",
+    "recipientLabel": "Para",
+    "recipientPlaceholder": "Selecciona un destinatario",
+    "sendAsLabel": "Enviar como",
+    "subjectLabel": "Asunto",
+    "bodyLabel": "Mensaje",
+    "kind": {
+      "student": "Alumno",
+      "instructor": "Instructor"
+    },
+    "sendAs": {
+      "self": "Tú mismo",
+      "operations": "Operations Desk",
+      "exams": "Oficina de Exámenes",
+      "training": "Oficina de Formación"
+    }
   },
   "Toast": {
     "dismiss": "Cerrar"

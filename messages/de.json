@@ -439,9 +439,40 @@
     "hideRead": "Gelesene E-Mails ausblenden",
     "refreshLabel": "Aktualisieren",
     "fetching": "Wird geladen …",
+    "compose": "Verfassen",
+    "folderLabel": "Postfach-Ordner",
+    "inbox": "Posteingang",
+    "sent": "Gesendet",
     "to": "an {name}",
+    "toName": "An {name}",
+    "unknownRecipient": "einem unbekannten Empfänger",
+    "sentToast": "Nachricht gesendet",
+    "sendError": "Ihre Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    "markReadError": "Der Lesestatus konnte nicht aktualisiert werden.",
+    "opensNewTab": "(wird in einem neuen Tab geöffnet)",
+    "opensDownload": "(lädt eine PDF-Datei herunter)",
     "noEmails": "Keine E-Mails vorhanden.",
     "noVisibleEmails": "Keine E-Mails entsprechen dem aktuellen Filter."
+  },
+  "ComposeEmailModal": {
+    "title": "Neue Nachricht",
+    "close": "Schließen",
+    "send": "Senden",
+    "recipientLabel": "An",
+    "recipientPlaceholder": "Empfänger auswählen",
+    "sendAsLabel": "Senden als",
+    "subjectLabel": "Betreff",
+    "bodyLabel": "Nachricht",
+    "kind": {
+      "student": "Schüler",
+      "instructor": "Fluglehrer"
+    },
+    "sendAs": {
+      "self": "Sie selbst",
+      "operations": "Operations Desk",
+      "exams": "Prüfungsbüro",
+      "training": "Ausbildungsbüro"
+    }
   },
   "Toast": {
     "dismiss": "Schließen"
