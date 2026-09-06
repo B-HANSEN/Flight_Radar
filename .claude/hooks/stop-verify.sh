@@ -11,6 +11,13 @@
 # block turns for noise unrelated to the change. Plain `npm test` (vitest,
 # no coverage) is what this checks instead.
 #
+# Also deliberately does NOT run `npm run lint` (eslint): that is a
+# style/quality check, not a "does the code work" check, and it already
+# hard-blocks `git push` in git-commit-push-gate.sh. It is also whole-repo
+# (the npm script takes no path) and would add its full runtime to every
+# turn, which the changed-files scoping here is meant to avoid. Formatting
+# is handled separately by the prettier PostToolUse hook (format-file.sh).
+#
 # Frontend TS is covered by `npm run type-check`, but the root tsconfig.json
 # excludes server/ entirely, so a changed server/src/*.ts file gets its own
 # `tsc --noEmit -p server/tsconfig.json` pass — otherwise server changes

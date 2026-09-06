@@ -941,9 +941,9 @@ function buildMailboxEmails(
 }
 
 // One consolidated availability fixture per real student — this single set
-// now drives /me/availability, the "not available" blocks derived on
+// drives /me/availability, the "not available" blocks derived on
 // /me/agenda, AND the open slots in the instructor scheduling view, so all
-// three always agree (previously three disjoint fixtures, see TODO.md).
+// three always agree.
 // Anchored to the current/next months (no past-month entries); each student
 // gets a couple of recurring windows plus a few one-off slots of varied
 // length. Priya is deliberately sparse to keep exercising the near-empty
@@ -3724,8 +3724,7 @@ function applyMonthlyCancellations(
 // scheduling demo leans on. Merged with the generated bulk below.
 const EXPLICIT_STUDENT_FLIGHTS: StudentFlightSeed[] = [
   // Jamie Torres is the default demo persona — a full, varied agenda across
-  // the current and next month (migrated from the old standalone
-  // `calendarEvents` array), including one cancelled lesson.
+  // the current and next month, including one cancelled lesson.
   {
     studentName: 'Jamie Torres',
     instructorName: 'James Whitfield',

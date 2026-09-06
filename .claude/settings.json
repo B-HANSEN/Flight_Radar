@@ -18,7 +18,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // .tool_input.notebook_path // empty' | { read -r f; [ -n \"$f\" ] && npx prettier --write --ignore-unknown \"$f\"; } 2>/dev/null || true"
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-$PWD}/.claude/hooks/format-file.sh\"",
+            "statusMessage": "Formatting changed file (prettier)..."
           }
         ]
       },
