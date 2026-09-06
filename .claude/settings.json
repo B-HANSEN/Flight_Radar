@@ -31,6 +31,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-$PWD}/.claude/hooks/stop-verify.sh\"",
+            "statusMessage": "Verifying changed files (type-check/tests)..."
+          }
+        ]
+      }
     ]
   }
 }
