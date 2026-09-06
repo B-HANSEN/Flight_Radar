@@ -27,6 +27,17 @@ Only report things that would produce a wrong result, a crash, a security hole, 
 - Trace why the code produces the wrong outcome.
 - Skip anything you can't state a concrete failure scenario for — no hedged "might be an issue" findings.
 
+## Weakened tests
+
+Diff changed `*.test.tsx`/`*.test.ts` files alongside the source changes, not just the source. A test that was quietly gutted to make a refactor pass is a correctness bug in disguise — the green checkmark stops meaning anything. Flag it when a test diff shows, with no corresponding justified behavior change in the source:
+
+- An assertion loosened (e.g. `toBe(5)` → `toBeDefined()`/`toBeTruthy()`, an exact match relaxed to a substring/regex, a removed `.not`).
+- A test case, `it`/`test` block, or specific input assertion deleted rather than updated.
+- A mock widened to swallow an error path that used to be exercised for real.
+- A skip/`.todo`/`it.skip` added to a previously-passing test without an explanation.
+
+Report these the same way as any other finding: point to the specific before/after in the test diff and state what real behavior is no longer being verified.
+
 ## What NOT to report
 
 - Style, formatting, naming, comment quality.
