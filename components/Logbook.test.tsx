@@ -4,6 +4,16 @@ import Logbook from './Logbook'
 import type { LogbookEntry } from './Logbook.types'
 import enMessages from '@/messages/en.json'
 
+const mockRouterRefresh = vi.fn()
+vi.mock('@/i18n/navigation', () => ({
+  useRouter: () => ({ refresh: mockRouterRefresh }),
+}))
+
+// jsdom implements neither URL.createObjectURL nor an anchor-triggered download.
+URL.createObjectURL = vi.fn(() => 'blob:mock')
+URL.revokeObjectURL = vi.fn()
+HTMLAnchorElement.prototype.click = vi.fn()
+
 const entries: LogbookEntry[] = [
   {
     id: 'e1',
@@ -154,16 +164,35 @@ describe('Logbook', () => {
     ])
   })
 
-  it('calls onDownload and onRefresh when their toolbar buttons are clicked', () => {
-    const onDownload = vi.fn()
-    const onRefresh = vi.fn()
-    renderLogbook({ entries, onDownload, onRefresh })
+  it('re-fetches the logbook and shows the toast when Refresh is clicked', () => {
+    mockRouterRefresh.mockClear()
+    renderLogbook({ entries })
 
-    fireEvent.click(screen.getByRole('button', { name: 'Download' }))
     fireEvent.click(screen.getByRole('button', { name: 'Refresh' }))
 
-    expect(onDownload).toHaveBeenCalledTimes(1)
-    expect(onRefresh).toHaveBeenCalledTimes(1)
+    expect(mockRouterRefresh).toHaveBeenCalledOnce()
+    expect(screen.getByText('Fetching…')).toBeInTheDocument()
+  })
+
+  it('exports the visible logbook as a CSV when Download is clicked', async () => {
+    vi.mocked(URL.createObjectURL).mockClear()
+    renderLogbook({ entries })
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Reverse order' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Download' }))
+
+    expect(URL.createObjectURL).toHaveBeenCalledOnce()
+    const blob = vi.mocked(URL.createObjectURL).mock.calls[0][0] as Blob
+    expect(blob.type).toContain('text/csv')
+
+    const [header, firstRow] = (await blob.text()).split('\r\n')
+    expect(header).toBe(
+      'Date,Departure Place,Departure Time,Arrival Place,Arrival Time,Make/Model,Registration,Single Engine,Cross-Country Dual,Total Time,Name PIC,Landings Day,Landings Night,Night,Remarks',
+    )
+    // Reverse-order toggle is respected: the last entry is exported first.
+    expect(firstRow).toBe(
+      '03/01/2026,LELL,09:00,LELL,09:45,Cessna 152,EC-CCC,,,0:45,A. Instructor,3,1,no,',
+    )
   })
 
   it('shows an empty-state message when there are no logbook entries', () => {

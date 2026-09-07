@@ -4,6 +4,7 @@ import { useId, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { ChevronDown, ChevronRight, Download, RefreshCw } from 'lucide-react'
 import { focusRing } from '@/lib/styles'
+import { useRouter } from '@/i18n/navigation'
 import { useDragScroll } from '@/lib/useDragScroll'
 import Toast from './Toast'
 import type { LogbookEntry } from './Logbook.types'
@@ -11,8 +12,38 @@ import type { LogbookEntry } from './Logbook.types'
 type Props = {
   entries?: LogbookEntry[]
   pageSize?: number
-  onDownload?: () => void
-  onRefresh?: () => void
+}
+
+// Columns for the CSV export — order and headers match the on-screen table.
+const CSV_COLUMNS: {
+  header: string
+  value: (entry: LogbookEntry) => string
+}[] = [
+  { header: 'Date', value: (e) => e.date },
+  { header: 'Departure Place', value: (e) => e.depPlace },
+  { header: 'Departure Time', value: (e) => e.depTime },
+  { header: 'Arrival Place', value: (e) => e.arrPlace },
+  { header: 'Arrival Time', value: (e) => e.arrTime },
+  { header: 'Make/Model', value: (e) => e.model },
+  { header: 'Registration', value: (e) => e.reg },
+  { header: 'Single Engine', value: (e) => e.se ?? '' },
+  { header: 'Cross-Country Dual', value: (e) => e.xcDual ?? '' },
+  { header: 'Total Time', value: (e) => e.total },
+  { header: 'Name PIC', value: (e) => e.pic },
+  { header: 'Landings Day', value: (e) => String(e.landingsDay) },
+  { header: 'Landings Night', value: (e) => String(e.landingsNight ?? 0) },
+  { header: 'Night', value: (e) => (e.night ? 'yes' : 'no') },
+  { header: 'Remarks', value: (e) => e.remarks ?? '' },
+]
+
+function toCsv(entries: LogbookEntry[]): string {
+  const escape = (cell: string) =>
+    /[",\r\n]/.test(cell) ? `"${cell.replace(/"/g, '""')}"` : cell
+  const rows = [
+    CSV_COLUMNS.map((column) => column.header),
+    ...entries.map((entry) => CSV_COLUMNS.map((column) => column.value(entry))),
+  ]
+  return rows.map((row) => row.map(escape).join(',')).join('\r\n')
 }
 
 const groupThClass =
@@ -379,13 +410,9 @@ function LogbookPage({
   )
 }
 
-export default function Logbook({
-  entries = [],
-  pageSize = 10,
-  onDownload,
-  onRefresh,
-}: Props) {
+export default function Logbook({ entries = [], pageSize = 10 }: Props) {
   const t = useTranslations('Logbook')
+  const router = useRouter()
   const [reverseOrder, setReverseOrder] = useState(false)
   const [closedPages, setClosedPages] = useState<Set<number>>(new Set())
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -415,7 +442,21 @@ export default function Logbook({
 
   function handleRefresh() {
     setIsRefreshing(true)
-    onRefresh?.()
+    // Re-runs the server component so the /logbook fetch picks up entries
+    // added since the page was loaded.
+    router.refresh()
+  }
+
+  function handleDownload() {
+    const blob = new Blob([toCsv(orderedEntries)], {
+      type: 'text/csv;charset=utf-8',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'logbook.csv'
+    link.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -427,7 +468,7 @@ export default function Logbook({
         <div className='mb-6 flex flex-wrap items-center gap-5'>
           <button
             type='button'
-            onClick={onDownload}
+            onClick={handleDownload}
             className={`flex items-center gap-1.5 rounded-lg border border-black-100 px-3.5 py-2 font-secondary text-sm font-semibold text-black-300 ${focusRing}`}
           >
             <Download size={15} aria-hidden='true' />
