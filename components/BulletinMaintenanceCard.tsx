@@ -11,17 +11,22 @@ const captionClasses =
   'text-center font-primary text-[11px] font-bold tracking-wider text-blue-300 uppercase'
 const photoWrapperClasses = 'relative h-45 w-full overflow-hidden rounded-lg'
 
-export default function BulletinMaintenanceCard() {
+type Props = {
+  headingLevel?: 2 | 3
+}
+
+export default function BulletinMaintenanceCard({ headingLevel = 2 }: Props) {
   const t = useTranslations('NewsBulletins.maintenance')
+  const Heading = headingLevel === 3 ? 'h3' : 'h2'
 
   return (
     <div className='w-full overflow-hidden rounded-xl border-2 border-blue-300 bg-white'>
       <div className='bg-blue-300 px-6 py-5'>
-        <h2 className='font-primary text-xl font-extrabold tracking-[0.01em] text-white uppercase'>
+        <Heading className='font-primary text-xl font-extrabold tracking-[0.01em] text-white uppercase'>
           {t('titlePrefix')}{' '}
           <span className='text-yellow-200'>{t('titleHighlight')}</span>{' '}
           {t('titleSuffix')}
-        </h2>
+        </Heading>
         <div className='mt-1.5 font-primary text-xs font-bold tracking-[0.03em] text-blue-100'>
           {t('aircraftTypes')}
         </div>

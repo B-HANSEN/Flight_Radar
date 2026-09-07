@@ -9,17 +9,22 @@ type Step = {
   detail: string
 }
 
-export default function BulletinProcedureCard() {
+type Props = {
+  headingLevel?: 2 | 3
+}
+
+export default function BulletinProcedureCard({ headingLevel = 2 }: Props) {
   const t = useTranslations('NewsBulletins.procedure')
   const steps = t.raw('steps') as Step[]
   const consequences = t.raw('consequences') as string[]
+  const Heading = headingLevel === 3 ? 'h3' : 'h2'
 
   return (
     <div className='w-full'>
       <div className='mb-3.5'>
-        <h2 className='mb-1 font-primary text-base font-bold text-black-300'>
+        <Heading className='mb-1 font-primary text-base font-bold text-black-300'>
           {t('title')}
-        </h2>
+        </Heading>
         <div className='mb-2 font-secondary text-xs text-black-200'>
           {t('postedDate')}
         </div>

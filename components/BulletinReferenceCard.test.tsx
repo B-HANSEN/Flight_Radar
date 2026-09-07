@@ -3,10 +3,10 @@ import { NextIntlClientProvider } from 'next-intl'
 import BulletinReferenceCard from './BulletinReferenceCard'
 import enMessages from '@/messages/en.json'
 
-function renderCard() {
+function renderCard(headingLevel?: 2 | 3) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <BulletinReferenceCard />
+      <BulletinReferenceCard headingLevel={headingLevel} />
     </NextIntlClientProvider>,
   )
 }
@@ -34,5 +34,15 @@ describe('BulletinReferenceCard', () => {
         expect(screen.getByText(row.minimum)).toBeInTheDocument()
       })
     })
+  })
+
+  it('renders its title at the requested heading level', () => {
+    renderCard(3)
+    expect(
+      screen.getByRole('heading', {
+        level: 3,
+        name: 'Applicable minimum altitudes',
+      }),
+    ).toBeInTheDocument()
   })
 })

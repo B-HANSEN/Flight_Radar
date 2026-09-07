@@ -105,7 +105,8 @@
   },
   "NewsPage": {
     "title": "Neuigkeiten",
-    "body": "Sicherheitsbulletins, Wartungserinnerungen und Betriebsupdates für Piloten und Bodenpersonal."
+    "body": "Sicherheitsbulletins, Wartungserinnerungen und Betriebsupdates für Piloten und Bodenpersonal.",
+    "bulletinsTitle": "Sicherheitsbulletins"
   },
   "SchedulePage": {
     "title": "Flugplan",

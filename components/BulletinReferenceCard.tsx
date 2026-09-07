@@ -13,16 +13,21 @@ type Table = {
   rows: Row[]
 }
 
-export default function BulletinReferenceCard() {
+type Props = {
+  headingLevel?: 2 | 3
+}
+
+export default function BulletinReferenceCard({ headingLevel = 2 }: Props) {
   const t = useTranslations('NewsBulletins.reference')
   const tables = t.raw('tables') as Table[]
+  const Heading = headingLevel === 3 ? 'h3' : 'h2'
 
   return (
     <div className='w-full overflow-hidden rounded-xl border border-black-100 bg-white'>
       <div className='bg-blue-300 px-6 py-4.5'>
-        <h2 className='font-primary text-xl font-extrabold tracking-[0.01em] text-white uppercase'>
+        <Heading className='font-primary text-xl font-extrabold tracking-[0.01em] text-white uppercase'>
           {t('title')}
-        </h2>
+        </Heading>
       </div>
 
       <div className='flex flex-col gap-5.5 px-6 py-5.5'>
@@ -36,7 +41,7 @@ export default function BulletinReferenceCard() {
             <div className='bg-blue-100 px-3.5 py-2.5 font-primary text-xs font-bold text-blue-300 uppercase'>
               {table.title}
             </div>
-            <div className='grid grid-cols-[minmax(180px,1.1fr)_minmax(200px,1fr)]'>
+            <div className='grid grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]'>
               <div className='border-r border-b border-black-200 bg-[#f0f4f1] px-3 py-2.5 font-primary text-[11.5px] font-bold text-black-300'>
                 {t('situationHeader')}
               </div>

@@ -105,7 +105,8 @@
   },
   "NewsPage": {
     "title": "News",
-    "body": "Safety bulletins, maintenance reminders, and operational updates for pilots and ground crew."
+    "body": "Safety bulletins, maintenance reminders, and operational updates for pilots and ground crew.",
+    "bulletinsTitle": "Safety bulletins"
   },
   "SchedulePage": {
     "title": "Schedule",

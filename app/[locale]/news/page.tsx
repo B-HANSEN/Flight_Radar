@@ -44,7 +44,7 @@ export default async function NewsPage({
   const news = await fetchApi<NewsItem[]>('/news')
 
   return (
-    <>
+    <div className='ml-[calc(50%-50vw)] w-screen px-8 sm:px-12'>
       <JsonLd
         data={buildWebPageSchema({
           locale,
@@ -53,18 +53,27 @@ export default async function NewsPage({
           description: t('body'),
         })}
       />
-      <PageHeading title={t('title')} description={t('body')} />
-      <NewsFeed news={news} />
-      <hr className='my-10 border-t border-black-200' />
-      <div className='flex flex-col gap-10'>
-        <BulletinReminderCard />
-        <hr className='border-t border-black-200' />
-        <BulletinProcedureCard />
-        <hr className='border-t border-black-200' />
-        <BulletinReferenceCard />
-        <hr className='border-t border-black-200' />
-        <BulletinMaintenanceCard />
+      <div className='mx-auto max-w-300'>
+        <PageHeading title={t('title')} description={t('body')} />
+        <div className='grid grid-cols-1 gap-12 xl:grid-cols-2 xl:gap-10'>
+          <NewsFeed news={news} />
+          <section
+            aria-labelledby='news-bulletins-heading'
+            className='flex flex-col gap-8 border-t border-black-200 pt-10 xl:border-t-0 xl:pt-0'
+          >
+            <h2
+              id='news-bulletins-heading'
+              className='font-primary text-xl font-bold text-black-300'
+            >
+              {t('bulletinsTitle')}
+            </h2>
+            <BulletinReminderCard headingLevel={3} />
+            <BulletinProcedureCard headingLevel={3} />
+            <BulletinReferenceCard headingLevel={3} />
+            <BulletinMaintenanceCard headingLevel={3} />
+          </section>
+        </div>
       </div>
-    </>
+    </div>
   )
 }

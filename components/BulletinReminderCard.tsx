@@ -6,17 +6,22 @@ import { useTranslations } from 'next-intl'
 
 const CHECKLIST_ICONS: LucideIcon[] = [TriangleAlert, Wrench, ClipboardCheck]
 
-export default function BulletinReminderCard() {
+type Props = {
+  headingLevel?: 2 | 3
+}
+
+export default function BulletinReminderCard({ headingLevel = 2 }: Props) {
   const t = useTranslations('NewsBulletins.reminder')
   const checklist = t.raw('checklist') as string[]
   const howToReport = t.raw('howToReport') as string[]
+  const Heading = headingLevel === 3 ? 'h3' : 'h2'
 
   return (
     <div className='w-full overflow-hidden rounded-xl border-2 border-blue-300 bg-white'>
       <div className='bg-blue-300 px-6 py-4.5'>
-        <h2 className='font-primary text-lg font-extrabold tracking-[0.01em] text-white uppercase'>
+        <Heading className='font-primary text-lg font-extrabold tracking-[0.01em] text-white uppercase'>
           {t('title')}
-        </h2>
+        </Heading>
       </div>
 
       <div className='px-6 pt-5.5 pb-6.5'>

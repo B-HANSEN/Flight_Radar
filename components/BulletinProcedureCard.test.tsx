@@ -3,10 +3,10 @@ import { NextIntlClientProvider } from 'next-intl'
 import BulletinProcedureCard from './BulletinProcedureCard'
 import enMessages from '@/messages/en.json'
 
-function renderCard() {
+function renderCard(headingLevel?: 2 | 3) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <BulletinProcedureCard />
+      <BulletinProcedureCard headingLevel={headingLevel} />
     </NextIntlClientProvider>,
   )
 }
@@ -43,5 +43,15 @@ describe('BulletinProcedureCard', () => {
     enMessages.NewsBulletins.procedure.consequences.forEach((item) => {
       expect(screen.getByText(item)).toBeInTheDocument()
     })
+  })
+
+  it('renders its title at the requested heading level', () => {
+    renderCard(3)
+    expect(
+      screen.getByRole('heading', {
+        level: 3,
+        name: 'Safety Bulletin: In-flight alternator failure',
+      }),
+    ).toBeInTheDocument()
   })
 })

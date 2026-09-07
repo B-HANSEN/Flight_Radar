@@ -105,7 +105,8 @@
   },
   "NewsPage": {
     "title": "Noticias",
-    "body": "Boletines de seguridad, recordatorios de mantenimiento y actualizaciones operativas para pilotos y personal de tierra."
+    "body": "Boletines de seguridad, recordatorios de mantenimiento y actualizaciones operativas para pilotos y personal de tierra.",
+    "bulletinsTitle": "Boletines de seguridad"
   },
   "SchedulePage": {
     "title": "Horario",

@@ -3,10 +3,10 @@ import { NextIntlClientProvider } from 'next-intl'
 import BulletinMaintenanceCard from './BulletinMaintenanceCard'
 import enMessages from '@/messages/en.json'
 
-function renderCard() {
+function renderCard(headingLevel?: 2 | 3) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <BulletinMaintenanceCard />
+      <BulletinMaintenanceCard headingLevel={headingLevel} />
     </NextIntlClientProvider>,
   )
 }
@@ -47,5 +47,10 @@ describe('BulletinMaintenanceCard', () => {
       'src',
       expect.stringContaining('engine-bay-after'),
     )
+  })
+
+  it('renders its title at the requested heading level', () => {
+    renderCard(3)
+    expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument()
   })
 })

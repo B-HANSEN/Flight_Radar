@@ -3,10 +3,10 @@ import { NextIntlClientProvider } from 'next-intl'
 import BulletinReminderCard from './BulletinReminderCard'
 import enMessages from '@/messages/en.json'
 
-function renderCard() {
+function renderCard(headingLevel?: 2 | 3) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <BulletinReminderCard />
+      <BulletinReminderCard headingLevel={headingLevel} />
     </NextIntlClientProvider>,
   )
 }
@@ -36,5 +36,15 @@ describe('BulletinReminderCard', () => {
     enMessages.NewsBulletins.reminder.howToReport.forEach((item) => {
       expect(screen.getByText(item)).toBeInTheDocument()
     })
+  })
+
+  it('renders its title at the requested heading level', () => {
+    renderCard(3)
+    expect(
+      screen.getByRole('heading', {
+        level: 3,
+        name: 'Reporting aircraft defects',
+      }),
+    ).toBeInTheDocument()
   })
 })
