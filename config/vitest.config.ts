@@ -25,6 +25,11 @@ export default defineConfig({
       exclude: [
         ...coverageConfigDefaults.exclude,
         'components/**/*.stories.tsx',
+        // Static fixture data and type-only modules have no executable code to
+        // unit test — excluding them keeps the per-file threshold meaningful
+        // (and dodges the v8 provider's flaky 0% reports for untested files).
+        'components/**/*.data.ts',
+        'components/**/*.types.ts',
         '.storybook/**',
       ],
       thresholds: {
