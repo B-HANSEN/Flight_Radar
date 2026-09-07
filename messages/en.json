@@ -154,7 +154,8 @@
     "nextPage": "Next page",
     "page": "Page {number}",
     "paginationLabel": "Pagination",
-    "photoAlt": "{type} ({arcid})"
+    "photoAlt": "{type} ({arcid})",
+    "scheduleLink": "View {arcid} ({type}) in the schedule"
   },
   "DocumentsPage": {
     "title": "Documents",

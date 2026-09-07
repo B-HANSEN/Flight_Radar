@@ -36,12 +36,19 @@ export async function generateMetadata({
 
 export default async function SchedulePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const { locale } = await params
   setRequestLocale(locale)
   const t = await getTranslations('SchedulePage')
+
+  const { aircraft: aircraftParam } = await searchParams
+  // Deep link from the aircraft directory: /schedule?aircraft=<arcid>.
+  const focusArcid =
+    typeof aircraftParam === 'string' ? aircraftParam : undefined
 
   const [allAircraft, blocks] = await Promise.all([
     fetchApi<ScheduleAircraft[]>('/aircraft'),
@@ -49,7 +56,11 @@ export default async function SchedulePage({
   ])
 
   const scheduledAircraftIds = new Set(blocks.map((block) => block.aircraftId))
-  const aircraft = allAircraft.filter((a) => scheduledAircraftIds.has(a.id))
+  // Show aircraft that have blocks, plus a directory-linked one even when it
+  // has nothing scheduled — so the link always lands on a real (empty) row.
+  const aircraft = allAircraft.filter(
+    (a) => scheduledAircraftIds.has(a.id) || a.arcid === focusArcid,
+  )
   // The page renders per request (no-store fetches above), so this is when
   // the data on screen was pulled; a Refresh re-runs this component.
   const updatedAt = new Date().toISOString()
@@ -71,6 +82,7 @@ export default async function SchedulePage({
           dayBlocks={blocks.filter((block) => block.period === 'day')}
           weekBlocks={blocks.filter((block) => block.period === 'week')}
           updatedAt={updatedAt}
+          focusArcid={focusArcid}
         />
       </div>
     </div>

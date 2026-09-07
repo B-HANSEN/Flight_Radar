@@ -13,6 +13,9 @@ vi.mock('@/i18n/navigation', () => ({
   useRouter: () => ({ refresh: mockRouterRefresh }),
 }))
 
+// jsdom has no layout engine, so scrollIntoView is unimplemented.
+Element.prototype.scrollIntoView = vi.fn()
+
 const AIRCRAFT: ScheduleAircraft[] = [
   {
     id: 'ec-erv',
@@ -125,15 +128,13 @@ describe('ScheduleBoard', () => {
     expect(screen.queryByText(/^Updated /)).not.toBeInTheDocument()
   })
 
-  it('refetches the schedule and calls onRefresh when the refresh button is clicked', () => {
+  it('refetches the schedule when the refresh button is clicked', () => {
     mockRouterRefresh.mockClear()
-    const onRefresh = vi.fn()
-    renderBoard({ onRefresh })
+    renderBoard()
 
     fireEvent.click(screen.getByRole('button', { name: 'Refresh' }))
 
     expect(mockRouterRefresh).toHaveBeenCalledOnce()
-    expect(onRefresh).toHaveBeenCalledOnce()
   })
 
   it('falls back to a placeholder photo for aircraft without a photoSrc', () => {
@@ -249,6 +250,16 @@ describe('ScheduleBoard', () => {
     expect(
       screen.queryByRole('button', { name: 'All types' }),
     ).not.toBeInTheDocument()
+  })
+
+  it('highlights and scrolls to the row deep-linked via focusArcid', () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, 'scrollIntoView')
+    renderBoard({ focusArcid: 'EC-EXL' })
+
+    const focusedRow = screen.getByText('EC-EXL').closest('[aria-current]')
+    expect(focusedRow).toHaveAttribute('aria-current', 'true')
+    expect(screen.getByText('EC-ERV').closest('[aria-current]')).toBeNull()
+    expect(scrollIntoView).toHaveBeenCalled()
   })
 
   it('only shows a dated week block within the currently viewed week', () => {

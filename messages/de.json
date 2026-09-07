@@ -154,7 +154,8 @@
     "nextPage": "Nächste Seite",
     "page": "Seite {number}",
     "paginationLabel": "Seitennavigation",
-    "photoAlt": "{type} ({arcid})"
+    "photoAlt": "{type} ({arcid})",
+    "scheduleLink": "{arcid} ({type}) im Flugplan anzeigen"
   },
   "DocumentsPage": {
     "title": "Dokumente",

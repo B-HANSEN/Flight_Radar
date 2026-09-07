@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
@@ -23,9 +23,11 @@ type Props = {
   dayBlocks?: ScheduleBlockRecord[]
   weekBlocks?: ScheduleBlockRecord[]
   initialDate?: Date
-  onRefresh?: () => void
   // ISO timestamp of when the board data was fetched, shown next to Refresh.
   updatedAt?: string
+  // arcid deep-linked from the aircraft directory — its row is highlighted
+  // and scrolled into view on load.
+  focusArcid?: string
 }
 
 type ScheduleView = 'day' | 'week'
@@ -164,8 +166,8 @@ export default function ScheduleBoard({
   dayBlocks = [],
   weekBlocks = [],
   initialDate,
-  onRefresh,
   updatedAt,
+  focusArcid,
 }: Props) {
   const t = useTranslations('ScheduleBoard')
   const locale = useLocale()
@@ -192,6 +194,11 @@ export default function ScheduleBoard({
       typeFilter ? aircraft.filter((ac) => ac.type === typeFilter) : aircraft,
     [aircraft, typeFilter],
   )
+
+  const focusRowRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    focusRowRef.current?.scrollIntoView({ block: 'center' })
+  }, [focusArcid])
 
   const weekStart = useMemo(() => startOfWeek(referenceDate), [referenceDate])
   const weekEnd = useMemo(() => addDays(weekStart, 6), [weekStart])
@@ -291,7 +298,6 @@ export default function ScheduleBoard({
     // Re-runs the server component so the /schedule fetch (cache: no-store)
     // picks up bookings added since the page was loaded.
     router.refresh()
-    onRefresh?.()
   }
 
   function handleBlockClick(ac: ScheduleAircraft, block: ScheduleBlock) {
@@ -428,36 +434,43 @@ export default function ScheduleBoard({
               <div className='flex h-9.5 items-center border-b border-black-200 px-4 font-primary text-xs font-bold tracking-wide text-black-200 uppercase'>
                 {t('singleEngineGroup')}
               </div>
-              {visibleAircraft.map((ac) => (
-                <div
-                  key={ac.id}
-                  className='flex h-18 items-center gap-2.5 border-b border-black-200 px-4 last:border-b-0'
-                >
-                  <div className='relative size-11 flex-none overflow-hidden rounded-lg bg-black-100/40'>
-                    <Image
-                      src={ac.photoSrc ?? FALLBACK_PHOTO_SRC}
-                      alt={
-                        ac.photoSrc
-                          ? t('photoAlt', { type: ac.type, arcid: ac.arcid })
-                          : ''
-                      }
-                      fill
-                      sizes='44px'
-                      className={
-                        ac.photoSrc ? 'object-cover' : 'object-contain p-1.5'
-                      }
-                    />
-                  </div>
-                  <div>
-                    <div className='font-primary text-sm font-bold text-black-300'>
-                      {ac.arcid}
+              {visibleAircraft.map((ac) => {
+                const isFocused = ac.arcid === focusArcid
+                return (
+                  <div
+                    key={ac.id}
+                    ref={isFocused ? focusRowRef : undefined}
+                    aria-current={isFocused ? 'true' : undefined}
+                    className={`flex h-18 items-center gap-2.5 border-b border-black-200 px-4 last:border-b-0 ${isFocused ? 'bg-blue-100' : ''}`}
+                  >
+                    <div className='relative size-11 flex-none overflow-hidden rounded-lg bg-black-100/40'>
+                      <Image
+                        src={ac.photoSrc ?? FALLBACK_PHOTO_SRC}
+                        alt={
+                          ac.photoSrc
+                            ? t('photoAlt', { type: ac.type, arcid: ac.arcid })
+                            : ''
+                        }
+                        fill
+                        sizes='44px'
+                        className={
+                          ac.photoSrc ? 'object-cover' : 'object-contain p-1.5'
+                        }
+                      />
                     </div>
-                    <div className='font-secondary text-[11px] text-black-200'>
-                      {ac.type}
+                    <div>
+                      <div className='font-primary text-sm font-bold text-black-300'>
+                        {ac.arcid}
+                      </div>
+                      <div
+                        className={`font-secondary text-[11px] ${isFocused ? 'text-black-300' : 'text-black-200'}`}
+                      >
+                        {ac.type}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             <div

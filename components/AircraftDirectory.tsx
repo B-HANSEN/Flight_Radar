@@ -4,6 +4,7 @@ import { useId, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
 import { focusRing } from '@/lib/styles'
 import type { Aircraft } from './AircraftDirectory.types'
 
@@ -85,9 +86,11 @@ export default function AircraftDirectory({
       ) : (
         <div className='grid grid-cols-2 gap-5 p-5 sm:grid-cols-3 lg:grid-cols-5'>
           {visible.map((ac, index) => (
-            <div
+            <Link
               key={ac.id}
-              className='flex flex-col overflow-hidden rounded-lg border border-black-100'
+              href={`/schedule?aircraft=${encodeURIComponent(ac.arcid)}`}
+              aria-label={t('scheduleLink', { type: ac.type, arcid: ac.arcid })}
+              className={`flex flex-col overflow-hidden rounded-lg border border-black-100 transition hover:border-black-200 hover:shadow-sm ${focusRing}`}
             >
               <div className='relative aspect-4/3 w-full flex-none bg-black-100/40'>
                 <Image
@@ -113,7 +116,7 @@ export default function AircraftDirectory({
                   {ac.type}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

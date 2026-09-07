@@ -154,7 +154,8 @@
     "nextPage": "Página siguiente",
     "page": "Página {number}",
     "paginationLabel": "Paginación",
-    "photoAlt": "{type} ({arcid})"
+    "photoAlt": "{type} ({arcid})",
+    "scheduleLink": "Ver {arcid} ({type}) en el horario"
   },
   "DocumentsPage": {
     "title": "Documentos",
