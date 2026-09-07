@@ -176,13 +176,11 @@ it('disables the This month button when already on the current month', () => {
   expect(screen.getByRole('button', { name: 'This month' })).toBeEnabled()
 })
 
-it('re-fetches the agenda (router.refresh) and calls onRefresh on Refresh', () => {
+it('re-fetches the agenda (router.refresh) on Refresh', () => {
   mockRouterRefresh.mockClear()
-  const onRefresh = vi.fn()
-  renderCalendar({ onRefresh })
+  renderCalendar()
   fireEvent.click(screen.getByLabelText('Refresh'))
   expect(mockRouterRefresh).toHaveBeenCalledOnce()
-  expect(onRefresh).toHaveBeenCalled()
   expect(screen.getByText('Fetching…')).toBeInTheDocument()
 })
 

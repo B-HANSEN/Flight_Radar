@@ -26,7 +26,6 @@ import { getFlightContent } from '@/lib/trainingContent'
 type Props = {
   events?: CalendarEvent[]
   initialMonth?: MonthKey
-  onRefresh?: () => void
   // ISO timestamp of when the agenda data was fetched, shown next to Refresh.
   updatedAt?: string
   perspective?: AgendaPerspective
@@ -45,7 +44,6 @@ function toISODate(date: Date): string {
 export default function AgendaCalendar({
   events = [],
   initialMonth,
-  onRefresh,
   updatedAt,
   perspective = 'student',
 }: Props) {
@@ -72,7 +70,6 @@ export default function AgendaCalendar({
     // Re-runs the server component so the /agenda fetch (cache: no-store)
     // picks up bookings/availability changed since the page was loaded.
     router.refresh()
-    onRefresh?.()
   }
 
   const isAtMin = toMonthIndex(month) === toMonthIndex(minMonth)
