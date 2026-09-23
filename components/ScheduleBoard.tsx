@@ -476,6 +476,7 @@ export default function ScheduleBoard({
             <div
               role='group'
               aria-label={t('gridLabel')}
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
               tabIndex={0}
               className={`overflow-x-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
               {...dragHandlers}

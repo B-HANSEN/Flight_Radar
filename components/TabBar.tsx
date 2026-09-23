@@ -43,6 +43,7 @@ export default function TabBar({ activePath, onItemClick }: Props) {
   return (
     <nav aria-label={t('label')} className='border-b border-black-100'>
       <ul
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
         tabIndex={0}
         aria-label={t('label')}
         className={`flex list-none gap-1 overflow-x-auto px-1 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}

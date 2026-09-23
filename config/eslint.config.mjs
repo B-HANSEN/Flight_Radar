@@ -1,6 +1,7 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from 'eslint-plugin-storybook'
 import prettier from 'eslint-config-prettier'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
 
 import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
@@ -24,6 +25,13 @@ const eslintConfig = defineConfig([
     // this repo maintains.
     'designs/extracted/**',
   ]),
+  // eslint-config-next enables only 6 jsx-a11y rules, as warnings. WCAG AA is
+  // a requirement here, so apply the full strict preset. Rules only: the
+  // plugin itself is already registered by eslint-config-next.
+  {
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts}'],
+    rules: jsxA11y.flatConfigs.strict.rules,
+  },
   ...storybook.configs['flat/recommended'],
   prettier,
 ])

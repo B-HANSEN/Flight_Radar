@@ -36,7 +36,10 @@ export default function Modal({
   return (
     <div
       className='fixed inset-0 z-50 flex items-center justify-center bg-black-300/50 p-4'
-      onClick={onClose}
+      role='presentation'
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
     >
       <div
         ref={dialogRef}
@@ -44,7 +47,6 @@ export default function Modal({
         aria-modal='true'
         aria-labelledby={titleId}
         tabIndex={-1}
-        onClick={(event) => event.stopPropagation()}
         className={`flex max-h-[85vh] w-full ${maxWidthClassName} flex-col overflow-hidden rounded-xl bg-white shadow-xl ${focusRing}`}
       >
         <div className='flex items-start justify-between gap-4 border-b border-black-100 px-6 py-4.5'>
@@ -64,6 +66,7 @@ export default function Modal({
           </button>
         </div>
         <div
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scrollable modal body must be keyboard-scrollable (WCAG 2.1.1)
           tabIndex={0}
           className={`flex flex-col gap-3 overflow-y-auto px-6 py-5 ${focusRing}`}
         >

@@ -74,6 +74,7 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
           <div
             role='table'
             aria-label={t('weather.label')}
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
             tabIndex={0}
             className={`grid grid-cols-[max-content_max-content_1fr] items-baseline gap-x-2 overflow-x-auto px-5.5 py-4.5 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
             {...dragHandlers}
@@ -155,6 +156,7 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
         <div
           role='group'
           aria-labelledby='homepage-bookings-heading'
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
           tabIndex={0}
           className={`max-h-44.25 overflow-y-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
           {...dragHandlers}
@@ -259,6 +261,7 @@ function SignaturesCard({
         <div
           role='group'
           aria-labelledby='homepage-signatures-heading'
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
           tabIndex={0}
           className={`max-h-44.25 overflow-y-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
           {...dragHandlers}

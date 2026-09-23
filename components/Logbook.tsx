@@ -102,6 +102,7 @@ function LogbookSummary({ entries }: { entries: LogbookEntry[] }) {
     <div
       role='group'
       aria-label={t('summaryCaption')}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
       tabIndex={0}
       className={`mb-7 overflow-x-auto rounded-lg border border-black-200 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
       {...dragHandlers}
@@ -263,6 +264,7 @@ function LogbookPage({
         <div
           role='group'
           aria-label={t('pageCaption', { number: pageNumber })}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
           tabIndex={0}
           className={`overflow-x-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
           {...dragHandlers}

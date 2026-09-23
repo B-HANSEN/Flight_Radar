@@ -278,7 +278,6 @@ export default function AvailabilityFormModal({
               {t('on')}
               <div
                 className={`${dateFieldWrapperClassName} ${dateMode === 'on' ? '' : 'opacity-50'}`}
-                onFocus={() => setDateMode('on')}
               >
                 <input
                   type='text'
@@ -290,6 +289,7 @@ export default function AvailabilityFormModal({
                   }
                   value={onDate}
                   onChange={(event) => setOnDate(event.target.value)}
+                  onFocus={() => setDateMode('on')}
                   className={dateInputClassName(isOnDateInvalid)}
                 />
                 <button
@@ -298,6 +298,7 @@ export default function AvailabilityFormModal({
                     setDateMode('on')
                     setDatePickerTarget('on')
                   }}
+                  onFocus={() => setDateMode('on')}
                   aria-label={t('openCalendarLabel', {
                     field: t('onDateLabel'),
                   })}
@@ -329,7 +330,6 @@ export default function AvailabilityFormModal({
               {t('from')}
               <div
                 className={`${dateFieldWrapperClassName} ${dateMode === 'range' ? '' : 'opacity-50'}`}
-                onFocus={() => setDateMode('range')}
               >
                 <input
                   type='text'
@@ -341,6 +341,7 @@ export default function AvailabilityFormModal({
                   }
                   value={fromDate}
                   onChange={(event) => setFromDate(event.target.value)}
+                  onFocus={() => setDateMode('range')}
                   className={dateInputClassName(isFromDateInvalid)}
                 />
                 <button
@@ -349,6 +350,7 @@ export default function AvailabilityFormModal({
                     setDateMode('range')
                     setDatePickerTarget('from')
                   }}
+                  onFocus={() => setDateMode('range')}
                   aria-label={t('openCalendarLabel', {
                     field: t('fromDateLabel'),
                   })}
@@ -360,7 +362,6 @@ export default function AvailabilityFormModal({
               {t('to')}
               <div
                 className={`${dateFieldWrapperClassName} ${dateMode === 'range' ? '' : 'opacity-50'}`}
-                onFocus={() => setDateMode('range')}
               >
                 <input
                   type='text'
@@ -372,6 +373,7 @@ export default function AvailabilityFormModal({
                   }
                   value={toDate}
                   onChange={(event) => setToDate(event.target.value)}
+                  onFocus={() => setDateMode('range')}
                   className={dateInputClassName(isToDateInvalid)}
                 />
                 <button
@@ -380,6 +382,7 @@ export default function AvailabilityFormModal({
                     setDateMode('range')
                     setDatePickerTarget('to')
                   }}
+                  onFocus={() => setDateMode('range')}
                   aria-label={t('openCalendarLabel', {
                     field: t('toDateLabel'),
                   })}

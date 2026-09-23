@@ -94,6 +94,7 @@ function HoursTable({
     <div
       role='group'
       aria-label={t('hoursTableCaption')}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
       tabIndex={0}
       className={`mb-9 overflow-x-auto rounded-lg border border-black-200 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
       {...dragHandlers}

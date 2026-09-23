@@ -57,6 +57,17 @@ describe('DatePickerModal', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
+  it('cancels on a backdrop click but not on a click inside the dialog', () => {
+    const { onCancel } = renderPicker()
+    const dialog = screen.getByRole('dialog')
+
+    fireEvent.click(dialog)
+    expect(onCancel).not.toHaveBeenCalled()
+
+    fireEvent.click(dialog.parentElement as HTMLElement)
+    expect(onCancel).toHaveBeenCalledOnce()
+  })
+
   it('initializes the selected day and month from the initial date', () => {
     renderPicker({ initialDate: formatDMY(nextMonth) })
 

@@ -97,7 +97,10 @@ export default function DatePickerModal({
   return (
     <div
       className='fixed inset-0 z-60 flex items-center justify-center bg-black-300/50 p-4'
-      onClick={onCancel}
+      role='presentation'
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onCancel()
+      }}
     >
       <div
         ref={dialogRef}
@@ -105,7 +108,6 @@ export default function DatePickerModal({
         aria-modal='true'
         aria-labelledby={titleId}
         tabIndex={-1}
-        onClick={(event) => event.stopPropagation()}
         className={`w-80 max-w-full overflow-hidden rounded-xl bg-white shadow-xl ${focusRing}`}
       >
         <h2 id={titleId} className='sr-only'>
