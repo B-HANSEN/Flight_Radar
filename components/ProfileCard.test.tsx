@@ -66,7 +66,9 @@ describe('ProfileCard', () => {
     expect(screen.getByText('Jane Doe')).toBeInTheDocument()
     expect(screen.getByText('Sister')).toBeInTheDocument()
     expect(screen.getByText('+34 600 987 654')).toBeInTheDocument()
-    expect(screen.queryByText('jamie.torres@example.com')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('jamie.torres@example.com'),
+    ).not.toBeInTheDocument()
   })
 
   it('calls onEdit and onLock when the header actions are clicked', () => {
