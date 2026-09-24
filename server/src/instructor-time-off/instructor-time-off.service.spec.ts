@@ -131,11 +131,11 @@ describe('InstructorTimeOffService', () => {
 
     await service.findAll()
 
-    const call = instructorTimeOffModel.find.mock.calls[0][0]
+    const [call] = instructorTimeOffModel.find.mock.calls[0] as [
+      { date: unknown },
+    ]
+    const monthStart: unknown = expect.stringMatching(/^\d{4}-\d{2}-01$/)
     expect(call).not.toHaveProperty('instructorId')
-    expect(call.date).toEqual({
-      $gte: expect.stringMatching(/^\d{4}-\d{2}-01$/),
-      $lt: expect.stringMatching(/^\d{4}-\d{2}-01$/),
-    })
+    expect(call.date).toEqual({ $gte: monthStart, $lt: monthStart })
   })
 })
