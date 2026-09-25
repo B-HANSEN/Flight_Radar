@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsNumberString,
   IsOptional,
+  IsString,
   validateSync,
 } from 'class-validator'
 
@@ -27,6 +28,12 @@ class EnvironmentVariables {
 
   @IsNotEmpty()
   CORS_ORIGIN!: string
+
+  // Optional so the API still boots without file storage; student-file
+  // uploads/downloads answer 503 until it is set.
+  @IsString()
+  @IsOptional()
+  BLOB_READ_WRITE_TOKEN?: string
 }
 
 export function validate(config: Record<string, unknown>) {
