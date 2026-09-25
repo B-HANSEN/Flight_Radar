@@ -1,25 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { PassThrough, Readable } from 'node:stream'
 import type { Response } from 'express'
-import { StudentFilesController } from './student-files.controller'
-import { StudentFilesService } from './student-files.service'
-import { StudentFile } from './schemas/student-file.schema'
+import { PersonFilesController } from './person-files.controller'
+import { PersonFilesService } from './person-files.service'
+import { PersonFile } from './schemas/person-file.schema'
 
-describe('StudentFilesController', () => {
-  let controller: StudentFilesController
-  const files: StudentFile[] = [
+describe('PersonFilesController', () => {
+  let controller: PersonFilesController
+  const files: PersonFile[] = [
     {
       label: 'Updated C152 checklist',
       category: 'checklist',
       fileName: 'c152-checklist.pdf',
       mimeType: 'application/pdf',
       size: 1024,
-      blobPathname: 'student-files/s1/c152-checklist-abc.pdf',
-      studentId: 's1',
+      blobPathname: 'person-files/p1/c152-checklist-abc.pdf',
+      personId: 'p1',
+      uploadedBy: 'i1',
     },
   ]
-  const studentFilesService = {
-    findByStudent: jest.fn().mockResolvedValue(files),
+  const personFilesService = {
+    findByPerson: jest.fn().mockResolvedValue(files),
     upload: jest.fn().mockResolvedValue(files[0]),
     openDownload: jest.fn(),
   }
@@ -28,18 +29,18 @@ describe('StudentFilesController', () => {
     jest.clearAllMocks()
 
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [StudentFilesController],
+      controllers: [PersonFilesController],
       providers: [
-        { provide: StudentFilesService, useValue: studentFilesService },
+        { provide: PersonFilesService, useValue: personFilesService },
       ],
     }).compile()
 
-    controller = app.get<StudentFilesController>(StudentFilesController)
+    controller = app.get<PersonFilesController>(PersonFilesController)
   })
 
-  it("returns the student's files from the service", async () => {
-    await expect(controller.findByStudent('s1')).resolves.toBe(files)
-    expect(studentFilesService.findByStudent).toHaveBeenCalledWith('s1')
+  it("returns the person's files from the service", async () => {
+    await expect(controller.findByPerson('p1')).resolves.toBe(files)
+    expect(personFilesService.findByPerson).toHaveBeenCalledWith('p1')
   })
 
   it('passes the uploaded file and form fields to the service', async () => {
@@ -49,14 +50,19 @@ describe('StudentFilesController', () => {
       size: 1024,
       buffer: Buffer.from('pdf'),
     }
-    const body = { studentId: 's1', label: 'Checklist', category: 'checklist' }
+    const body = {
+      personId: 'p1',
+      label: 'Checklist',
+      category: 'checklist',
+      uploadedBy: 'i1',
+    }
 
     await expect(controller.upload(file, body)).resolves.toBe(files[0])
-    expect(studentFilesService.upload).toHaveBeenCalledWith(file, body)
+    expect(personFilesService.upload).toHaveBeenCalledWith(file, body)
   })
 
   it('streams the blob with the right content headers', async () => {
-    studentFilesService.openDownload.mockResolvedValue({
+    personFilesService.openDownload.mockResolvedValue({
       file: files[0],
       stream: Readable.from([Buffer.from('pdf bytes')]),
     })
@@ -69,7 +75,7 @@ describe('StudentFilesController', () => {
     await controller.download('file-1', res as unknown as Response)
     await finished
 
-    expect(studentFilesService.openDownload).toHaveBeenCalledWith('file-1')
+    expect(personFilesService.openDownload).toHaveBeenCalledWith('file-1')
     expect(res.set).toHaveBeenCalledWith({
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename="c152-checklist.pdf"',

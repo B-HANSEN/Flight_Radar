@@ -14,18 +14,19 @@ import type { Response } from 'express'
 import { pipeline } from 'node:stream/promises'
 import {
   MAX_FILE_BYTES,
-  StudentFilesService,
+  PersonFilesService,
   type IncomingFile,
-  type UploadStudentFileInput,
-} from './student-files.service'
+  type UploadPersonFileInput,
+} from './person-files.service'
 
-@Controller('student-files')
-export class StudentFilesController {
-  constructor(private readonly studentFilesService: StudentFilesService) {}
+@Controller('person-files')
+export class PersonFilesController {
+  constructor(private readonly personFilesService: PersonFilesService) {}
 
+  // `personId` is a student or an instructor.
   @Get()
-  findByStudent(@Query('studentId') studentId: string) {
-    return this.studentFilesService.findByStudent(studentId)
+  findByPerson(@Query('personId') personId: string) {
+    return this.personFilesService.findByPerson(personId)
   }
 
   // Multipart upload: a `file` part plus the metadata fields. Multer rejects
@@ -36,16 +37,16 @@ export class StudentFilesController {
   )
   upload(
     @UploadedFile() file: IncomingFile | undefined,
-    @Body() body: UploadStudentFileInput,
+    @Body() body: UploadPersonFileInput,
   ) {
-    return this.studentFilesService.upload(file, body)
+    return this.personFilesService.upload(file, body)
   }
 
   // Streams the private blob through the API — the browser never sees the
   // blob URL. Mirrors the documents module's download endpoint.
   @Get(':id/download')
   async download(@Param('id') id: string, @Res() res: Response) {
-    const { file, stream } = await this.studentFilesService.openDownload(id)
+    const { file, stream } = await this.personFilesService.openDownload(id)
 
     res.set({
       'Content-Type': file.mimeType,

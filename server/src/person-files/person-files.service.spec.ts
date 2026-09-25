@@ -3,22 +3,32 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { Readable } from 'node:stream'
 import { getModelToken } from '@nestjs/mongoose'
 import { BlobStorageService } from './blob-storage.service'
-import { StudentFilesService, safeFileName } from './student-files.service'
-import { StudentFile } from './schemas/student-file.schema'
+import { PersonFilesService, safeFileName } from './person-files.service'
+import { PersonFile } from './schemas/person-file.schema'
+import { Instructor } from '../instructors/schemas/instructor.schema'
 import { Student } from '../students/schemas/student.schema'
 
 const STUDENT_ID = '64b000000000000000000001'
 const FILE_ID = '64b000000000000000000002'
+const INSTRUCTOR_ID = '64b000000000000000000003'
+const OTHER_INSTRUCTOR_ID = '64b000000000000000000004'
 
-describe('StudentFilesService', () => {
-  let service: StudentFilesService
+function findByIdAmong(ids: string[]) {
+  return (id: string) => ({
+    exec: jest.fn().mockResolvedValue(ids.includes(id) ? { id } : null),
+  })
+}
 
-  const studentFileModel = {
+describe('PersonFilesService', () => {
+  let service: PersonFilesService
+
+  const personFileModel = {
     find: jest.fn(),
     findById: jest.fn(),
     create: jest.fn(),
   }
   const studentModel = { findById: jest.fn() }
+  const instructorModel = { findById: jest.fn() }
   const blobStorage = { upload: jest.fn(), download: jest.fn() }
 
   const file = {
@@ -28,48 +38,45 @@ describe('StudentFilesService', () => {
     buffer: Buffer.from('pdf'),
   }
   const input = {
-    studentId: STUDENT_ID,
+    personId: STUDENT_ID,
     label: '  Updated checklist  ',
     category: 'checklist',
     expiresAt: '',
-    uploadedBy: 'instructor-1',
+    uploadedBy: INSTRUCTOR_ID,
   }
 
   beforeEach(async () => {
     jest.clearAllMocks()
-    studentModel.findById.mockReturnValue({
-      exec: jest.fn().mockResolvedValue({ name: 'Jamie Torres' }),
-    })
-    blobStorage.upload.mockResolvedValue('student-files/s1/c152-abc.pdf')
-    studentFileModel.create.mockImplementation((doc: unknown) =>
+    studentModel.findById.mockImplementation(findByIdAmong([STUDENT_ID]))
+    instructorModel.findById.mockImplementation(
+      findByIdAmong([INSTRUCTOR_ID, OTHER_INSTRUCTOR_ID]),
+    )
+    blobStorage.upload.mockResolvedValue('person-files/p1/c152-abc.pdf')
+    personFileModel.create.mockImplementation((doc: unknown) =>
       Promise.resolve(doc),
     )
 
     const app: TestingModule = await Test.createTestingModule({
       providers: [
-        StudentFilesService,
-        {
-          provide: getModelToken(StudentFile.name),
-          useValue: studentFileModel,
-        },
+        PersonFilesService,
+        { provide: getModelToken(PersonFile.name), useValue: personFileModel },
         { provide: getModelToken(Student.name), useValue: studentModel },
+        { provide: getModelToken(Instructor.name), useValue: instructorModel },
         { provide: BlobStorageService, useValue: blobStorage },
       ],
     }).compile()
 
-    service = app.get<StudentFilesService>(StudentFilesService)
+    service = app.get<PersonFilesService>(PersonFilesService)
   })
 
-  it('lists a student’s files newest first', async () => {
+  it('lists a person’s files newest first', async () => {
     const exec = jest.fn().mockResolvedValue([])
     const sort = jest.fn().mockReturnValue({ exec })
-    studentFileModel.find.mockReturnValue({ sort })
+    personFileModel.find.mockReturnValue({ sort })
 
-    await service.findByStudent(STUDENT_ID)
+    await service.findByPerson(STUDENT_ID)
 
-    expect(studentFileModel.find).toHaveBeenCalledWith({
-      studentId: STUDENT_ID,
-    })
+    expect(personFileModel.find).toHaveBeenCalledWith({ personId: STUDENT_ID })
     expect(sort).toHaveBeenCalledWith({ uploadedAt: -1 })
   })
 
@@ -78,27 +85,38 @@ describe('StudentFilesService', () => {
       const result = await service.upload(file, input)
 
       expect(blobStorage.upload).toHaveBeenCalledWith(
-        `student-files/${STUDENT_ID}/C152 checklist.pdf`,
+        `person-files/${STUDENT_ID}/C152 checklist.pdf`,
         file.buffer,
         'application/pdf',
       )
       expect(result).toEqual({
         label: 'Updated checklist',
         category: 'checklist',
-        uploadedBy: 'instructor-1',
-        studentId: STUDENT_ID,
+        personId: STUDENT_ID,
+        uploadedBy: INSTRUCTOR_ID,
         fileName: 'C152 checklist.pdf',
         mimeType: 'application/pdf',
         size: 2048,
-        blobPathname: 'student-files/s1/c152-abc.pdf',
+        blobPathname: 'person-files/p1/c152-abc.pdf',
       })
     })
 
     it('keeps a valid expiry date', async () => {
       await service.upload(file, { ...input, expiresAt: '2027-03-31' })
 
-      expect(studentFileModel.create).toHaveBeenCalledWith(
+      expect(personFileModel.create).toHaveBeenCalledWith(
         expect.objectContaining({ expiresAt: '2027-03-31' }),
+      )
+    })
+
+    it('lets an instructor upload for another instructor', async () => {
+      await service.upload(file, { ...input, personId: OTHER_INSTRUCTOR_ID })
+
+      expect(personFileModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          personId: OTHER_INSTRUCTOR_ID,
+          uploadedBy: INSTRUCTOR_ID,
+        }),
       )
     })
 
@@ -108,6 +126,11 @@ describe('StudentFilesService', () => {
       ['a blank label', file, { ...input, label: '   ' }],
       ['an unknown category', file, { ...input, category: 'secret' }],
       ['an impossible date', file, { ...input, expiresAt: '2027-02-30' }],
+      [
+        'an instructor uploading their own documents',
+        file,
+        { ...input, personId: INSTRUCTOR_ID },
+      ],
     ])('rejects %s before touching storage', async (_case, f, i) => {
       await expect(service.upload(f, i)).rejects.toBeInstanceOf(
         BadRequestException,
@@ -115,30 +138,27 @@ describe('StudentFilesService', () => {
       expect(blobStorage.upload).not.toHaveBeenCalled()
     })
 
-    it('rejects an unknown student', async () => {
-      studentModel.findById.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
-      })
-
-      await expect(service.upload(file, input)).rejects.toBeInstanceOf(
+    it.each([
+      ['an unknown recipient', { ...input, personId: FILE_ID }],
+      ['a malformed recipient id', { ...input, personId: 'nope' }],
+      [
+        'an uploader who is not an instructor',
+        { ...input, personId: OTHER_INSTRUCTOR_ID, uploadedBy: STUDENT_ID },
+      ],
+      ['a missing uploader', { ...input, uploadedBy: '' }],
+    ])('rejects %s', async (_case, i) => {
+      await expect(service.upload(file, i)).rejects.toBeInstanceOf(
         NotFoundException,
       )
       expect(blobStorage.upload).not.toHaveBeenCalled()
-    })
-
-    it('rejects a malformed student id without querying', async () => {
-      await expect(
-        service.upload(file, { ...input, studentId: 'nope' }),
-      ).rejects.toBeInstanceOf(NotFoundException)
-      expect(studentModel.findById).not.toHaveBeenCalled()
     })
   })
 
   describe('openDownload', () => {
     it('returns the file record and its blob stream', async () => {
-      const record = { blobPathname: 'student-files/s1/c152-abc.pdf' }
+      const record = { blobPathname: 'person-files/p1/c152-abc.pdf' }
       const stream = Readable.from(['x'])
-      studentFileModel.findById.mockReturnValue({
+      personFileModel.findById.mockReturnValue({
         exec: jest.fn().mockResolvedValue(record),
       })
       blobStorage.download.mockResolvedValue(stream)

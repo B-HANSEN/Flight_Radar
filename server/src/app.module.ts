@@ -20,7 +20,7 @@ import { LogbookModule } from './logbook/logbook.module'
 import { MailboxModule } from './mailbox/mailbox.module'
 import { NewsModule } from './news/news.module'
 import { ScheduleModule } from './schedule/schedule.module'
-import { StudentFilesModule } from './student-files/student-files.module'
+import { PersonFilesModule } from './person-files/person-files.module'
 import { StudentsModule } from './students/students.module'
 import { WeatherModule } from './weather/weather.module'
 
@@ -49,7 +49,7 @@ import { WeatherModule } from './weather/weather.module'
     MailboxModule,
     NewsModule,
     ScheduleModule,
-    StudentFilesModule,
+    PersonFilesModule,
     StudentsModule,
     WeatherModule,
   ],

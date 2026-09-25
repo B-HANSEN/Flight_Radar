@@ -5,23 +5,27 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, isValidObjectId } from 'mongoose'
+import {
+  Instructor,
+  InstructorDocument,
+} from '../instructors/schemas/instructor.schema'
 import { Student, StudentDocument } from '../students/schemas/student.schema'
 import { BlobStorageService } from './blob-storage.service'
 import {
-  STUDENT_FILE_CATEGORIES,
-  StudentFile,
-  StudentFileCategory,
-  StudentFileDocument,
-} from './schemas/student-file.schema'
+  PERSON_FILE_CATEGORIES,
+  PersonFile,
+  PersonFileCategory,
+  PersonFileDocument,
+} from './schemas/person-file.schema'
 
 // Multipart form fields arrive as plain strings; an empty optional field is
 // sent as ''.
-export type UploadStudentFileInput = {
-  studentId: string
+export type UploadPersonFileInput = {
+  personId: string
   label: string
   category: string
   expiresAt?: string
-  uploadedBy?: string
+  uploadedBy: string
 }
 
 // The subset of multer's in-memory file the service relies on.
@@ -47,8 +51,18 @@ function isIsoDate(value: string): boolean {
   return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value)
 }
 
-function isCategory(value: string): value is StudentFileCategory {
-  return (STUDENT_FILE_CATEGORIES as readonly string[]).includes(value)
+function isCategory(value: string): value is PersonFileCategory {
+  return (PERSON_FILE_CATEGORIES as readonly string[]).includes(value)
+}
+
+type FindableById = {
+  findById(id: string): { exec(): Promise<unknown> }
+}
+
+// A malformed id would make findById throw a CastError (→ 500); treat
+// anything that isn't a valid ObjectId as simply not found.
+async function exists(model: FindableById, id: string): Promise<boolean> {
+  return Boolean(id && isValidObjectId(id) && (await model.findById(id).exec()))
 }
 
 // Keeps the stored name readable while dropping anything that could break
@@ -58,53 +72,56 @@ export function safeFileName(name: string): string {
 }
 
 @Injectable()
-export class StudentFilesService {
+export class PersonFilesService {
   constructor(
-    @InjectModel(StudentFile.name)
-    private readonly studentFileModel: Model<StudentFileDocument>,
+    @InjectModel(PersonFile.name)
+    private readonly personFileModel: Model<PersonFileDocument>,
     @InjectModel(Student.name)
     private readonly studentModel: Model<StudentDocument>,
+    @InjectModel(Instructor.name)
+    private readonly instructorModel: Model<InstructorDocument>,
     private readonly blobStorage: BlobStorageService,
   ) {}
 
-  findByStudent(studentId: string) {
-    return this.studentFileModel
-      .find({ studentId })
+  findByPerson(personId: string) {
+    return this.personFileModel
+      .find({ personId })
       .sort({ uploadedAt: -1 })
       .exec()
   }
 
-  async findById(id: string): Promise<StudentFileDocument> {
+  async findById(id: string): Promise<PersonFileDocument> {
     // A malformed id would make findById throw a CastError (→ 500); treat
     // anything that isn't a valid ObjectId as simply not found.
     const file = isValidObjectId(id)
-      ? await this.studentFileModel.findById(id).exec()
+      ? await this.personFileModel.findById(id).exec()
       : null
 
     if (!file) {
-      throw new NotFoundException(`Student file ${id} not found`)
+      throw new NotFoundException(`File ${id} not found`)
     }
 
     return file
   }
 
-  async upload(file: IncomingFile | undefined, input: UploadStudentFileInput) {
+  async upload(file: IncomingFile | undefined, input: UploadPersonFileInput) {
     if (!file) {
       throw new BadRequestException('A file is required')
     }
     const fields = this.validate(file, input)
-    await this.assertStudentExists(input.studentId)
+    await this.assertParticipantsExist(input.personId, input.uploadedBy)
 
     const fileName = safeFileName(file.originalname)
     const blobPathname = await this.blobStorage.upload(
-      `student-files/${input.studentId}/${fileName}`,
+      `person-files/${input.personId}/${fileName}`,
       file.buffer,
       file.mimetype,
     )
 
-    return this.studentFileModel.create({
+    return this.personFileModel.create({
       ...fields,
-      studentId: input.studentId,
+      personId: input.personId,
+      uploadedBy: input.uploadedBy,
       fileName,
       mimeType: file.mimetype,
       size: file.size,
@@ -118,7 +135,7 @@ export class StudentFilesService {
     return { file, stream }
   }
 
-  private validate(file: IncomingFile, input: UploadStudentFileInput) {
+  private validate(file: IncomingFile, input: UploadPersonFileInput) {
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       throw new BadRequestException('Only PDF and image files can be uploaded')
     }
@@ -138,20 +155,34 @@ export class StudentFilesService {
       throw new BadRequestException('Expiry date must be YYYY-MM-DD')
     }
 
+    // Four-eyes principle: an instructor's own documents are uploaded by a
+    // different instructor.
+    if (input.uploadedBy && input.uploadedBy === input.personId) {
+      throw new BadRequestException(
+        'Your own documents must be uploaded by another instructor',
+      )
+    }
+
     return {
       label,
       category: input.category,
       ...(expiresAt ? { expiresAt } : {}),
-      ...(input.uploadedBy ? { uploadedBy: input.uploadedBy } : {}),
     }
   }
 
-  private async assertStudentExists(studentId: string) {
-    const student = isValidObjectId(studentId)
-      ? await this.studentModel.findById(studentId).exec()
-      : null
-    if (!student) {
-      throw new NotFoundException(`Student ${studentId} not found`)
+  // The recipient may be a student or an instructor; the uploader must be
+  // an instructor.
+  private async assertParticipantsExist(personId: string, uploadedBy: string) {
+    const [isStudent, isInstructor, uploaderExists] = await Promise.all([
+      exists(this.studentModel, personId),
+      exists(this.instructorModel, personId),
+      exists(this.instructorModel, uploadedBy),
+    ])
+    if (!isStudent && !isInstructor) {
+      throw new NotFoundException(`Person ${personId} not found`)
+    }
+    if (!uploaderExists) {
+      throw new NotFoundException(`Instructor ${uploadedBy} not found`)
     }
   }
 }
