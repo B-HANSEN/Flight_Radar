@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import Courses from '@/components/Courses'
 import type { CourseProgress } from '@/components/Courses.types'
@@ -11,13 +11,7 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function CoursesPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
+export default async function CoursesPage() {
   const t = await getTranslations('CoursesPage')
 
   const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value

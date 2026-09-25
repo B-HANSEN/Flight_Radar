@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import CertificateList from '@/components/CertificateList'
 import type { Certificate } from '@/components/CertificateList.types'
@@ -17,13 +17,7 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function CertificatesPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
+export default async function CertificatesPage() {
   const t = await getTranslations('CertificatesPage')
 
   const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value

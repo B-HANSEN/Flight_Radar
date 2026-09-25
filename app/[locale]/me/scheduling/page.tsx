@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import { redirect } from '@/i18n/navigation'
 import {
@@ -17,13 +17,8 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function SchedulingPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
+export default async function SchedulingPage() {
+  const locale = await getLocale()
 
   // Only an instructor view (RoleSwitcher's instructor options) may see
   // this page — a student's own preview never should. The default, absent

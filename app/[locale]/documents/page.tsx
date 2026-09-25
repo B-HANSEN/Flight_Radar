@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import DocumentsBrowser from '@/components/DocumentsBrowser'
 import JsonLd from '@/components/JsonLd'
@@ -12,13 +12,9 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}): Promise<Metadata> {
-  const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'DocumentsPage' })
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale()
+  const t = await getTranslations('DocumentsPage')
 
   return buildPageMetadata({
     locale,
@@ -28,13 +24,8 @@ export async function generateMetadata({
   })
 }
 
-export default async function DocumentsPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
+export default async function DocumentsPage() {
+  const locale = await getLocale()
   const t = await getTranslations('DocumentsPage')
   const folders = await fetchApi<DocumentFolder[]>('/documents')
 

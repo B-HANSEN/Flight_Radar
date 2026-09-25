@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
-import { NextIntlClientProvider, hasLocale } from 'next-intl'
-import { getMessages, setRequestLocale } from 'next-intl/server'
-import { notFound } from 'next/navigation'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages } from 'next-intl/server'
 import { cookies } from 'next/headers'
 import { routing } from '@/i18n/routing'
 import NavBar from '@/components/NavBar'
@@ -35,18 +34,14 @@ export const metadata: Metadata = {
     'A flight school management platform for tracking bookings, logbooks, certificates, and courses.',
 }
 
+// The locale is read from next/root-params (see i18n/request.ts), which
+// also 404s an unsupported locale segment.
 export default async function LocaleLayout({
   children,
-  params,
 }: {
   children: React.ReactNode
-  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
-  if (!hasLocale(routing.locales, locale)) {
-    notFound()
-  }
-  setRequestLocale(locale)
+  const locale = await getLocale()
   const messages = await getMessages()
   const students = await fetchApi<Student[]>('/students')
   const instructors = await fetchApi<Instructor[]>('/instructors')

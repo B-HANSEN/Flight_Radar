@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import {
   CURRENT_ROLE_COOKIE,
@@ -25,13 +25,9 @@ export const metadata: Metadata = {
 
 export default async function MeLayout({
   children,
-  params,
 }: {
   children: React.ReactNode
-  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
-  setRequestLocale(locale)
   const t = await getTranslations('MePage.profileCard')
 
   const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value

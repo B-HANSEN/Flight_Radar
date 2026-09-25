@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import Homepage from '@/components/Homepage'
 import JsonLd from '@/components/JsonLd'
@@ -44,13 +44,9 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}): Promise<Metadata> {
-  const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'Homepage.meta' })
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale()
+  const t = await getTranslations('Homepage.meta')
 
   return buildPageMetadata({
     locale,
@@ -61,14 +57,9 @@ export async function generateMetadata({
   })
 }
 
-export default async function HomePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
-  const t = await getTranslations({ locale, namespace: 'Homepage.meta' })
+export default async function HomePage() {
+  const locale = await getLocale()
+  const t = await getTranslations('Homepage.meta')
 
   const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value
   const isInstructorView = isInstructorRoleValue(roleCookie)

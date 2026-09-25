@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import PageHeading from '@/components/PageHeading'
 import JsonLd from '@/components/JsonLd'
@@ -13,13 +13,9 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}): Promise<Metadata> {
-  const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'AircraftPage' })
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale()
+  const t = await getTranslations('AircraftPage')
 
   return buildPageMetadata({
     locale,
@@ -29,13 +25,8 @@ export async function generateMetadata({
   })
 }
 
-export default async function AircraftPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
+export default async function AircraftPage() {
+  const locale = await getLocale()
   const t = await getTranslations('AircraftPage')
   const aircraft = await fetchApi<Aircraft[]>('/aircraft', {
     next: { revalidate: 3600 },

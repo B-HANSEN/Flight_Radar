@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import { redirect } from '@/i18n/navigation'
 import {
@@ -18,13 +18,8 @@ export function generateStaticParams() {
 
 const toOption = ({ id, name }: { id: string; name: string }) => ({ id, name })
 
-export default async function UploadsPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
+export default async function UploadsPage() {
+  const locale = await getLocale()
 
   // Instructor-only, like /me/scheduling — a student view is sent back to
   // their own /me.

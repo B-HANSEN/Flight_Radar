@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { getTranslations } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import {
   CURRENT_ROLE_COOKIE,
@@ -15,13 +15,7 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-export default async function AgendaPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}) {
-  const { locale } = await params
-  setRequestLocale(locale)
+export default async function AgendaPage() {
   const t = await getTranslations('AgendaPage')
 
   // Scope the agenda to whoever is currently being previewed — a student
