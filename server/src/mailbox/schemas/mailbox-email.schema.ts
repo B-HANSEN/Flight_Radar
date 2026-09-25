@@ -102,9 +102,8 @@ export class MailboxEmail {
   @Prop({ default: false })
   read?: boolean
 
-  // No Users module yet (no auth) — plain person ids for now (a student or
-  // instructor id), become real ObjectId refs once the Users module
-  // exists. `recipientId` owns the mailbox the message lands in;
+  // Plain ids of seeded demo people (a student or instructor id), not
+  // ObjectId refs. `recipientId` owns the mailbox the message lands in;
   // `senderId` is set only when a real person sent it (category
   // 'personal'), absent for desk/system mail.
   @Prop({ required: true })

@@ -39,8 +39,7 @@ export class Booking {
   @Prop({ required: true })
   time!: string
 
-  // No Users module yet (no auth) — plain id for now, becomes a real
-  // ObjectId ref once the Users module exists.
+  // Plain id of a seeded demo student, not an ObjectId ref.
   @Prop({ required: true })
   studentId!: string
 

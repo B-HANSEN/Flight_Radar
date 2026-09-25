@@ -27,8 +27,7 @@ export type AvailabilityEntryInput = {
 export type CreateAvailabilityEntryInput = AvailabilityEntryInput
 export type UpdateAvailabilityEntryInput = AvailabilityEntryInput
 
-// No Users module yet (no auth) — plain id for now, becomes a real
-// ObjectId ref once the Users module exists. Callers that know the persona
+// Plain id of a seeded demo student, not an ObjectId ref. Callers that know the persona
 // (the /me pages) pass a real student id; the default keeps older callers
 // and tests working.
 const DEFAULT_STUDENT_ID = 'student-1'

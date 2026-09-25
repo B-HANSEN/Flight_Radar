@@ -3488,8 +3488,8 @@ const students: Omit<Student, '_id'>[] = [
 // Kate Ashford ("K. Ashford") are the two names already scattered through
 // bookings/logbook/signatures/flight-evaluations seed data below — this is
 // the first place they exist as real profile records rather than loose
-// strings. No Users module yet (no auth), so there's still no login tied
-// to a specific instructor — RoleSwitcher lets a visitor preview either one.
+// strings. They're demo personas only — RoleSwitcher lets a visitor preview
+// either one.
 const instructors: Omit<Instructor, '_id'>[] = [
   {
     name: 'James Whitfield',

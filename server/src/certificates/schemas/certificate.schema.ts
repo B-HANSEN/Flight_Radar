@@ -46,9 +46,8 @@ export class Certificate {
   @Prop()
   holderName?: string
 
-  // A student or an instructor (previewing their own profile) — no Users
-  // module yet (no auth), so this is a plain id for now, becomes a real
-  // ObjectId ref once the Users module exists.
+  // A student or an instructor (previewing their own profile) — plain id
+  // of a seeded demo person, not an ObjectId ref.
   @Prop({ required: true })
   personId!: string
 }

@@ -51,8 +51,8 @@ const items: NavItem[] = [
   { key: 'scheduling', href: '/instructor', icon: GraduationCap },
 ]
 
-// No Users module yet (no auth) — falls back to this fixed placeholder if
-// the caller doesn't pass real fetched instructors (e.g. in Storybook/tests).
+// Fixed placeholder instructor, used when the caller doesn't pass real
+// fetched instructors (e.g. in Storybook/tests).
 const FALLBACK_INSTRUCTORS: Instructor[] = [
   {
     id: 'fallback-instructor',

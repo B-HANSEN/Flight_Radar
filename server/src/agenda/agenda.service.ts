@@ -30,8 +30,7 @@ import { formatISODate, startOfCurrentMonth, toISODate } from '../common/date'
 // with server/, so this is a deliberate duplicated constant.
 const AGENDA_MONTHS_AHEAD = 3
 
-// No Users module yet (no auth) — plain id for now, becomes a real
-// ObjectId ref once the Users module exists.
+// Plain id of a seeded demo student, not an ObjectId ref.
 const DEFAULT_STUDENT_ID = 'student-1'
 
 export type AgendaQuery = {

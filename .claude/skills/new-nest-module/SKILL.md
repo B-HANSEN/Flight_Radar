@@ -3,7 +3,7 @@ name: new-nest-module
 description: Scaffold a new NestJS + Mongoose feature module under server/src/ (schema, service, controller, controller spec, module) in this repo's established shape. Use when the user asks to add a backend module, a new API entity/resource, or to wire a new collection into the server. Ensures the module is registered in app.module.ts and seeded in seed.ts in the same pass, since a module that exists but isn't wired in either place silently returns nothing (404 or empty array) rather than erroring.
 ---
 
-Add a new flat module under `server/src/<name>/` (kebab-case, plural if the entity is a list — e.g. `bookings`, `documents`, singular `health` is the one exception). Follow `server/src/bookings/` as the reference implementation — copy its shape exactly rather than improvising. No DTOs, no `common/` guards, no auth — this project has no Users/auth module yet, so any per-student field is a plain string `studentId` with a comment, not a Mongoose ref.
+Add a new flat module under `server/src/<name>/` (kebab-case, plural if the entity is a list — e.g. `bookings`, `documents`, singular `health` is the one exception). Follow `server/src/bookings/` as the reference implementation — copy its shape exactly rather than improvising. No DTOs, no `common/` guards, no auth — this is a demo app with seeded demo personas only (no Users module, none planned), so any per-student field is a plain string `studentId` with a comment, not a Mongoose ref.
 
 ## Files
 
@@ -41,8 +41,7 @@ export class <Name> {
   @Prop()
   optionalField?: string
 
-  // No Users module yet (no auth) — plain id for now, becomes a real
-  // ObjectId ref once the Users module exists.
+  // Plain id of a seeded demo student, not an ObjectId ref.
   @Prop({ required: true })
   studentId!: string
 }
