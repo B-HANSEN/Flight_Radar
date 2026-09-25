@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useReducer, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { CheckCircle2, Clock, Plane } from 'lucide-react'
 import Modal from './Modal'
@@ -63,6 +63,96 @@ function uniqueAircraftTypes(aircraft: ScheduleAircraft[]): string[] {
   return Array.from(new Set(aircraft.map((ac) => ac.type)))
 }
 
+type FormState = {
+  aircraft: { type: string; id: string }
+  lessonType: string
+  instructorId: string
+  comments: string
+  time: { start: string; end: string }
+  timePicker: TimeTarget
+  instructorLockedNotice: boolean
+}
+
+type FormAction =
+  | { type: 'toggleAircraftType'; aircraftType: string }
+  | { type: 'selectAircraft'; id: string }
+  | { type: 'toggleLessonType'; lessonType: string }
+  | { type: 'selectInstructor'; id: string }
+  | { type: 'setInstructorLockedNotice'; open: boolean }
+  | { type: 'setComments'; comments: string }
+  | { type: 'openTimePicker'; target: 'start' | 'end' }
+  | { type: 'confirmTime'; value: string }
+  | { type: 'closeTimePicker' }
+
+function initialFormState({
+  target,
+  currentInstructorId,
+}: {
+  target: ScheduleFlightTarget | null
+  currentInstructorId?: string
+}): FormState {
+  return {
+    aircraft: { type: '', id: '' },
+    lessonType: '',
+    instructorId: currentInstructorId ?? '',
+    comments: '',
+    time: {
+      start: target?.slot.startTime ?? '',
+      end: target?.slot.endTime ?? '',
+    },
+    timePicker: null,
+    instructorLockedNotice: false,
+  }
+}
+
+const NO_AIRCRAFT = { type: '', id: '' }
+
+// Aircraft type and tail change together: picking (or clearing) a type
+// always drops the tail, and so does switching to a Theory lesson, which
+// needs no aircraft at all.
+function formReducer(state: FormState, action: FormAction): FormState {
+  switch (action.type) {
+    case 'toggleAircraftType':
+      return {
+        ...state,
+        aircraft: {
+          type:
+            state.aircraft.type === action.aircraftType
+              ? ''
+              : action.aircraftType,
+          id: '',
+        },
+      }
+    case 'selectAircraft':
+      return { ...state, aircraft: { ...state.aircraft, id: action.id } }
+    case 'toggleLessonType':
+      return {
+        ...state,
+        lessonType:
+          state.lessonType === action.lessonType ? '' : action.lessonType,
+        aircraft: action.lessonType === 'Theory' ? NO_AIRCRAFT : state.aircraft,
+      }
+    case 'selectInstructor':
+      return { ...state, instructorId: action.id }
+    case 'setInstructorLockedNotice':
+      return { ...state, instructorLockedNotice: action.open }
+    case 'setComments':
+      return { ...state, comments: action.comments }
+    case 'openTimePicker':
+      return { ...state, timePicker: action.target }
+    case 'confirmTime':
+      return state.timePicker === null
+        ? state
+        : {
+            ...state,
+            time: { ...state.time, [state.timePicker]: action.value },
+            timePicker: null,
+          }
+    case 'closeTimePicker':
+      return { ...state, timePicker: null }
+  }
+}
+
 function formatDayLabel(isoDate: string, locale: string): string {
   const date = new Date(`${isoDate}T00:00:00`)
   const weekday = new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(
@@ -86,17 +176,16 @@ export default function ScheduleFlightModal({
   const locale = useLocale()
   const formId = useId()
 
-  const [selectedAircraftType, setSelectedAircraftType] = useState('')
-  const [selectedAircraftId, setSelectedAircraftId] = useState('')
-  const [selectedLessonType, setSelectedLessonType] = useState('')
-  const [selectedInstructorId, setSelectedInstructorId] = useState(
-    currentInstructorId ?? '',
+  const [state, dispatch] = useReducer(
+    formReducer,
+    { target, currentInstructorId },
+    initialFormState,
   )
-  const [instructorLockedNotice, setInstructorLockedNotice] = useState(false)
-  const [comments, setComments] = useState('')
-  const [startTime, setStartTime] = useState(target?.slot.startTime ?? '')
-  const [endTime, setEndTime] = useState(target?.slot.endTime ?? '')
-  const [timePickerTarget, setTimePickerTarget] = useState<TimeTarget>(null)
+  const { comments, timePicker, instructorLockedNotice } = state
+  const { type: selectedAircraftType, id: selectedAircraftId } = state.aircraft
+  const selectedLessonType = state.lessonType
+  const selectedInstructorId = state.instructorId
+  const { start: startTime, end: endTime } = state.time
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [fetchedBusyAircraft, setFetchedBusyAircraft] = useState<
     AircraftAvailability[]
@@ -220,35 +309,16 @@ export default function ScheduleFlightModal({
     overlappingFlight !== undefined ||
     bufferConflictFlight !== undefined
 
-  function selectAircraftType(type: string) {
-    setSelectedAircraftType((current) => (current === type ? '' : type))
-    setSelectedAircraftId('')
-  }
-
   // Unlike aircraft type/lesson type, an instructor can't be deselected
   // back to none — a booking always needs one assigned.
   function selectInstructor(id: string) {
     if (!canAssignOtherInstructor) {
-      if (id !== currentInstructorId) setInstructorLockedNotice(true)
+      if (id !== currentInstructorId) {
+        dispatch({ type: 'setInstructorLockedNotice', open: true })
+      }
       return
     }
-    setSelectedInstructorId(id)
-  }
-
-  function toggleLessonType(type: string) {
-    setSelectedLessonType((current) => (current === type ? '' : type))
-    // A Theory lesson has no aircraft — drop any pending aircraft choice so
-    // it can't be sent, and so the (now hidden) tail picker resets.
-    if (type === 'Theory') {
-      setSelectedAircraftType('')
-      setSelectedAircraftId('')
-    }
-  }
-
-  function handleTimeConfirm(time: string) {
-    if (timePickerTarget === 'start') setStartTime(time)
-    if (timePickerTarget === 'end') setEndTime(time)
-    setTimePickerTarget(null)
+    dispatch({ type: 'selectInstructor', id })
   }
 
   // Theory (ground school) needs no aircraft, but the topic is mandatory —
@@ -322,7 +392,7 @@ export default function ScheduleFlightModal({
       title={t('title')}
       closeLabel={t('close')}
       maxWidthClassName='max-w-3xl'
-      active={timePickerTarget === null}
+      active={timePicker === null}
     >
       {target && (
         <>
@@ -352,7 +422,9 @@ export default function ScheduleFlightModal({
             <div className='flex flex-wrap items-center gap-3'>
               <button
                 type='button'
-                onClick={() => setTimePickerTarget('start')}
+                onClick={() =>
+                  dispatch({ type: 'openTimePicker', target: 'start' })
+                }
                 aria-label={`${t('startTimeLabel')}: ${startTime}`}
                 aria-describedby={
                   hasSchedulingConflict ? `${formId}-time-issue` : undefined
@@ -371,7 +443,9 @@ export default function ScheduleFlightModal({
               <span className='font-secondary text-sm text-black-200'>–</span>
               <button
                 type='button'
-                onClick={() => setTimePickerTarget('end')}
+                onClick={() =>
+                  dispatch({ type: 'openTimePicker', target: 'end' })
+                }
                 aria-label={`${t('endTimeLabel')}: ${endTime}`}
                 aria-describedby={
                   hasSchedulingConflict ? `${formId}-time-issue` : undefined
@@ -478,7 +552,9 @@ export default function ScheduleFlightModal({
                 <button
                   key={type}
                   type='button'
-                  onClick={() => selectAircraftType(type)}
+                  onClick={() =>
+                    dispatch({ type: 'toggleAircraftType', aircraftType: type })
+                  }
                   aria-pressed={selectedAircraftType === type}
                   className={pillClassName(
                     selectedAircraftType === type,
@@ -511,7 +587,8 @@ export default function ScheduleFlightModal({
                       <button
                         type='button'
                         onClick={() => {
-                          if (!busy) setSelectedAircraftId(option.id)
+                          if (!busy)
+                            dispatch({ type: 'selectAircraft', id: option.id })
                         }}
                         aria-pressed={isSelected}
                         aria-disabled={busy !== undefined}
@@ -552,7 +629,9 @@ export default function ScheduleFlightModal({
                 <button
                   key={value}
                   type='button'
-                  onClick={() => toggleLessonType(value)}
+                  onClick={() =>
+                    dispatch({ type: 'toggleLessonType', lessonType: value })
+                  }
                   aria-pressed={selectedLessonType === value}
                   className={pillClassName(selectedLessonType === value)}
                 >
@@ -606,7 +685,9 @@ export default function ScheduleFlightModal({
             <textarea
               id={`${formId}-comments`}
               value={comments}
-              onChange={(event) => setComments(event.target.value)}
+              onChange={(event) =>
+                dispatch({ type: 'setComments', comments: event.target.value })
+              }
               required={isTheory}
               aria-required={isTheory}
               placeholder={
@@ -635,17 +716,19 @@ export default function ScheduleFlightModal({
           </div>
 
           <TimePickerModal
-            key={`time-${timePickerTarget}`}
-            isOpen={timePickerTarget !== null}
-            initialTime={timePickerTarget === 'start' ? startTime : endTime}
-            onCancel={() => setTimePickerTarget(null)}
-            onConfirm={handleTimeConfirm}
+            key={`time-${timePicker}`}
+            isOpen={timePicker !== null}
+            initialTime={timePicker === 'start' ? startTime : endTime}
+            onCancel={() => dispatch({ type: 'closeTimePicker' })}
+            onConfirm={(value) => dispatch({ type: 'confirmTime', value })}
           />
 
           <Toast
             message={t('instructorLockedNotice')}
             open={instructorLockedNotice}
-            onClose={() => setInstructorLockedNotice(false)}
+            onClose={() =>
+              dispatch({ type: 'setInstructorLockedNotice', open: false })
+            }
             durationMs={5000}
             variant='error'
           />

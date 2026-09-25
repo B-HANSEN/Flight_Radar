@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState } from 'react'
+import { useId, useReducer } from 'react'
 import { useTranslations } from 'next-intl'
 import { Calendar, Clock } from 'lucide-react'
 import Modal from './Modal'
@@ -65,16 +65,26 @@ function weekdayOfDate(date: Date): Weekday {
 }
 
 type FormState = {
-  dateMode: DateMode
-  onDate: string
-  fromDate: string
-  toDate: string
-  timeMode: TimeMode
-  startTime: string
-  endTime: string
-  recurrenceMode: RecurrenceMode
-  recurrenceDays: Weekday[]
+  date: { mode: DateMode; on: string; from: string; to: string }
+  time: { mode: TimeMode; start: string; end: string }
+  recurrence: { mode: RecurrenceMode; days: Weekday[] }
+  timePicker: TimeTarget
+  datePicker: DateTarget
 }
+
+type FormAction =
+  | { type: 'reset'; state: FormState }
+  | { type: 'setDateMode'; mode: DateMode }
+  | { type: 'setDate'; field: 'on' | 'from' | 'to'; value: string }
+  | { type: 'openDatePicker'; target: 'on' | 'from' | 'to' }
+  | { type: 'confirmDate'; value: string }
+  | { type: 'closeDatePicker' }
+  | { type: 'setTimeMode'; mode: TimeMode }
+  | { type: 'openTimePicker'; target: 'start' | 'end' }
+  | { type: 'confirmTime'; value: string }
+  | { type: 'closeTimePicker' }
+  | { type: 'setRecurrenceMode'; mode: RecurrenceMode }
+  | { type: 'toggleWeekday'; day: Weekday }
 
 function initialFormState(initialValues?: AvailabilityFormValues): FormState {
   const date = initialValues?.date
@@ -82,15 +92,168 @@ function initialFormState(initialValues?: AvailabilityFormValues): FormState {
   const recurrence = initialValues?.recurrence
 
   return {
-    dateMode: date?.mode ?? 'range',
-    onDate: date?.mode === 'on' ? date.date : '',
-    fromDate: date?.mode === 'range' ? date.from : '',
-    toDate: date?.mode === 'range' ? date.to : '',
-    timeMode: time?.mode ?? 'allDay',
-    startTime: time?.mode === 'between' ? time.start : '08:00',
-    endTime: time?.mode === 'between' ? time.end : '10:00',
-    recurrenceMode: recurrence?.mode ?? 'everyday',
-    recurrenceDays: recurrence?.mode === 'days' ? recurrence.days : [],
+    date: {
+      mode: date?.mode ?? 'range',
+      on: date?.mode === 'on' ? date.date : '',
+      from: date?.mode === 'range' ? date.from : '',
+      to: date?.mode === 'range' ? date.to : '',
+    },
+    time: {
+      mode: time?.mode ?? 'allDay',
+      start: time?.mode === 'between' ? time.start : '08:00',
+      end: time?.mode === 'between' ? time.end : '10:00',
+    },
+    recurrence: {
+      mode: recurrence?.mode ?? 'everyday',
+      days: recurrence?.mode === 'days' ? recurrence.days : [],
+    },
+    timePicker: null,
+    datePicker: null,
+  }
+}
+
+function toggle(days: Weekday[], day: Weekday): Weekday[] {
+  return days.includes(day)
+    ? days.filter((selected) => selected !== day)
+    : [...days, day]
+}
+
+type DateAction = Extract<
+  FormAction,
+  {
+    type:
+      | 'setDateMode'
+      | 'setDate'
+      | 'openDatePicker'
+      | 'confirmDate'
+      | 'closeDatePicker'
+  }
+>
+type TimeAction = Extract<
+  FormAction,
+  { type: 'setTimeMode' | 'openTimePicker' | 'confirmTime' | 'closeTimePicker' }
+>
+type RecurrenceAction = Extract<
+  FormAction,
+  { type: 'setRecurrenceMode' | 'toggleWeekday' }
+>
+
+// Opening a date's calendar also selects the radio option it belongs to.
+function dateReducer(state: FormState, action: DateAction): FormState {
+  const { date } = state
+  switch (action.type) {
+    case 'setDateMode':
+      return { ...state, date: { ...date, mode: action.mode } }
+    case 'setDate':
+      return { ...state, date: { ...date, [action.field]: action.value } }
+    case 'openDatePicker': {
+      const mode = action.target === 'on' ? 'on' : 'range'
+      return { ...state, date: { ...date, mode }, datePicker: action.target }
+    }
+    case 'confirmDate':
+      if (state.datePicker === null) return state
+      return {
+        ...state,
+        date: { ...date, [state.datePicker]: action.value },
+        datePicker: null,
+      }
+    case 'closeDatePicker':
+      return { ...state, datePicker: null }
+  }
+}
+
+// Likewise, opening a time picker selects "between".
+function timeReducer(state: FormState, action: TimeAction): FormState {
+  const { time } = state
+  switch (action.type) {
+    case 'setTimeMode':
+      return { ...state, time: { ...time, mode: action.mode } }
+    case 'openTimePicker':
+      return {
+        ...state,
+        time: { ...time, mode: 'between' },
+        timePicker: action.target,
+      }
+    case 'confirmTime':
+      if (state.timePicker === null) return state
+      return {
+        ...state,
+        time: { ...time, [state.timePicker]: action.value },
+        timePicker: null,
+      }
+    case 'closeTimePicker':
+      return { ...state, timePicker: null }
+  }
+}
+
+// Picking a weekday switches recurrence to "these days".
+function recurrenceReducer(
+  state: FormState,
+  action: RecurrenceAction,
+): FormState {
+  const { recurrence } = state
+  switch (action.type) {
+    case 'setRecurrenceMode':
+      return { ...state, recurrence: { ...recurrence, mode: action.mode } }
+    case 'toggleWeekday':
+      return {
+        ...state,
+        recurrence: { mode: 'days', days: toggle(recurrence.days, action.day) },
+      }
+  }
+}
+
+function formReducer(state: FormState, action: FormAction): FormState {
+  switch (action.type) {
+    case 'reset':
+      return action.state
+    case 'setDateMode':
+    case 'setDate':
+    case 'openDatePicker':
+    case 'confirmDate':
+    case 'closeDatePicker':
+      return dateReducer(state, action)
+    case 'setTimeMode':
+    case 'openTimePicker':
+    case 'confirmTime':
+    case 'closeTimePicker':
+      return timeReducer(state, action)
+    case 'setRecurrenceMode':
+    case 'toggleWeekday':
+      return recurrenceReducer(state, action)
+  }
+}
+
+// null = dates aren't valid yet, so no weekday restriction can be computed.
+function allowedWeekdaysFor(date: FormState['date']): Set<Weekday> | null {
+  if (date.mode === 'on') {
+    const on = parseAvailabilityDate(date.on)
+    return on ? new Set([weekdayOfDate(on)]) : null
+  }
+  const from = parseAvailabilityDate(date.from)
+  const to = parseAvailabilityDate(date.to)
+  return from && to ? weekdaysInRange(from, to) : null
+}
+
+function toFormValues(
+  { date, time, recurrence }: FormState,
+  effectiveDays: Weekday[],
+): AvailabilityFormValues {
+  const orderedDays = WEEKDAY_ORDER.filter((day) => effectiveDays.includes(day))
+  return {
+    date:
+      date.mode === 'on'
+        ? { mode: 'on', date: date.on }
+        : { mode: 'range', from: date.from, to: date.to },
+    time:
+      time.mode === 'allDay'
+        ? { mode: 'allDay' }
+        : { mode: 'between', start: time.start, end: time.end },
+    recurrence:
+      recurrence.mode === 'everyday' ||
+      orderedDays.length === WEEKDAY_ORDER.length
+        ? { mode: 'everyday' }
+        : { mode: 'days', days: orderedDays },
   }
 }
 
@@ -121,47 +284,15 @@ export default function AvailabilityFormModal({
 }: Props) {
   const t = useTranslations('AvailabilityFormModal')
   const formId = useId()
-
-  const initial = initialFormState(initialValues)
-
-  const [dateMode, setDateMode] = useState<DateMode>(initial.dateMode)
-  const [onDate, setOnDate] = useState(initial.onDate)
-  const [fromDate, setFromDate] = useState(initial.fromDate)
-  const [toDate, setToDate] = useState(initial.toDate)
-  const [timeMode, setTimeMode] = useState<TimeMode>(initial.timeMode)
-  const [startTime, setStartTime] = useState(initial.startTime)
-  const [endTime, setEndTime] = useState(initial.endTime)
-  const [recurrenceMode, setRecurrenceMode] = useState<RecurrenceMode>(
-    initial.recurrenceMode,
+  const [state, dispatch] = useReducer(
+    formReducer,
+    initialValues,
+    initialFormState,
   )
-  const [recurrenceDays, setRecurrenceDays] = useState<Weekday[]>(
-    initial.recurrenceDays,
-  )
-  const [timePickerTarget, setTimePickerTarget] = useState<TimeTarget>(null)
-  const [datePickerTarget, setDatePickerTarget] = useState<DateTarget>(null)
+  const { date, time, recurrence, timePicker, datePicker } = state
 
   function reset() {
-    const initial = initialFormState(initialValues)
-    setDateMode(initial.dateMode)
-    setOnDate(initial.onDate)
-    setFromDate(initial.fromDate)
-    setToDate(initial.toDate)
-    setTimeMode(initial.timeMode)
-    setStartTime(initial.startTime)
-    setEndTime(initial.endTime)
-    setRecurrenceMode(initial.recurrenceMode)
-    setRecurrenceDays(initial.recurrenceDays)
-    setTimePickerTarget(null)
-    setDatePickerTarget(null)
-  }
-
-  function toggleWeekday(day: Weekday) {
-    setRecurrenceMode('days')
-    setRecurrenceDays((current) =>
-      current.includes(day)
-        ? current.filter((selected) => selected !== day)
-        : [...current, day],
-    )
+    dispatch({ type: 'reset', state: initialFormState(initialValues) })
   }
 
   function handleClose() {
@@ -170,27 +301,8 @@ export default function AvailabilityFormModal({
   }
 
   async function handleSave() {
-    const date =
-      dateMode === 'on'
-        ? ({ mode: 'on', date: onDate } as const)
-        : ({ mode: 'range', from: fromDate, to: toDate } as const)
-
-    const time: AvailabilityFormValues['time'] =
-      timeMode === 'allDay'
-        ? { mode: 'allDay' }
-        : { mode: 'between', start: startTime, end: endTime }
-
-    const orderedDays = WEEKDAY_ORDER.filter((day) =>
-      effectiveRecurrenceDays.includes(day),
-    )
-    const recurrence: AvailabilityFormValues['recurrence'] =
-      recurrenceMode === 'everyday' ||
-      orderedDays.length === WEEKDAY_ORDER.length
-        ? { mode: 'everyday' }
-        : { mode: 'days', days: orderedDays }
-
     try {
-      await onSave({ date, time, recurrence })
+      await onSave(toFormValues(state, effectiveRecurrenceDays))
       reset()
     } catch {
       // The caller already surfaced an error to the user; keep the form
@@ -198,62 +310,33 @@ export default function AvailabilityFormModal({
     }
   }
 
-  function handleTimeConfirm(time: string) {
-    if (timePickerTarget === 'start') setStartTime(time)
-    if (timePickerTarget === 'end') setEndTime(time)
-    setTimePickerTarget(null)
-  }
-
-  function handleDateConfirm(date: string) {
-    if (datePickerTarget === 'on') setOnDate(date)
-    if (datePickerTarget === 'from') setFromDate(date)
-    if (datePickerTarget === 'to') setToDate(date)
-    setDatePickerTarget(null)
-  }
-
   const weekdayLetters = t.raw('weekdayLetters') as string[]
   const weekdayNames = t.raw('weekdayNames') as string[]
 
-  const isOnDateInvalid = onDate !== '' && !isValidAvailabilityDate(onDate)
+  const isOnDateInvalid = date.on !== '' && !isValidAvailabilityDate(date.on)
   const isFromDateInvalid =
-    fromDate !== '' && !isValidAvailabilityDate(fromDate)
-  const isToDateInvalid = toDate !== '' && !isValidAvailabilityDate(toDate)
-  const isTimeRangeInvalid = timeMode === 'between' && startTime >= endTime
+    date.from !== '' && !isValidAvailabilityDate(date.from)
+  const isToDateInvalid = date.to !== '' && !isValidAvailabilityDate(date.to)
+  const isTimeRangeInvalid = time.mode === 'between' && time.start >= time.end
 
-  // null = dates aren't valid yet, so no weekday restriction can be computed.
-  const allowedWeekdays =
-    dateMode === 'on'
-      ? (() => {
-          const date = parseAvailabilityDate(onDate)
-          return date ? new Set([weekdayOfDate(date)]) : null
-        })()
-      : (() => {
-          const from = parseAvailabilityDate(fromDate)
-          const to = parseAvailabilityDate(toDate)
-          return from && to ? weekdaysInRange(from, to) : null
-        })()
-
+  const allowedWeekdays = allowedWeekdaysFor(date)
   const effectiveRecurrenceDays = allowedWeekdays
-    ? recurrenceDays.filter((day) => allowedWeekdays.has(day))
-    : recurrenceDays
+    ? recurrence.days.filter((day) => allowedWeekdays.has(day))
+    : recurrence.days
 
   const isRecurrenceInvalid =
-    recurrenceMode === 'days' && effectiveRecurrenceDays.length === 0
+    recurrence.mode === 'days' && effectiveRecurrenceDays.length === 0
 
   const canSave =
-    ((dateMode === 'on' && isValidAvailabilityDate(onDate)) ||
-      (dateMode === 'range' &&
-        isValidAvailabilityDate(fromDate) &&
-        isValidAvailabilityDate(toDate))) &&
+    ((date.mode === 'on' && isValidAvailabilityDate(date.on)) ||
+      (date.mode === 'range' &&
+        isValidAvailabilityDate(date.from) &&
+        isValidAvailabilityDate(date.to))) &&
     !isTimeRangeInvalid &&
     !isRecurrenceInvalid
 
   const datePickerInitialValue =
-    datePickerTarget === 'on'
-      ? onDate
-      : datePickerTarget === 'from'
-        ? fromDate
-        : toDate
+    datePicker === null ? date.to : date[datePicker]
 
   return (
     <Modal
@@ -261,7 +344,7 @@ export default function AvailabilityFormModal({
       onClose={handleClose}
       title={title ?? t('title')}
       closeLabel={t('close')}
-      active={timePickerTarget === null && datePickerTarget === null}
+      active={timePicker === null && datePicker === null}
     >
       <fieldset className='m-0 border-0 p-0'>
         <legend className={legendClassName}>{t('datesLegend')}</legend>
@@ -272,12 +355,12 @@ export default function AvailabilityFormModal({
                 type='radio'
                 name={`${formId}-date-mode`}
                 className={radioInputClassName}
-                checked={dateMode === 'on'}
-                onChange={() => setDateMode('on')}
+                checked={date.mode === 'on'}
+                onChange={() => dispatch({ type: 'setDateMode', mode: 'on' })}
               />
               {t('on')}
               <div
-                className={`${dateFieldWrapperClassName} ${dateMode === 'on' ? '' : 'opacity-50'}`}
+                className={`${dateFieldWrapperClassName} ${date.mode === 'on' ? '' : 'opacity-50'}`}
               >
                 <input
                   type='text'
@@ -287,18 +370,23 @@ export default function AvailabilityFormModal({
                   aria-describedby={
                     isOnDateInvalid ? `${formId}-on-date-error` : undefined
                   }
-                  value={onDate}
-                  onChange={(event) => setOnDate(event.target.value)}
-                  onFocus={() => setDateMode('on')}
+                  value={date.on}
+                  onChange={(event) =>
+                    dispatch({
+                      type: 'setDate',
+                      field: 'on',
+                      value: event.target.value,
+                    })
+                  }
+                  onFocus={() => dispatch({ type: 'setDateMode', mode: 'on' })}
                   className={dateInputClassName(isOnDateInvalid)}
                 />
                 <button
                   type='button'
-                  onClick={() => {
-                    setDateMode('on')
-                    setDatePickerTarget('on')
-                  }}
-                  onFocus={() => setDateMode('on')}
+                  onClick={() =>
+                    dispatch({ type: 'openDatePicker', target: 'on' })
+                  }
+                  onFocus={() => dispatch({ type: 'setDateMode', mode: 'on' })}
                   aria-label={t('openCalendarLabel', {
                     field: t('onDateLabel'),
                   })}
@@ -324,12 +412,14 @@ export default function AvailabilityFormModal({
                 type='radio'
                 name={`${formId}-date-mode`}
                 className={radioInputClassName}
-                checked={dateMode === 'range'}
-                onChange={() => setDateMode('range')}
+                checked={date.mode === 'range'}
+                onChange={() =>
+                  dispatch({ type: 'setDateMode', mode: 'range' })
+                }
               />
               {t('from')}
               <div
-                className={`${dateFieldWrapperClassName} ${dateMode === 'range' ? '' : 'opacity-50'}`}
+                className={`${dateFieldWrapperClassName} ${date.mode === 'range' ? '' : 'opacity-50'}`}
               >
                 <input
                   type='text'
@@ -339,18 +429,27 @@ export default function AvailabilityFormModal({
                   aria-describedby={
                     isFromDateInvalid ? `${formId}-from-date-error` : undefined
                   }
-                  value={fromDate}
-                  onChange={(event) => setFromDate(event.target.value)}
-                  onFocus={() => setDateMode('range')}
+                  value={date.from}
+                  onChange={(event) =>
+                    dispatch({
+                      type: 'setDate',
+                      field: 'from',
+                      value: event.target.value,
+                    })
+                  }
+                  onFocus={() =>
+                    dispatch({ type: 'setDateMode', mode: 'range' })
+                  }
                   className={dateInputClassName(isFromDateInvalid)}
                 />
                 <button
                   type='button'
-                  onClick={() => {
-                    setDateMode('range')
-                    setDatePickerTarget('from')
-                  }}
-                  onFocus={() => setDateMode('range')}
+                  onClick={() =>
+                    dispatch({ type: 'openDatePicker', target: 'from' })
+                  }
+                  onFocus={() =>
+                    dispatch({ type: 'setDateMode', mode: 'range' })
+                  }
                   aria-label={t('openCalendarLabel', {
                     field: t('fromDateLabel'),
                   })}
@@ -361,7 +460,7 @@ export default function AvailabilityFormModal({
               </div>
               {t('to')}
               <div
-                className={`${dateFieldWrapperClassName} ${dateMode === 'range' ? '' : 'opacity-50'}`}
+                className={`${dateFieldWrapperClassName} ${date.mode === 'range' ? '' : 'opacity-50'}`}
               >
                 <input
                   type='text'
@@ -371,18 +470,27 @@ export default function AvailabilityFormModal({
                   aria-describedby={
                     isToDateInvalid ? `${formId}-to-date-error` : undefined
                   }
-                  value={toDate}
-                  onChange={(event) => setToDate(event.target.value)}
-                  onFocus={() => setDateMode('range')}
+                  value={date.to}
+                  onChange={(event) =>
+                    dispatch({
+                      type: 'setDate',
+                      field: 'to',
+                      value: event.target.value,
+                    })
+                  }
+                  onFocus={() =>
+                    dispatch({ type: 'setDateMode', mode: 'range' })
+                  }
                   className={dateInputClassName(isToDateInvalid)}
                 />
                 <button
                   type='button'
-                  onClick={() => {
-                    setDateMode('range')
-                    setDatePickerTarget('to')
-                  }}
-                  onFocus={() => setDateMode('range')}
+                  onClick={() =>
+                    dispatch({ type: 'openDatePicker', target: 'to' })
+                  }
+                  onFocus={() =>
+                    dispatch({ type: 'setDateMode', mode: 'range' })
+                  }
                   aria-label={t('openCalendarLabel', {
                     field: t('toDateLabel'),
                   })}
@@ -422,8 +530,8 @@ export default function AvailabilityFormModal({
               type='radio'
               name={`${formId}-time-mode`}
               className={radioInputClassName}
-              checked={timeMode === 'allDay'}
-              onChange={() => setTimeMode('allDay')}
+              checked={time.mode === 'allDay'}
+              onChange={() => dispatch({ type: 'setTimeMode', mode: 'allDay' })}
             />
             {t('allDay')}
           </label>
@@ -433,22 +541,25 @@ export default function AvailabilityFormModal({
                 type='radio'
                 name={`${formId}-time-mode`}
                 className={radioInputClassName}
-                checked={timeMode === 'between'}
-                onChange={() => setTimeMode('between')}
+                checked={time.mode === 'between'}
+                onChange={() =>
+                  dispatch({ type: 'setTimeMode', mode: 'between' })
+                }
               />
               {t('between')}
               <button
                 type='button'
-                onFocus={() => setTimeMode('between')}
-                onClick={() => {
-                  setTimeMode('between')
-                  setTimePickerTarget('start')
-                }}
-                aria-label={`${t('startTimeLabel')}: ${startTime}`}
-                className={`${timeTriggerClassName} ${timeMode === 'between' ? '' : 'opacity-50'}`}
+                onFocus={() =>
+                  dispatch({ type: 'setTimeMode', mode: 'between' })
+                }
+                onClick={() =>
+                  dispatch({ type: 'openTimePicker', target: 'start' })
+                }
+                aria-label={`${t('startTimeLabel')}: ${time.start}`}
+                className={`${timeTriggerClassName} ${time.mode === 'between' ? '' : 'opacity-50'}`}
               >
                 <span className='font-secondary text-sm text-black-300'>
-                  {startTime}
+                  {time.start}
                 </span>
                 <Clock
                   size={16}
@@ -459,25 +570,26 @@ export default function AvailabilityFormModal({
               {t('and')}
               <button
                 type='button'
-                onFocus={() => setTimeMode('between')}
-                onClick={() => {
-                  setTimeMode('between')
-                  setTimePickerTarget('end')
-                }}
-                aria-label={`${t('endTimeLabel')}: ${endTime}`}
+                onFocus={() =>
+                  dispatch({ type: 'setTimeMode', mode: 'between' })
+                }
+                onClick={() =>
+                  dispatch({ type: 'openTimePicker', target: 'end' })
+                }
+                aria-label={`${t('endTimeLabel')}: ${time.end}`}
                 aria-describedby={
                   isTimeRangeInvalid ? `${formId}-time-range-error` : undefined
                 }
                 className={`${timeTriggerClassName} ${
                   isTimeRangeInvalid
                     ? 'border-red-200'
-                    : timeMode === 'between'
+                    : time.mode === 'between'
                       ? ''
                       : 'opacity-50'
                 }`}
               >
                 <span className='font-secondary text-sm text-black-300'>
-                  {endTime}
+                  {time.end}
                 </span>
                 <Clock
                   size={16}
@@ -507,8 +619,10 @@ export default function AvailabilityFormModal({
               type='radio'
               name={`${formId}-recurrence-mode`}
               className={radioInputClassName}
-              checked={recurrenceMode === 'everyday'}
-              onChange={() => setRecurrenceMode('everyday')}
+              checked={recurrence.mode === 'everyday'}
+              onChange={() =>
+                dispatch({ type: 'setRecurrenceMode', mode: 'everyday' })
+              }
             />
             {t('everyday')}
           </label>
@@ -518,18 +632,20 @@ export default function AvailabilityFormModal({
                 type='radio'
                 name={`${formId}-recurrence-mode`}
                 className={radioInputClassName}
-                checked={recurrenceMode === 'days'}
-                onChange={() => setRecurrenceMode('days')}
+                checked={recurrence.mode === 'days'}
+                onChange={() =>
+                  dispatch({ type: 'setRecurrenceMode', mode: 'days' })
+                }
               />
               {t('theseDays')}
               <div
-                className={`flex items-center gap-1.5 ${recurrenceMode === 'days' ? '' : 'opacity-50'}`}
+                className={`flex items-center gap-1.5 ${recurrence.mode === 'days' ? '' : 'opacity-50'}`}
               >
                 {WEEKDAY_ORDER.map((day, index) => (
                   <button
                     key={day}
                     type='button'
-                    onClick={() => toggleWeekday(day)}
+                    onClick={() => dispatch({ type: 'toggleWeekday', day })}
                     disabled={
                       allowedWeekdays !== null && !allowedWeekdays.has(day)
                     }
@@ -575,19 +691,19 @@ export default function AvailabilityFormModal({
       </div>
 
       <TimePickerModal
-        key={`time-${timePickerTarget}`}
-        isOpen={timePickerTarget !== null}
-        initialTime={timePickerTarget === 'start' ? startTime : endTime}
-        onCancel={() => setTimePickerTarget(null)}
-        onConfirm={handleTimeConfirm}
+        key={`time-${timePicker}`}
+        isOpen={timePicker !== null}
+        initialTime={timePicker === 'start' ? time.start : time.end}
+        onCancel={() => dispatch({ type: 'closeTimePicker' })}
+        onConfirm={(value) => dispatch({ type: 'confirmTime', value })}
       />
 
       <DatePickerModal
-        key={`date-${datePickerTarget}`}
-        isOpen={datePickerTarget !== null}
+        key={`date-${datePicker}`}
+        isOpen={datePicker !== null}
         initialDate={datePickerInitialValue}
-        onCancel={() => setDatePickerTarget(null)}
-        onConfirm={handleDateConfirm}
+        onCancel={() => dispatch({ type: 'closeDatePicker' })}
+        onConfirm={(value) => dispatch({ type: 'confirmDate', value })}
       />
     </Modal>
   )
