@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import StudentFileUpload from './StudentFileUpload'
-import { DUMMY_STUDENT_FILES } from './StudentFileList.data'
+import PersonFileUpload from './PersonFileUpload'
+import { DUMMY_PERSON_FILES } from './PersonFileList.data'
 
-const meta: Meta<typeof StudentFileUpload> = {
-  component: StudentFileUpload,
-  title: 'Components/StudentFileUpload',
+const meta: Meta<typeof PersonFileUpload> = {
+  component: PersonFileUpload,
+  title: 'Components/PersonFileUpload',
   args: {
     students: [
       { id: 'student-1', name: 'Jamie Torres' },
       { id: 'student-2', name: 'Priya Shah' },
     ],
     instructorId: 'instructor-1',
-    initialFiles: DUMMY_STUDENT_FILES,
+    initialFiles: DUMMY_PERSON_FILES,
   },
   argTypes: {
     students: { control: 'object' },
@@ -21,4 +21,4 @@ const meta: Meta<typeof StudentFileUpload> = {
 }
 export default meta
 
-export const Default: StoryObj<typeof StudentFileUpload> = {}
+export const Default: StoryObj<typeof PersonFileUpload> = {}

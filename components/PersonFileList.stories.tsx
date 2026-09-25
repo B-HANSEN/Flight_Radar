@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import StudentFileList from './StudentFileList'
-import { DUMMY_STUDENT_FILES } from './StudentFileList.data'
+import PersonFileList from './PersonFileList'
+import { DUMMY_PERSON_FILES } from './PersonFileList.data'
 
-const meta: Meta<typeof StudentFileList> = {
-  component: StudentFileList,
-  title: 'Components/StudentFileList',
+const meta: Meta<typeof PersonFileList> = {
+  component: PersonFileList,
+  title: 'Components/PersonFileList',
   args: {
-    files: DUMMY_STUDENT_FILES,
+    files: DUMMY_PERSON_FILES,
     headingLevel: 'h2',
     loading: false,
   },
@@ -19,4 +19,4 @@ const meta: Meta<typeof StudentFileList> = {
 }
 export default meta
 
-export const Default: StoryObj<typeof StudentFileList> = {}
+export const Default: StoryObj<typeof PersonFileList> = {}

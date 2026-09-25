@@ -13,14 +13,19 @@ type TabKey =
   | 'logbook'
   | 'availability'
   | 'emails'
+  | 'scheduling'
+  | 'uploads'
 
 type TabItem = {
   key: TabKey
   href: string
+  instructorOnly?: boolean
 }
 
 type Props = {
   activePath?: string
+  // Adds the instructor tools (scheduling students, uploading documents).
+  isInstructorView?: boolean
   onItemClick?: (href: string) => void
 }
 
@@ -32,13 +37,22 @@ const items: TabItem[] = [
   { key: 'logbook', href: '/me/logbook' },
   { key: 'availability', href: '/me/availability' },
   { key: 'emails', href: '/me/emails' },
+  { key: 'scheduling', href: '/me/scheduling', instructorOnly: true },
+  { key: 'uploads', href: '/me/uploads', instructorOnly: true },
 ]
 
-export default function TabBar({ activePath, onItemClick }: Props) {
+export default function TabBar({
+  activePath,
+  isInstructorView = false,
+  onItemClick,
+}: Props) {
   const t = useTranslations('RecordTabBar')
   const pathname = usePathname() ?? items[0].href
   const currentPath = activePath ?? pathname
   const { isDragging, dragHandlers } = useDragScroll<HTMLUListElement>()
+  const visibleItems = isInstructorView
+    ? items
+    : items.filter((item) => !item.instructorOnly)
 
   return (
     <nav aria-label={t('label')} className='border-b border-black-100'>
@@ -46,7 +60,7 @@ export default function TabBar({ activePath, onItemClick }: Props) {
         className={`flex list-none gap-1 overflow-x-auto px-1 ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
         {...dragHandlers}
       >
-        {items.map(({ key, href }) => {
+        {visibleItems.map(({ key, href }) => {
           const isActive = currentPath === href
           return (
             <li key={key} className='flex-none'>

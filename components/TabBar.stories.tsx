@@ -18,8 +18,11 @@ const meta: Meta<typeof TabBar> = {
         '/me/logbook',
         '/me/availability',
         '/me/emails',
+        '/me/scheduling',
+        '/me/uploads',
       ],
     },
+    isInstructorView: { control: 'boolean' },
   },
 }
 export default meta

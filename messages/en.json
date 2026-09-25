@@ -8,7 +8,6 @@
     "schedule": "Schedule",
     "aircraft": "Aircraft",
     "documents": "Documents",
-    "scheduling": "Scheduling",
     "language": "Change language",
     "localTime": "Local Time",
     "zuluTime": "Zulu Time"
@@ -181,7 +180,9 @@
     "signatures": "Signatures",
     "logbook": "Logbook",
     "availability": "Availability",
-    "emails": "Emails"
+    "emails": "Emails",
+    "scheduling": "Scheduling",
+    "uploads": "Uploads"
   },
   "AgendaCalendar": {
     "calendarLabel": "Monthly agenda calendar",
@@ -218,8 +219,8 @@
     "expiration": "Expiration",
     "downloadDocumentLabel": "Download document for {name}"
   },
-  "StudentFileList": {
-    "title": "Documents from your instructors",
+  "PersonFileList": {
+    "title": "Documents from instructors",
     "empty": "No documents yet",
     "loading": "Loading documents…",
     "uploaded": "Uploaded",
@@ -233,10 +234,12 @@
       "other": "Other"
     }
   },
-  "StudentFileUpload": {
+  "PersonFileUpload": {
     "title": "Upload a document",
-    "description": "Share a file with a student, such as an updated checklist or a new license. It appears on their certificates page.",
-    "studentLabel": "Student",
+    "description": "Share a file with a student or another instructor, such as an updated checklist or a new license. It appears on their certificates page. Your own documents are uploaded by another instructor (four-eyes principle).",
+    "recipientLabel": "Recipient",
+    "studentsGroup": "Students",
+    "instructorsGroup": "Instructors",
     "labelLabel": "Label",
     "labelPlaceholder": "e.g. Updated C152 checklist",
     "categoryLabel": "Category",
@@ -247,7 +250,7 @@
     "uploading": "Uploading…",
     "uploaded": "Document uploaded",
     "uploadError": "The document could not be uploaded. Please try again.",
-    "loadError": "The student's documents could not be loaded.",
+    "loadError": "The documents could not be loaded.",
     "tooLarge": "The file is larger than 10 MB.",
     "filesFor": "Documents for {name}",
     "categories": {
@@ -576,8 +579,11 @@
     "confirm": "Confirm lesson",
     "confirming": "Confirming…"
   },
-  "InstructorPage": {
+  "SchedulingPage": {
     "title": "Scheduling"
+  },
+  "UploadsPage": {
+    "title": "Uploads"
   },
   "NewsBulletins": {
     "reminder": {

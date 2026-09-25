@@ -8,7 +8,6 @@ import {
   CalendarDays,
   PlaneTakeoff,
   FileText,
-  GraduationCap,
   type LucideIcon,
 } from 'lucide-react'
 import Image from 'next/image'
@@ -21,8 +20,7 @@ import NavClock from './NavClock'
 import RoleSwitcher from './RoleSwitcher'
 import type { Instructor, Student } from './RoleSwitcher.types'
 
-type NavItemKey =
-  'home' | 'me' | 'news' | 'schedule' | 'aircraft' | 'documents' | 'scheduling'
+type NavItemKey = 'home' | 'me' | 'news' | 'schedule' | 'aircraft' | 'documents'
 
 type NavItem = {
   key: NavItemKey
@@ -48,7 +46,6 @@ const items: NavItem[] = [
   { key: 'schedule', href: '/schedule', icon: CalendarDays },
   { key: 'aircraft', href: '/aircraft', icon: PlaneTakeoff },
   { key: 'documents', href: '/documents', icon: FileText },
-  { key: 'scheduling', href: '/instructor', icon: GraduationCap },
 ]
 
 // Fixed placeholder instructor, used when the caller doesn't pass real
@@ -94,10 +91,6 @@ export default function NavBar({
   const [selectedInstructorId, setSelectedInstructorId] = useState<
     string | null
   >(initialSelectedInstructorId ?? null)
-  const visibleItems =
-    selectedStudentId === null
-      ? items
-      : items.filter((item) => item.key !== 'scheduling')
 
   return (
     <nav
@@ -133,7 +126,7 @@ export default function NavBar({
       <ul
         className={`list-none flex-1 items-center gap-1 ${collapsed ? 'hidden' : 'hidden md:flex'}`}
       >
-        {visibleItems.map(({ key, href, icon: Icon }) => {
+        {items.map(({ key, href, icon: Icon }) => {
           const isActive =
             currentPath === href ||
             (href !== '/' && currentPath.startsWith(`${href}/`))

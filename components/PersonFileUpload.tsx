@@ -5,25 +5,29 @@ import { Upload } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { apiErrorMessage, fetchApi } from '@/lib/api'
 import { focusRing } from '@/lib/styles'
-import StudentFileList from './StudentFileList'
+import PersonFileList from './PersonFileList'
 import Toast from './Toast'
 import {
-  STUDENT_FILE_CATEGORIES,
-  type StudentFile,
-  type StudentFileCategory,
-} from './StudentFileList.types'
+  PERSON_FILE_CATEGORIES,
+  type PersonFile,
+  type PersonFileCategory,
+} from './PersonFileList.types'
 
-type StudentOption = { id: string; name: string }
+type PersonOption = { id: string; name: string }
 
 type Props = {
-  students?: StudentOption[]
+  students?: PersonOption[]
+  // Other instructors only — four-eyes principle: an instructor's own
+  // documents are uploaded by someone else, so the uploader isn't offered.
+  instructors?: PersonOption[]
+  // The uploading instructor.
   instructorId?: string
-  // Files of the first student, fetched server-side so the list isn't empty
-  // on first paint.
-  initialFiles?: StudentFile[]
+  // Files of the first recipient, fetched server-side so the list isn't
+  // empty on first paint.
+  initialFiles?: PersonFile[]
 }
 
-// Mirrors the API's limits (server/src/student-files) so the instructor gets
+// Mirrors the API's limits (server/src/person-files) so the instructor gets
 // an immediate answer instead of a round trip.
 export const MAX_FILE_BYTES = 10 * 1024 * 1024
 const ACCEPTED_TYPES = 'application/pdf,image/png,image/jpeg,image/webp'
@@ -35,49 +39,70 @@ const inputClassName = `w-full rounded-sm border border-black-200 bg-transparent
 
 type ToastState = { message: string; variant: 'success' | 'error' } | null
 
-export default function StudentFileUpload({
+function RecipientGroup({
+  label,
+  people,
+}: {
+  label: string
+  people: PersonOption[]
+}) {
+  if (people.length === 0) return null
+  return (
+    <optgroup label={label}>
+      {people.map((person) => (
+        <option key={person.id} value={person.id}>
+          {person.name}
+        </option>
+      ))}
+    </optgroup>
+  )
+}
+
+export default function PersonFileUpload({
   students = [],
+  instructors = [],
   instructorId,
   initialFiles = [],
 }: Props) {
-  const t = useTranslations('StudentFileUpload')
+  const t = useTranslations('PersonFileUpload')
   const headingId = useId()
   const fieldId = useId()
   const fileInput = useRef<HTMLInputElement>(null)
-  const [studentId, setStudentId] = useState(students[0]?.id ?? '')
+  const recipients = [...students, ...instructors]
+  const [personId, setPersonId] = useState(recipients[0]?.id ?? '')
   const [label, setLabel] = useState('')
-  const [category, setCategory] = useState<StudentFileCategory>('checklist')
+  const [category, setCategory] = useState<PersonFileCategory>('checklist')
   const [expiresAt, setExpiresAt] = useState('')
-  const [files, setFiles] = useState<StudentFile[]>(initialFiles)
+  const [files, setFiles] = useState<PersonFile[]>(initialFiles)
   const [uploading, setUploading] = useState(false)
   const [loadingFiles, setLoadingFiles] = useState(false)
   const [toast, setToast] = useState<ToastState>(null)
-  const selectedStudent = students.find((student) => student.id === studentId)
-  // The student whose files the list should show. A load that resolves after
+  const selectedPerson = recipients.find((person) => person.id === personId)
+  // The person whose files the list should show. A load that resolves after
   // the instructor has picked someone else is stale and dropped.
-  const currentStudentId = useRef(studentId)
+  const currentPersonId = useRef(personId)
 
   async function loadFiles(id: string) {
     try {
-      const next = await fetchApi<StudentFile[]>(
-        `/student-files?studentId=${encodeURIComponent(id)}`,
+      const next = await fetchApi<PersonFile[]>(
+        `/person-files?personId=${encodeURIComponent(id)}`,
       )
-      if (currentStudentId.current === id) setFiles(next)
+      if (currentPersonId.current === id) setFiles(next)
     } catch (error) {
-      if (currentStudentId.current !== id) return
+      if (currentPersonId.current !== id) return
       setFiles([])
       setToast({
         message: apiErrorMessage(error, t('loadError')),
         variant: 'error',
       })
     } finally {
-      if (currentStudentId.current === id) setLoadingFiles(false)
+      if (currentPersonId.current === id) setLoadingFiles(false)
     }
   }
 
-  async function handleStudentChange(id: string) {
-    setStudentId(id)
-    currentStudentId.current = id
+  async function handlePersonChange(id: string) {
+    setPersonId(id)
+    currentPersonId.current = id
     setLoadingFiles(true)
     await loadFiles(id)
   }
@@ -85,11 +110,11 @@ export default function StudentFileUpload({
   function buildFormData(file: File): FormData {
     const data = new FormData()
     data.append('file', file)
-    data.append('studentId', studentId)
+    data.append('personId', personId)
     data.append('label', label.trim())
     data.append('category', category)
     data.append('expiresAt', expiresAt)
-    if (instructorId) data.append('uploadedBy', instructorId)
+    data.append('uploadedBy', instructorId ?? '')
     return data
   }
 
@@ -110,7 +135,7 @@ export default function StudentFileUpload({
 
     setUploading(true)
     try {
-      await fetchApi<StudentFile>('/student-files', {
+      await fetchApi<PersonFile>('/person-files', {
         method: 'POST',
         body: buildFormData(file),
         cache: 'no-store',
@@ -127,7 +152,7 @@ export default function StudentFileUpload({
 
     resetFields()
     setToast({ message: t('uploaded'), variant: 'success' })
-    if (currentStudentId.current === studentId) await loadFiles(studentId)
+    if (currentPersonId.current === personId) await loadFiles(personId)
   }
 
   return (
@@ -151,21 +176,21 @@ export default function StudentFileUpload({
         className='mb-8 grid grid-cols-1 gap-4 md:grid-cols-2'
       >
         <div>
-          <label htmlFor={`${fieldId}-student`} className={labelClassName}>
-            {t('studentLabel')}
+          <label htmlFor={`${fieldId}-recipient`} className={labelClassName}>
+            {t('recipientLabel')}
           </label>
           <select
-            id={`${fieldId}-student`}
-            value={studentId}
-            onChange={(event) => handleStudentChange(event.target.value)}
+            id={`${fieldId}-recipient`}
+            value={personId}
+            onChange={(event) => handlePersonChange(event.target.value)}
             required
             className={inputClassName}
           >
-            {students.map((student) => (
-              <option key={student.id} value={student.id}>
-                {student.name}
-              </option>
-            ))}
+            <RecipientGroup label={t('studentsGroup')} people={students} />
+            <RecipientGroup
+              label={t('instructorsGroup')}
+              people={instructors}
+            />
           </select>
         </div>
 
@@ -193,11 +218,11 @@ export default function StudentFileUpload({
             id={`${fieldId}-category`}
             value={category}
             onChange={(event) =>
-              setCategory(event.target.value as StudentFileCategory)
+              setCategory(event.target.value as PersonFileCategory)
             }
             className={inputClassName}
           >
-            {STUDENT_FILE_CATEGORIES.map((value) => (
+            {PERSON_FILE_CATEGORIES.map((value) => (
               <option key={value} value={value}>
                 {t(`categories.${value}`)}
               </option>
@@ -242,7 +267,7 @@ export default function StudentFileUpload({
         <div className='md:col-span-2'>
           <button
             type='submit'
-            disabled={uploading || !studentId}
+            disabled={uploading || !personId || !instructorId}
             className={`flex cursor-pointer items-center gap-2 rounded-lg bg-blue-100 px-4 py-2.5 font-primary text-sm font-bold text-blue-300 disabled:cursor-not-allowed disabled:opacity-50 ${focusRing}`}
           >
             <Upload size={16} aria-hidden='true' />
@@ -251,13 +276,13 @@ export default function StudentFileUpload({
         </div>
       </form>
 
-      <StudentFileList
+      <PersonFileList
         files={files}
         loading={loadingFiles}
         headingLevel='h3'
         title={
-          selectedStudent
-            ? t('filesFor', { name: selectedStudent.name })
+          selectedPerson
+            ? t('filesFor', { name: selectedPerson.name })
             : undefined
         }
       />

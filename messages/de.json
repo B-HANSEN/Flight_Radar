@@ -8,7 +8,6 @@
     "schedule": "Flugplan",
     "aircraft": "Flugzeuge",
     "documents": "Dokumente",
-    "scheduling": "Terminplanung",
     "language": "Sprache ändern",
     "localTime": "Ortszeit",
     "zuluTime": "Zulu-Zeit"
@@ -181,7 +180,9 @@
     "signatures": "Unterschriften",
     "logbook": "Logbook",
     "availability": "Verfügbarkeit",
-    "emails": "E-Mails"
+    "emails": "E-Mails",
+    "scheduling": "Terminplanung",
+    "uploads": "Uploads"
   },
   "AgendaCalendar": {
     "calendarLabel": "Monatliche Agenda-Kalenderansicht",
@@ -218,8 +219,8 @@
     "expiration": "Ablauf",
     "downloadDocumentLabel": "Dokument herunterladen für {name}"
   },
-  "StudentFileList": {
-    "title": "Dokumente von deinen Fluglehrern",
+  "PersonFileList": {
+    "title": "Dokumente von Fluglehrern",
     "empty": "Noch keine Dokumente",
     "loading": "Dokumente werden geladen…",
     "uploaded": "Hochgeladen",
@@ -233,10 +234,12 @@
       "other": "Sonstiges"
     }
   },
-  "StudentFileUpload": {
+  "PersonFileUpload": {
     "title": "Dokument hochladen",
-    "description": "Teile eine Datei mit einem Flugschüler, z. B. eine aktualisierte Checkliste oder eine neue Lizenz. Sie erscheint auf seiner Zertifikatsseite.",
-    "studentLabel": "Flugschüler",
+    "description": "Teile eine Datei mit einem Flugschüler oder einem anderen Fluglehrer, z. B. eine aktualisierte Checkliste oder eine neue Lizenz. Sie erscheint auf dessen Zertifikatsseite. Deine eigenen Dokumente lädt ein anderer Fluglehrer hoch (Vier-Augen-Prinzip).",
+    "recipientLabel": "Empfänger",
+    "studentsGroup": "Flugschüler",
+    "instructorsGroup": "Fluglehrer",
     "labelLabel": "Bezeichnung",
     "labelPlaceholder": "z. B. Aktualisierte C152-Checkliste",
     "categoryLabel": "Kategorie",
@@ -247,7 +250,7 @@
     "uploading": "Wird hochgeladen…",
     "uploaded": "Dokument hochgeladen",
     "uploadError": "Das Dokument konnte nicht hochgeladen werden. Bitte versuche es erneut.",
-    "loadError": "Die Dokumente des Flugschülers konnten nicht geladen werden.",
+    "loadError": "Die Dokumente konnten nicht geladen werden.",
     "tooLarge": "Die Datei ist größer als 10 MB.",
     "filesFor": "Dokumente für {name}",
     "categories": {
@@ -576,8 +579,11 @@
     "confirm": "Lektion bestätigen",
     "confirming": "Wird bestätigt…"
   },
-  "InstructorPage": {
+  "SchedulingPage": {
     "title": "Terminplanung"
+  },
+  "UploadsPage": {
+    "title": "Uploads"
   },
   "NewsBulletins": {
     "reminder": {

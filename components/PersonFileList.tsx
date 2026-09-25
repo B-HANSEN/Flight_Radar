@@ -5,10 +5,10 @@ import { Download, FileText, Loader2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { apiUrl } from '@/lib/api'
 import { focusRing } from '@/lib/styles'
-import type { StudentFile } from './StudentFileList.types'
+import type { PersonFile } from './PersonFileList.types'
 
 type Props = {
-  files?: StudentFile[]
+  files?: PersonFile[]
   // Overrides the default student-facing heading.
   title?: string
   // 'h3' when nested under another panel's h2 (the instructor upload panel).
@@ -31,8 +31,8 @@ function formatDate(value: string, locale: string): string {
   }).format(date)
 }
 
-function FileRow({ file, todayIso }: { file: StudentFile; todayIso: string }) {
-  const t = useTranslations('StudentFileList')
+function FileRow({ file, todayIso }: { file: PersonFile; todayIso: string }) {
+  const t = useTranslations('PersonFileList')
   const locale = useLocale()
   const expired = file.expiresAt !== undefined && file.expiresAt < todayIso
 
@@ -75,7 +75,7 @@ function FileRow({ file, todayIso }: { file: StudentFile; todayIso: string }) {
       </div>
 
       <a
-        href={apiUrl(`/student-files/${file.id}/download`)}
+        href={apiUrl(`/person-files/${file.id}/download`)}
         download={file.fileName}
         aria-label={t('downloadLabel', { name: file.label })}
         className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 ${focusRing}`}
@@ -86,14 +86,14 @@ function FileRow({ file, todayIso }: { file: StudentFile; todayIso: string }) {
   )
 }
 
-export default function StudentFileList({
+export default function PersonFileList({
   files = [],
   title,
   headingLevel = 'h2',
   loading = false,
   referenceDate,
 }: Props) {
-  const t = useTranslations('StudentFileList')
+  const t = useTranslations('PersonFileList')
   const headingId = useId()
   const Heading = headingLevel
   const todayIso = (referenceDate ?? new Date()).toISOString().slice(0, 10)

@@ -50,7 +50,7 @@ describe('TabBar', () => {
     mockUsePathname.mockReturnValue('/me/agenda')
   })
 
-  it('renders every tab with its translated label and href', () => {
+  it('renders every student tab with its translated label and href', () => {
     renderTabBar()
 
     const expected: [string, string][] = [
@@ -65,6 +65,31 @@ describe('TabBar', () => {
     expected.forEach(([name, href]) => {
       expect(screen.getByRole('link', { name })).toHaveAttribute('href', href)
     })
+  })
+
+  it('hides the instructor tools unless it is the instructor view', () => {
+    const { rerender } = renderTabBar()
+    expect(
+      screen.queryByRole('link', { name: 'Scheduling' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Uploads' }),
+    ).not.toBeInTheDocument()
+
+    rerender(
+      <NextIntlClientProvider locale='en' messages={enMessages}>
+        <TabBar isInstructorView />
+      </NextIntlClientProvider>,
+    )
+
+    expect(screen.getByRole('link', { name: 'Scheduling' })).toHaveAttribute(
+      'href',
+      '/me/scheduling',
+    )
+    expect(screen.getByRole('link', { name: 'Uploads' })).toHaveAttribute(
+      'href',
+      '/me/uploads',
+    )
   })
 
   it('marks only the tab matching the current path as active', () => {

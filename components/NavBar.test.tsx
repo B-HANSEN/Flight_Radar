@@ -72,7 +72,6 @@ describe('NavBar', () => {
       ['Schedule', '/schedule'],
       ['Aircraft', '/aircraft'],
       ['Documents', '/documents'],
-      ['Scheduling', '/instructor'],
     ]
     expected.forEach(([name, href]) => {
       expect(screen.getByRole('link', { name })).toHaveAttribute('href', href)
@@ -184,14 +183,7 @@ describe('NavBar', () => {
     expect(mockRouterRefresh).toHaveBeenCalledOnce()
   })
 
-  it('hides the Scheduling nav item while a student is the current view', () => {
-    renderNavBar({ students: DUMMY_STUDENTS })
-    expect(
-      screen.queryByRole('link', { name: 'Scheduling' }),
-    ).not.toBeInTheDocument()
-  })
-
-  it('shows the Scheduling nav item once switched to the instructor view, and sets the role cookie', () => {
+  it('sets the role cookie when switched to the instructor view', () => {
     document.cookie = 'fr-current-role=; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     renderNavBar({ students: DUMMY_STUDENTS, instructors: DUMMY_INSTRUCTORS })
     fireEvent.click(screen.getByRole('button', { name: 'Jamie Torres' }))
@@ -201,10 +193,6 @@ describe('NavBar', () => {
       }),
     )
 
-    expect(screen.getByRole('link', { name: 'Scheduling' })).toHaveAttribute(
-      'href',
-      '/instructor',
-    )
     expect(document.cookie).toContain(
       `fr-current-role=instructor:${DUMMY_INSTRUCTORS[0].id}`,
     )
@@ -235,10 +223,9 @@ describe('NavBar', () => {
         name: 'James Whitfield · Instructor',
       }),
     ).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Scheduling' })).toBeInTheDocument()
   })
 
-  it('honors an explicit initialSelectedStudentId of a student, hiding Scheduling', () => {
+  it('honors an explicit initialSelectedStudentId of a student', () => {
     renderNavBar({
       students: DUMMY_STUDENTS,
       initialSelectedStudentId: 'student-3',
@@ -246,9 +233,6 @@ describe('NavBar', () => {
     expect(
       screen.getByRole('button', { name: 'Priya Shah' }),
     ).toBeInTheDocument()
-    expect(
-      screen.queryByRole('link', { name: 'Scheduling' }),
-    ).not.toBeInTheDocument()
   })
 
   it('falls back to / for the active state when there is no current pathname', () => {

@@ -1,27 +1,27 @@
 import { render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
-import StudentFileList from './StudentFileList'
-import { DUMMY_STUDENT_FILES } from './StudentFileList.data'
+import PersonFileList from './PersonFileList'
+import { DUMMY_PERSON_FILES } from './PersonFileList.data'
 import enMessages from '@/messages/en.json'
 
 const REFERENCE_DATE = new Date('2026-09-25T12:00:00Z')
 
-function renderList(props: Parameters<typeof StudentFileList>[0] = {}) {
+function renderList(props: Parameters<typeof PersonFileList>[0] = {}) {
   return render(
     <NextIntlClientProvider locale='en' messages={enMessages}>
-      <StudentFileList referenceDate={REFERENCE_DATE} {...props} />
+      <PersonFileList referenceDate={REFERENCE_DATE} {...props} />
     </NextIntlClientProvider>,
   )
 }
 
-describe('StudentFileList', () => {
+describe('PersonFileList', () => {
   it('lists each file with its category, dates and a download link', () => {
-    renderList({ files: DUMMY_STUDENT_FILES })
+    renderList({ files: DUMMY_PERSON_FILES })
 
     expect(
       screen.getByRole('heading', {
         level: 2,
-        name: 'Documents from your instructors',
+        name: 'Documents from instructors',
       }),
     ).toBeInTheDocument()
     const rows = screen.getAllByRole('listitem')
@@ -35,14 +35,14 @@ describe('StudentFileList', () => {
       checklist.getByRole('link', { name: 'Download Updated C152 checklist' }),
     ).toHaveAttribute(
       'href',
-      expect.stringMatching(/\/student-files\/file-1\/download$/),
+      expect.stringMatching(/\/person-files\/file-1\/download$/),
     )
 
     expect(within(rows[1]).getByText('Mar 31, 2028')).toBeInTheDocument()
   })
 
   it('flags a file whose expiry date has passed', () => {
-    renderList({ files: DUMMY_STUDENT_FILES })
+    renderList({ files: DUMMY_PERSON_FILES })
 
     const medical = screen.getAllByRole('listitem')[2]
     expect(within(medical).getByText('Jun 30, 2026 · Expired')).toHaveClass(
@@ -52,7 +52,7 @@ describe('StudentFileList', () => {
   })
 
   it('shows a loading status instead of the files while loading', () => {
-    renderList({ files: DUMMY_STUDENT_FILES, loading: true })
+    renderList({ files: DUMMY_PERSON_FILES, loading: true })
 
     expect(screen.getByRole('status')).toHaveTextContent('Loading documents…')
     expect(screen.queryByRole('list')).not.toBeInTheDocument()

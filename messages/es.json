@@ -8,7 +8,6 @@
     "schedule": "Horario",
     "aircraft": "Aeronaves",
     "documents": "Documentos",
-    "scheduling": "Programación",
     "language": "Cambiar idioma",
     "localTime": "Hora Local",
     "zuluTime": "Hora Zulú"
@@ -181,7 +180,9 @@
     "signatures": "Firmas",
     "logbook": "Logbook",
     "availability": "Disponibilidad",
-    "emails": "Correos"
+    "emails": "Correos",
+    "scheduling": "Programación",
+    "uploads": "Subidas"
   },
   "AgendaCalendar": {
     "calendarLabel": "Calendario mensual de agenda",
@@ -218,8 +219,8 @@
     "expiration": "Vencimiento",
     "downloadDocumentLabel": "Descargar documento de {name}"
   },
-  "StudentFileList": {
-    "title": "Documentos de tus instructores",
+  "PersonFileList": {
+    "title": "Documentos de instructores",
     "empty": "Aún no hay documentos",
     "loading": "Cargando documentos…",
     "uploaded": "Subido",
@@ -233,10 +234,12 @@
       "other": "Otro"
     }
   },
-  "StudentFileUpload": {
+  "PersonFileUpload": {
     "title": "Subir un documento",
-    "description": "Comparte un archivo con un alumno, como una lista de verificación actualizada o una nueva licencia. Aparecerá en su página de certificados.",
-    "studentLabel": "Alumno",
+    "description": "Comparte un archivo con un alumno u otro instructor, como una lista de verificación actualizada o una nueva licencia. Aparecerá en su página de certificados. Tus propios documentos los sube otro instructor (principio de los cuatro ojos).",
+    "recipientLabel": "Destinatario",
+    "studentsGroup": "Alumnos",
+    "instructorsGroup": "Instructores",
     "labelLabel": "Etiqueta",
     "labelPlaceholder": "p. ej. Lista de verificación C152 actualizada",
     "categoryLabel": "Categoría",
@@ -247,7 +250,7 @@
     "uploading": "Subiendo…",
     "uploaded": "Documento subido",
     "uploadError": "No se pudo subir el documento. Inténtalo de nuevo.",
-    "loadError": "No se pudieron cargar los documentos del alumno.",
+    "loadError": "No se pudieron cargar los documentos.",
     "tooLarge": "El archivo supera los 10 MB.",
     "filesFor": "Documentos de {name}",
     "categories": {
@@ -576,8 +579,11 @@
     "confirm": "Confirmar lección",
     "confirming": "Confirmando…"
   },
-  "InstructorPage": {
+  "SchedulingPage": {
     "title": "Programación"
+  },
+  "UploadsPage": {
+    "title": "Subidas"
   },
   "NewsBulletins": {
     "reminder": {
