@@ -218,6 +218,45 @@
     "expiration": "Ablauf",
     "downloadDocumentLabel": "Dokument herunterladen für {name}"
   },
+  "StudentFileList": {
+    "title": "Dokumente von deinen Fluglehrern",
+    "empty": "Noch keine Dokumente",
+    "loading": "Dokumente werden geladen…",
+    "uploaded": "Hochgeladen",
+    "expires": "Gültig bis",
+    "expired": "Abgelaufen",
+    "downloadLabel": "{name} herunterladen",
+    "categories": {
+      "checklist": "Checkliste",
+      "license": "Lizenz",
+      "medical": "Medical",
+      "other": "Sonstiges"
+    }
+  },
+  "StudentFileUpload": {
+    "title": "Dokument hochladen",
+    "description": "Teile eine Datei mit einem Flugschüler, z. B. eine aktualisierte Checkliste oder eine neue Lizenz. Sie erscheint auf seiner Zertifikatsseite.",
+    "studentLabel": "Flugschüler",
+    "labelLabel": "Bezeichnung",
+    "labelPlaceholder": "z. B. Aktualisierte C152-Checkliste",
+    "categoryLabel": "Kategorie",
+    "expiresLabel": "Ablaufdatum (optional)",
+    "fileLabel": "Datei",
+    "fileHint": "PDF, PNG, JPEG oder WebP, bis zu 10 MB.",
+    "submit": "Hochladen",
+    "uploading": "Wird hochgeladen…",
+    "uploaded": "Dokument hochgeladen",
+    "uploadError": "Das Dokument konnte nicht hochgeladen werden. Bitte versuche es erneut.",
+    "loadError": "Die Dokumente des Flugschülers konnten nicht geladen werden.",
+    "tooLarge": "Die Datei ist größer als 10 MB.",
+    "filesFor": "Dokumente für {name}",
+    "categories": {
+      "checklist": "Checkliste",
+      "license": "Lizenz",
+      "medical": "Medical",
+      "other": "Sonstiges"
+    }
+  },
   "CoursesPage": {
     "title": "Kurse",
     "underDevelopment": "Die Ausbilder-Kursansicht befindet sich noch in Entwicklung."

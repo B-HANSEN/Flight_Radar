@@ -3,6 +3,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { routing } from '@/i18n/routing'
 import CertificateList from '@/components/CertificateList'
 import type { Certificate } from '@/components/CertificateList.types'
+import StudentFileList from '@/components/StudentFileList'
+import type { StudentFile } from '@/components/StudentFileList.types'
 import { fetchApi } from '@/lib/api'
 import {
   CURRENT_ROLE_COOKIE,
@@ -26,6 +28,8 @@ export default async function CertificatesPage({
 
   const roleCookie = (await cookies()).get(CURRENT_ROLE_COOKIE)?.value
   let personId: string
+  // Only students receive instructor-uploaded documents.
+  let isStudent = false
 
   if (isInstructorRoleValue(roleCookie)) {
     const instructors = await fetchApi<Instructor[]>('/instructors')
@@ -42,16 +46,25 @@ export default async function CertificatesPage({
       students.find((s) => s.name === 'Jamie Torres') ??
       students[0]
     personId = student.id
+    isStudent = true
   }
 
-  const certificates = await fetchApi<Certificate[]>(
-    `/certificates?personId=${personId}`,
-  )
+  const [certificates, studentFiles] = await Promise.all([
+    fetchApi<Certificate[]>(`/certificates?personId=${personId}`),
+    isStudent
+      ? fetchApi<StudentFile[]>(`/student-files?studentId=${personId}`)
+      : Promise.resolve([]),
+  ])
 
   return (
     <>
       <h1 className='sr-only'>{t('title')}</h1>
       <CertificateList certificates={certificates} />
+      {isStudent && (
+        <div className='mt-9'>
+          <StudentFileList files={studentFiles} />
+        </div>
+      )}
     </>
   )
 }

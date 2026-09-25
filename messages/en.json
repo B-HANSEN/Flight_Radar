@@ -218,6 +218,45 @@
     "expiration": "Expiration",
     "downloadDocumentLabel": "Download document for {name}"
   },
+  "StudentFileList": {
+    "title": "Documents from your instructors",
+    "empty": "No documents yet",
+    "loading": "Loading documents…",
+    "uploaded": "Uploaded",
+    "expires": "Expires",
+    "expired": "Expired",
+    "downloadLabel": "Download {name}",
+    "categories": {
+      "checklist": "Checklist",
+      "license": "License",
+      "medical": "Medical",
+      "other": "Other"
+    }
+  },
+  "StudentFileUpload": {
+    "title": "Upload a document",
+    "description": "Share a file with a student, such as an updated checklist or a new license. It appears on their certificates page.",
+    "studentLabel": "Student",
+    "labelLabel": "Label",
+    "labelPlaceholder": "e.g. Updated C152 checklist",
+    "categoryLabel": "Category",
+    "expiresLabel": "Expiry date (optional)",
+    "fileLabel": "File",
+    "fileHint": "PDF, PNG, JPEG or WebP, up to 10 MB.",
+    "submit": "Upload",
+    "uploading": "Uploading…",
+    "uploaded": "Document uploaded",
+    "uploadError": "The document could not be uploaded. Please try again.",
+    "loadError": "The student's documents could not be loaded.",
+    "tooLarge": "The file is larger than 10 MB.",
+    "filesFor": "Documents for {name}",
+    "categories": {
+      "checklist": "Checklist",
+      "license": "License",
+      "medical": "Medical",
+      "other": "Other"
+    }
+  },
   "CoursesPage": {
     "title": "Courses",
     "underDevelopment": "The instructor course view is still under development."

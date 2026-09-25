@@ -8,6 +8,8 @@ import {
   isInstructorRoleValue,
 } from '@/lib/currentRole'
 import InstructorScheduleView from '@/components/InstructorScheduleView'
+import StudentFileUpload from '@/components/StudentFileUpload'
+import type { StudentFile } from '@/components/StudentFileList.types'
 import type { RawStudentSchedule } from '@/components/InstructorScheduleView.types'
 import type { Instructor } from '@/components/RoleSwitcher.types'
 import type { ScheduleAircraft } from '@/components/ScheduleBoard.types'
@@ -44,6 +46,14 @@ export default async function InstructorPage({
   const currentInstructor =
     instructors.find((instructor) => instructor.id === selectedInstructorId) ??
     instructors[0]
+  // The upload panel opens on the first student; later picks fetch on the
+  // client.
+  const firstStudentId = students[0]?.id
+  const initialFiles = firstStudentId
+    ? await fetchApi<StudentFile[]>(
+        `/student-files?studentId=${encodeURIComponent(firstStudentId)}`,
+      )
+    : []
 
   return (
     <>
@@ -55,6 +65,13 @@ export default async function InstructorPage({
         students={students}
         aircraft={aircraft}
       />
+      <div className='mt-6'>
+        <StudentFileUpload
+          students={students.map(({ id, name }) => ({ id, name }))}
+          instructorId={currentInstructor?.id}
+          initialFiles={initialFiles}
+        />
+      </div>
     </>
   )
 }

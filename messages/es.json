@@ -218,6 +218,45 @@
     "expiration": "Vencimiento",
     "downloadDocumentLabel": "Descargar documento de {name}"
   },
+  "StudentFileList": {
+    "title": "Documentos de tus instructores",
+    "empty": "Aún no hay documentos",
+    "loading": "Cargando documentos…",
+    "uploaded": "Subido",
+    "expires": "Caduca",
+    "expired": "Caducado",
+    "downloadLabel": "Descargar {name}",
+    "categories": {
+      "checklist": "Lista de verificación",
+      "license": "Licencia",
+      "medical": "Médico",
+      "other": "Otro"
+    }
+  },
+  "StudentFileUpload": {
+    "title": "Subir un documento",
+    "description": "Comparte un archivo con un alumno, como una lista de verificación actualizada o una nueva licencia. Aparecerá en su página de certificados.",
+    "studentLabel": "Alumno",
+    "labelLabel": "Etiqueta",
+    "labelPlaceholder": "p. ej. Lista de verificación C152 actualizada",
+    "categoryLabel": "Categoría",
+    "expiresLabel": "Fecha de caducidad (opcional)",
+    "fileLabel": "Archivo",
+    "fileHint": "PDF, PNG, JPEG o WebP, hasta 10 MB.",
+    "submit": "Subir",
+    "uploading": "Subiendo…",
+    "uploaded": "Documento subido",
+    "uploadError": "No se pudo subir el documento. Inténtalo de nuevo.",
+    "loadError": "No se pudieron cargar los documentos del alumno.",
+    "tooLarge": "El archivo supera los 10 MB.",
+    "filesFor": "Documentos de {name}",
+    "categories": {
+      "checklist": "Lista de verificación",
+      "license": "Licencia",
+      "medical": "Médico",
+      "other": "Otro"
+    }
+  },
   "CoursesPage": {
     "title": "Cursos",
     "underDevelopment": "La vista de curso del instructor todavía está en desarrollo."
