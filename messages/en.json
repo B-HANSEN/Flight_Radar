@@ -228,20 +228,21 @@
     "expired": "Expired",
     "downloadLabel": "Download {name}",
     "categories": {
-      "checklist": "Checklist",
       "license": "License",
+      "rating": "Rating",
+      "radiotelephony": "Radiotelephony license",
       "medical": "Medical",
       "other": "Other"
     }
   },
   "PersonFileUpload": {
     "title": "Upload a document",
-    "description": "Share a file with a student or another instructor, such as an updated checklist or a new license. It appears on their certificates page. Your own documents are uploaded by another instructor (four-eyes principle).",
+    "description": "Share a file with a student or another instructor, such as a new license, rating or radiotelephony license. It appears on their certificates page. Your own documents are uploaded by another instructor (four-eyes principle).",
     "recipientLabel": "Recipient",
     "studentsGroup": "Students",
     "instructorsGroup": "Instructors",
     "labelLabel": "Label",
-    "labelPlaceholder": "e.g. Updated C152 checklist",
+    "labelPlaceholder": "e.g. Night rating",
     "categoryLabel": "Category",
     "expiresLabel": "Expiry date (optional)",
     "fileLabel": "File",
@@ -254,8 +255,9 @@
     "tooLarge": "The file is larger than 10 MB.",
     "filesFor": "Documents for {name}",
     "categories": {
-      "checklist": "Checklist",
       "license": "License",
+      "rating": "Rating",
+      "radiotelephony": "Radiotelephony license",
       "medical": "Medical",
       "other": "Other"
     }

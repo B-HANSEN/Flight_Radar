@@ -35,6 +35,11 @@ function FileRow({ file, todayIso }: { file: PersonFile; todayIso: string }) {
   const t = useTranslations('PersonFileList')
   const locale = useLocale()
   const expired = file.expiresAt !== undefined && file.expiresAt < todayIso
+  // A category that has since been retired (e.g. checklists, now in
+  // /documents) still reads sensibly on older records.
+  const categoryKey = t.has(`categories.${file.category}`)
+    ? `categories.${file.category}`
+    : 'categories.other'
 
   return (
     <li className='grid grid-cols-[auto_1.6fr_1fr_1fr_auto] items-center gap-4 rounded-lg border border-black-100 bg-black-100/10 px-4.5 py-4'>
@@ -47,7 +52,7 @@ function FileRow({ file, todayIso }: { file: PersonFile; todayIso: string }) {
           {file.label}
         </div>
         <div className='mt-0.5 font-secondary text-xs text-black-200'>
-          {t(`categories.${file.category}`)}
+          {t(categoryKey)}
         </div>
       </div>
 

@@ -1,9 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { HydratedDocument } from 'mongoose'
 
+// Personal documents only. Checklists are shared aircraft documents and
+// belong in /documents, not with a person.
 export const PERSON_FILE_CATEGORIES = [
-  'checklist',
   'license',
+  'rating',
+  'radiotelephony',
   'medical',
   'other',
 ] as const

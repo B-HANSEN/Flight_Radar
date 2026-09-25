@@ -32,15 +32,15 @@ describe('PersonFilesService', () => {
   const blobStorage = { upload: jest.fn(), download: jest.fn() }
 
   const file = {
-    originalname: 'C152 checklist.pdf',
+    originalname: 'Night rating.pdf',
     mimetype: 'application/pdf',
     size: 2048,
     buffer: Buffer.from('pdf'),
   }
   const input = {
     personId: STUDENT_ID,
-    label: '  Updated checklist  ',
-    category: 'checklist',
+    label: '  Night rating  ',
+    category: 'rating',
     expiresAt: '',
     uploadedBy: INSTRUCTOR_ID,
   }
@@ -85,16 +85,16 @@ describe('PersonFilesService', () => {
       const result = await service.upload(file, input)
 
       expect(blobStorage.upload).toHaveBeenCalledWith(
-        `person-files/${STUDENT_ID}/C152 checklist.pdf`,
+        `person-files/${STUDENT_ID}/Night rating.pdf`,
         file.buffer,
         'application/pdf',
       )
       expect(result).toEqual({
-        label: 'Updated checklist',
-        category: 'checklist',
+        label: 'Night rating',
+        category: 'rating',
         personId: STUDENT_ID,
         uploadedBy: INSTRUCTOR_ID,
-        fileName: 'C152 checklist.pdf',
+        fileName: 'Night rating.pdf',
         mimeType: 'application/pdf',
         size: 2048,
         blobPathname: 'person-files/p1/c152-abc.pdf',
@@ -125,6 +125,7 @@ describe('PersonFilesService', () => {
       ['a disallowed type', { ...file, mimetype: 'text/html' }, input],
       ['a blank label', file, { ...input, label: '   ' }],
       ['an unknown category', file, { ...input, category: 'secret' }],
+      ['a checklist', file, { ...input, category: 'checklist' }],
       ['an impossible date', file, { ...input, expiresAt: '2027-02-30' }],
       [
         'an instructor uploading their own documents',

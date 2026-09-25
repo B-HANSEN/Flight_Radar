@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import PersonFileList from './PersonFileList'
 import { DUMMY_PERSON_FILES } from './PersonFileList.data'
+import type { PersonFile } from './PersonFileList.types'
 import enMessages from '@/messages/en.json'
 
 const REFERENCE_DATE = new Date('2026-09-25T12:00:00Z')
@@ -27,18 +28,28 @@ describe('PersonFileList', () => {
     const rows = screen.getAllByRole('listitem')
     expect(rows).toHaveLength(3)
 
-    const checklist = within(rows[0])
-    expect(checklist.getByText('Checklist')).toBeInTheDocument()
-    expect(checklist.getByText('Sep 20, 2026')).toBeInTheDocument()
-    expect(checklist.getByText('—')).toBeInTheDocument()
+    const rating = within(rows[0])
+    expect(rating.getByText('Rating')).toBeInTheDocument()
+    expect(rating.getByText('Sep 20, 2026')).toBeInTheDocument()
+    expect(rating.getByText('—')).toBeInTheDocument()
     expect(
-      checklist.getByRole('link', { name: 'Download Updated C152 checklist' }),
+      rating.getByRole('link', { name: 'Download Night rating' }),
     ).toHaveAttribute(
       'href',
       expect.stringMatching(/\/person-files\/file-1\/download$/),
     )
 
     expect(within(rows[1]).getByText('Mar 31, 2028')).toBeInTheDocument()
+  })
+
+  it('shows a retired category as Other', () => {
+    const legacy = {
+      ...DUMMY_PERSON_FILES[0],
+      category: 'checklist',
+    } as unknown as PersonFile
+    renderList({ files: [legacy] })
+
+    expect(screen.getByText('Other')).toBeInTheDocument()
   })
 
   it('flags a file whose expiry date has passed', () => {

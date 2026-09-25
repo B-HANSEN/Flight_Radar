@@ -165,14 +165,14 @@ describe('PersonFileUpload', () => {
       () => new Promise((resolve) => (resolveLoad = resolve)),
     )
     renderUpload()
-    expect(screen.getByText('Updated C152 checklist')).toBeInTheDocument()
+    expect(screen.getByText('Night rating')).toBeInTheDocument()
 
     fireEvent.change(screen.getByLabelText('Recipient'), {
       target: { value: 'student-2' },
     })
 
     expect(screen.getByText('Loading documents…')).toBeInTheDocument()
-    expect(screen.queryByText('Updated C152 checklist')).not.toBeInTheDocument()
+    expect(screen.queryByText('Night rating')).not.toBeInTheDocument()
     resolveLoad([DUMMY_PERSON_FILES[2]])
     expect(await screen.findByText('Class 2 medical scan')).toBeInTheDocument()
     expect(screen.queryByText('Loading documents…')).not.toBeInTheDocument()

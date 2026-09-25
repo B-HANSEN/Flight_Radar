@@ -228,20 +228,21 @@
     "expired": "Caducado",
     "downloadLabel": "Descargar {name}",
     "categories": {
-      "checklist": "Lista de verificación",
       "license": "Licencia",
+      "rating": "Habilitación",
+      "radiotelephony": "Licencia de radiotelefonía",
       "medical": "Médico",
       "other": "Otro"
     }
   },
   "PersonFileUpload": {
     "title": "Subir un documento",
-    "description": "Comparte un archivo con un alumno u otro instructor, como una lista de verificación actualizada o una nueva licencia. Aparecerá en su página de certificados. Tus propios documentos los sube otro instructor (principio de los cuatro ojos).",
+    "description": "Comparte un archivo con un alumno u otro instructor, como una nueva licencia, habilitación o licencia de radiotelefonía. Aparecerá en su página de certificados. Tus propios documentos los sube otro instructor (principio de los cuatro ojos).",
     "recipientLabel": "Destinatario",
     "studentsGroup": "Alumnos",
     "instructorsGroup": "Instructores",
     "labelLabel": "Etiqueta",
-    "labelPlaceholder": "p. ej. Lista de verificación C152 actualizada",
+    "labelPlaceholder": "p. ej. Habilitación nocturna",
     "categoryLabel": "Categoría",
     "expiresLabel": "Fecha de caducidad (opcional)",
     "fileLabel": "Archivo",
@@ -254,8 +255,9 @@
     "tooLarge": "El archivo supera los 10 MB.",
     "filesFor": "Documentos de {name}",
     "categories": {
-      "checklist": "Lista de verificación",
       "license": "Licencia",
+      "rating": "Habilitación",
+      "radiotelephony": "Licencia de radiotelefonía",
       "medical": "Médico",
       "other": "Otro"
     }

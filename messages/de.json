@@ -228,20 +228,21 @@
     "expired": "Abgelaufen",
     "downloadLabel": "{name} herunterladen",
     "categories": {
-      "checklist": "Checkliste",
       "license": "Lizenz",
+      "rating": "Berechtigung",
+      "radiotelephony": "Sprechfunkzeugnis",
       "medical": "Medical",
       "other": "Sonstiges"
     }
   },
   "PersonFileUpload": {
     "title": "Dokument hochladen",
-    "description": "Teile eine Datei mit einem Flugschüler oder einem anderen Fluglehrer, z. B. eine aktualisierte Checkliste oder eine neue Lizenz. Sie erscheint auf dessen Zertifikatsseite. Deine eigenen Dokumente lädt ein anderer Fluglehrer hoch (Vier-Augen-Prinzip).",
+    "description": "Teile eine Datei mit einem Flugschüler oder einem anderen Fluglehrer, z. B. eine neue Lizenz, Berechtigung oder ein Sprechfunkzeugnis. Sie erscheint auf dessen Zertifikatsseite. Deine eigenen Dokumente lädt ein anderer Fluglehrer hoch (Vier-Augen-Prinzip).",
     "recipientLabel": "Empfänger",
     "studentsGroup": "Flugschüler",
     "instructorsGroup": "Fluglehrer",
     "labelLabel": "Bezeichnung",
-    "labelPlaceholder": "z. B. Aktualisierte C152-Checkliste",
+    "labelPlaceholder": "z. B. Nachtflugberechtigung",
     "categoryLabel": "Kategorie",
     "expiresLabel": "Ablaufdatum (optional)",
     "fileLabel": "Datei",
@@ -254,8 +255,9 @@
     "tooLarge": "Die Datei ist größer als 10 MB.",
     "filesFor": "Dokumente für {name}",
     "categories": {
-      "checklist": "Checkliste",
       "license": "Lizenz",
+      "rating": "Berechtigung",
+      "radiotelephony": "Sprechfunkzeugnis",
       "medical": "Medical",
       "other": "Sonstiges"
     }

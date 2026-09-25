@@ -3,9 +3,9 @@ import type { PersonFile } from './PersonFileList.types'
 export const DUMMY_PERSON_FILES: PersonFile[] = [
   {
     id: 'file-1',
-    label: 'Updated C152 checklist',
-    category: 'checklist',
-    fileName: 'c152-checklist.pdf',
+    label: 'Night rating',
+    category: 'rating',
+    fileName: 'night-rating.pdf',
     mimeType: 'application/pdf',
     size: 184_320,
     personId: 'student-1',

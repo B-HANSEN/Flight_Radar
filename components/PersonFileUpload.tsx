@@ -71,7 +71,7 @@ export default function PersonFileUpload({
   const recipients = [...students, ...instructors]
   const [personId, setPersonId] = useState(recipients[0]?.id ?? '')
   const [label, setLabel] = useState('')
-  const [category, setCategory] = useState<PersonFileCategory>('checklist')
+  const [category, setCategory] = useState<PersonFileCategory>('license')
   const [expiresAt, setExpiresAt] = useState('')
   const [files, setFiles] = useState<PersonFile[]>(initialFiles)
   const [uploading, setUploading] = useState(false)

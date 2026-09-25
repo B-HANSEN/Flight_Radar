@@ -9,12 +9,12 @@ describe('PersonFilesController', () => {
   let controller: PersonFilesController
   const files: PersonFile[] = [
     {
-      label: 'Updated C152 checklist',
-      category: 'checklist',
-      fileName: 'c152-checklist.pdf',
+      label: 'Night rating',
+      category: 'rating',
+      fileName: 'night-rating.pdf',
       mimeType: 'application/pdf',
       size: 1024,
-      blobPathname: 'person-files/p1/c152-checklist-abc.pdf',
+      blobPathname: 'person-files/p1/night-rating-abc.pdf',
       personId: 'p1',
       uploadedBy: 'i1',
     },
@@ -45,15 +45,15 @@ describe('PersonFilesController', () => {
 
   it('passes the uploaded file and form fields to the service', async () => {
     const file = {
-      originalname: 'c152-checklist.pdf',
+      originalname: 'night-rating.pdf',
       mimetype: 'application/pdf',
       size: 1024,
       buffer: Buffer.from('pdf'),
     }
     const body = {
       personId: 'p1',
-      label: 'Checklist',
-      category: 'checklist',
+      label: 'Night rating',
+      category: 'rating',
       uploadedBy: 'i1',
     }
 
@@ -78,7 +78,7 @@ describe('PersonFilesController', () => {
     expect(personFilesService.openDownload).toHaveBeenCalledWith('file-1')
     expect(res.set).toHaveBeenCalledWith({
       'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename="c152-checklist.pdf"',
+      'Content-Disposition': 'attachment; filename="night-rating.pdf"',
     })
     expect(Buffer.concat(chunks).toString()).toBe('pdf bytes')
   })
