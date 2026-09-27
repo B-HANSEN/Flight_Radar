@@ -13,6 +13,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --config config/eslint.config.mjs && node config/check-image-formats.mjs",
+    "lint:skills": "for s in .claude/skills/*/; do uvx --from skills-ref agentskills validate \"$s\" || exit 1; done",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

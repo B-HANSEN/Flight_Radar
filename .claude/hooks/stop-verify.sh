@@ -22,6 +22,10 @@
 # excludes server/ entirely, so a changed server/src/*.ts file gets its own
 # `tsc --noEmit -p server/tsconfig.json` pass — otherwise server changes
 # would sail through this hook with zero type checking.
+#
+# A changed .claude/skills/ file gets `npm run lint:skills` (the agentskills
+# validator via uvx) so a broken SKILL.md frontmatter is caught before the
+# skill silently stops loading.
 
 project_dir="${CLAUDE_PROJECT_DIR:-$PWD}"
 cd "$project_dir" || exit 0
@@ -35,7 +39,7 @@ changed=$(printf '%s\n%s\n' "$tracked_changed" "$untracked" | sed '/^$/d' | sort
 
 [ -z "$changed" ] && exit 0
 
-relevant=$(printf '%s\n' "$changed" | grep -E '^(app/|components/|i18n/|server/src/)')
+relevant=$(printf '%s\n' "$changed" | grep -E '^(app/|components/|i18n/|server/src/|\.claude/skills/)')
 [ -z "$relevant" ] && exit 0
 
 fail=0
@@ -43,6 +47,7 @@ report=""
 
 fe_ts_changed=$(printf '%s\n' "$relevant" | grep -E '^(app/|components/|i18n/).*\.tsx?$')
 server_ts_changed=$(printf '%s\n' "$relevant" | grep -E '^server/src/.*\.ts$')
+skills_changed=$(printf '%s\n' "$relevant" | grep -E '^\.claude/skills/')
 test_relevant=$(printf '%s\n' "$relevant" | grep -E '(\.test\.tsx?$|^components/)')
 
 if [ -n "$fe_ts_changed" ]; then
@@ -61,6 +66,17 @@ if [ -n "$server_ts_changed" ]; then
   if [ $? -ne 0 ]; then
     fail=1
     report="${report}## server type-check failed (tsc -p server/tsconfig.json)
+${out}
+
+"
+  fi
+fi
+
+if [ -n "$skills_changed" ]; then
+  out=$(npm run lint:skills 2>&1)
+  if [ $? -ne 0 ]; then
+    fail=1
+    report="${report}## npm run lint:skills failed
 ${out}
 
 "
