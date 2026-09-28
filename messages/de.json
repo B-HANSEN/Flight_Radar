@@ -396,7 +396,23 @@
     "fileCount": "{count, plural, one {# Datei} other {# Dateien}}",
     "noFolders": "Keine Ordner verfügbar.",
     "noFiles": "Keine Dateien in diesem Ordner.",
-    "downloadLabel": "{file} herunterladen"
+    "downloadLabel": "{file} herunterladen",
+    "filesLabel": "Dateien in {folder}",
+    "deleteLabel": "{file} löschen",
+    "deleted": "Datei gelöscht",
+    "deleteError": "Die Datei konnte nicht gelöscht werden. Bitte versuche es erneut.",
+    "deleteGone": "{file} wurde bereits gelöscht."
+  },
+  "DocumentUpload": {
+    "fileLabel": "Datei in {folder} hochladen",
+    "fileHint": "PDF, Excel (XLSX), PNG, JPEG oder WebP, bis 10 MB. Dateinamen müssen im Ordner eindeutig sein.",
+    "submit": "Hochladen",
+    "uploading": "Wird hochgeladen…",
+    "uploaded": "Datei hochgeladen",
+    "uploadError": "Die Datei konnte nicht hochgeladen werden. Bitte versuche es erneut.",
+    "tooLarge": "{file} ist größer als 10 MB. Bitte wähle eine kleinere Datei.",
+    "wrongType": "{file} kann nicht hochgeladen werden. Erlaubt sind nur PDF-, Excel- (XLSX), PNG-, JPEG- und WebP-Dateien.",
+    "duplicate": "In {folder} gibt es bereits eine Datei namens {file}. Benenne sie um oder lösche zuerst die vorhandene Datei."
   },
   "AvailabilityPage": {
     "title": "Verfügbarkeit"

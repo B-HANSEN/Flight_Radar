@@ -8,6 +8,10 @@ const meta: Meta<typeof DocumentsBrowser> = {
   args: {
     folders: DUMMY_DOCUMENT_FOLDERS,
   },
+  argTypes: {
+    // Set it to show the instructor's upload form inside an open folder.
+    instructorId: { control: 'text' },
+  },
 }
 export default meta
 

@@ -396,7 +396,23 @@
     "fileCount": "{count, plural, one {# file} other {# files}}",
     "noFolders": "No folders available.",
     "noFiles": "No files in this folder.",
-    "downloadLabel": "Download {file}"
+    "downloadLabel": "Download {file}",
+    "filesLabel": "Files in {folder}",
+    "deleteLabel": "Delete {file}",
+    "deleted": "File deleted",
+    "deleteError": "The file could not be deleted. Please try again.",
+    "deleteGone": "{file} was already deleted."
+  },
+  "DocumentUpload": {
+    "fileLabel": "Upload a file to {folder}",
+    "fileHint": "PDF, Excel (XLSX), PNG, JPEG or WebP, up to 10 MB. File names must be unique within the folder.",
+    "submit": "Upload",
+    "uploading": "Uploading…",
+    "uploaded": "File uploaded",
+    "uploadError": "The file could not be uploaded. Please try again.",
+    "tooLarge": "{file} is larger than 10 MB. Please choose a smaller file.",
+    "wrongType": "{file} can't be uploaded. Only PDF, Excel (XLSX), PNG, JPEG and WebP files are allowed.",
+    "duplicate": "{folder} already has a file named {file}. Rename it or delete the existing file first."
   },
   "AvailabilityPage": {
     "title": "Availability"
