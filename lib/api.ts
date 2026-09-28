@@ -94,7 +94,9 @@ export function apiUrl(path: string): string {
 // otherwise — a 5xx, a network drop, or a non-API throw all carry nothing a
 // user should see.
 export function apiErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof FlightRadarApiError && error.serverMessage
+  return error instanceof FlightRadarApiError &&
+    error.isExpected &&
+    error.serverMessage
     ? error.serverMessage
     : fallback
 }

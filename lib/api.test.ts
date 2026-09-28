@@ -138,8 +138,15 @@ describe('apiErrorMessage', () => {
       statusCode: 500,
       serverMessage: null,
     })
+    // A 5xx's own text is internal detail, even when the API sent one.
+    const describedServerError = new FlightRadarApiError('boom', {
+      path: '/documents/1/files',
+      statusCode: 503,
+      serverMessage: 'File storage is not configured',
+    })
 
     expect(apiErrorMessage(serverError, 'generic')).toBe('generic')
+    expect(apiErrorMessage(describedServerError, 'generic')).toBe('generic')
     expect(apiErrorMessage(new TypeError('fetch failed'), 'generic')).toBe(
       'generic',
     )
