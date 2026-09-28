@@ -12,6 +12,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express'
 import type { Response } from 'express'
 import { pipeline } from 'node:stream/promises'
+import { attachmentDisposition, uploadOptions } from '../common/file-transfer'
 import {
   MAX_FILE_BYTES,
   PersonFilesService,
@@ -32,9 +33,7 @@ export class PersonFilesController {
   // Multipart upload: a `file` part plus the metadata fields. Multer rejects
   // an oversized file with a 413 before it reaches the service.
   @Post()
-  @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: MAX_FILE_BYTES } }),
-  )
+  @UseInterceptors(FileInterceptor('file', uploadOptions(MAX_FILE_BYTES)))
   upload(
     @UploadedFile() file: IncomingFile | undefined,
     @Body() body: UploadPersonFileInput,
@@ -50,7 +49,7 @@ export class PersonFilesController {
 
     res.set({
       'Content-Type': file.mimeType,
-      'Content-Disposition': `attachment; filename="${file.fileName}"`,
+      'Content-Disposition': attachmentDisposition(file.fileName),
     })
     await pipeline(stream, res)
   }

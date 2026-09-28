@@ -12,6 +12,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express'
 import type { Response } from 'express'
 import { pipeline } from 'node:stream/promises'
+import { attachmentDisposition, uploadOptions } from '../common/file-transfer'
 import {
   DocumentsService,
   MAX_FILE_BYTES,
@@ -31,9 +32,7 @@ export class DocumentsController {
   // Multer rejects an oversized file with a 413 before it reaches the
   // service. Responds with the updated folder.
   @Post(':folderId/files')
-  @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: MAX_FILE_BYTES } }),
-  )
+  @UseInterceptors(FileInterceptor('file', uploadOptions(MAX_FILE_BYTES)))
   upload(
     @Param('folderId') folderId: string,
     @UploadedFile() file: IncomingFile | undefined,
@@ -55,7 +54,7 @@ export class DocumentsController {
 
     res.set({
       'Content-Type': file.mimeType,
-      'Content-Disposition': `attachment; filename="${file.name}"`,
+      'Content-Disposition': attachmentDisposition(file.name),
     })
     if (Buffer.isBuffer(body)) {
       res.send(body)
