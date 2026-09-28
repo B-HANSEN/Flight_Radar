@@ -1,6 +1,22 @@
-import { Controller, Get, Param, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 import type { Response } from 'express'
-import { DocumentsService } from './documents.service'
+import { pipeline } from 'node:stream/promises'
+import {
+  DocumentsService,
+  MAX_FILE_BYTES,
+  type IncomingFile,
+} from './documents.service'
 
 @Controller('documents')
 export class DocumentsController {
@@ -11,19 +27,48 @@ export class DocumentsController {
     return this.documentsService.findAll()
   }
 
+  // Multipart upload: a `file` part plus the uploading instructor's id.
+  // Multer rejects an oversized file with a 413 before it reaches the
+  // service. Responds with the updated folder.
+  @Post(':folderId/files')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: MAX_FILE_BYTES } }),
+  )
+  upload(
+    @Param('folderId') folderId: string,
+    @UploadedFile() file: IncomingFile | undefined,
+    @Body('uploadedBy') uploadedBy: string,
+  ) {
+    return this.documentsService.upload(folderId, file, uploadedBy)
+  }
+
   @Get(':folderId/files/:fileName')
   async downloadFile(
     @Param('folderId') folderId: string,
     @Param('fileName') fileName: string,
     @Res() res: Response,
   ) {
-    const file = await this.documentsService.findFile(folderId, fileName)
+    const { file, body } = await this.documentsService.openDownload(
+      folderId,
+      fileName,
+    )
 
-    res
-      .set({
-        'Content-Type': file.mimeType,
-        'Content-Disposition': `attachment; filename="${file.name}"`,
-      })
-      .send(file.data)
+    res.set({
+      'Content-Type': file.mimeType,
+      'Content-Disposition': `attachment; filename="${file.name}"`,
+    })
+    if (Buffer.isBuffer(body)) {
+      res.send(body)
+    } else {
+      await pipeline(body, res)
+    }
+  }
+
+  @Delete(':folderId/files/:fileName')
+  deleteFile(
+    @Param('folderId') folderId: string,
+    @Param('fileName') fileName: string,
+  ) {
+    return this.documentsService.deleteFile(folderId, fileName)
   }
 }

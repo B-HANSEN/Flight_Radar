@@ -14,11 +14,24 @@ export class DocumentFile {
   @Prop({ required: true })
   mimeType!: string
 
-  // The file's raw bytes. Excluded from the folder-listing query
-  // (DocumentsService.findAll) so /documents stays light — only fetched
-  // when a specific file is downloaded.
-  @Prop({ required: true })
-  data!: Buffer
+  // Each file lives in exactly one of two places. Seeded demo files keep
+  // their raw bytes here, so the seed runs without a blob token; uploaded
+  // files live in a private Vercel Blob instead. Both are excluded from the
+  // folder listing (DocumentsService.findAll) — the bytes to keep
+  // /documents light, the pathname because downloads go through the API.
+  @Prop()
+  data?: Buffer
+
+  @Prop()
+  blobPathname?: string
+
+  // Plain id of the seeded demo instructor who uploaded it; absent on
+  // seeded files.
+  @Prop()
+  uploadedBy?: string
+
+  @Prop()
+  uploadedAt?: Date
 }
 
 const DocumentFileSchema = SchemaFactory.createForClass(DocumentFile)
