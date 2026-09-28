@@ -10,7 +10,10 @@ import {
   InstructorDocument,
 } from '../instructors/schemas/instructor.schema'
 import { Student, StudentDocument } from '../students/schemas/student.schema'
-import { BlobStorageService } from './blob-storage.service'
+import {
+  BlobStorageService,
+  safeFileName,
+} from '../common/blob-storage.service'
 import {
   PERSON_FILE_CATEGORIES,
   PersonFile,
@@ -63,12 +66,6 @@ type FindableById = {
 // anything that isn't a valid ObjectId as simply not found.
 async function exists(model: FindableById, id: string): Promise<boolean> {
   return Boolean(id && isValidObjectId(id) && (await model.findById(id).exec()))
-}
-
-// Keeps the stored name readable while dropping anything that could break
-// a blob path or the quoted Content-Disposition header on download.
-export function safeFileName(name: string): string {
-  return name.replace(/["\\/\r\n]+/g, '_').trim() || 'file'
 }
 
 @Injectable()

@@ -4,11 +4,17 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { get, put } from '@vercel/blob'
+import { del, get, put } from '@vercel/blob'
 import { Readable } from 'node:stream'
 import type { ReadableStream } from 'node:stream/web'
 
-// Thin wrapper around @vercel/blob so the rest of the module (and its tests)
+// Keeps the stored name readable while dropping anything that could break
+// a blob path or the quoted Content-Disposition header on download.
+export function safeFileName(name: string): string {
+  return name.replace(/["\\/\r\n]+/g, '_').trim() || 'file'
+}
+
+// Thin wrapper around @vercel/blob so feature modules (and their tests)
 // never touch the SDK or the token directly. Every blob is private: the API
 // streams it back to the browser, so a blob URL alone grants nothing.
 @Injectable()
@@ -47,5 +53,9 @@ export class BlobStorageService {
     }
     // The SDK hands back a DOM ReadableStream; Express pipes Node streams.
     return Readable.fromWeb(result.stream as ReadableStream<Uint8Array>)
+  }
+
+  async remove(pathname: string): Promise<void> {
+    await del(pathname, { token: this.token() })
   }
 }

@@ -2,8 +2,11 @@ import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { Readable } from 'node:stream'
 import { getModelToken } from '@nestjs/mongoose'
-import { BlobStorageService } from './blob-storage.service'
-import { PersonFilesService, safeFileName } from './person-files.service'
+import {
+  BlobStorageService,
+  safeFileName,
+} from '../common/blob-storage.service'
+import { PersonFilesService } from './person-files.service'
 import { PersonFile } from './schemas/person-file.schema'
 import { Instructor } from '../instructors/schemas/instructor.schema'
 import { Student } from '../students/schemas/student.schema'

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { BlobStorageService } from './blob-storage.service'
+import { BlobStorageService } from '../common/blob-storage.service'
 import { PersonFilesController } from './person-files.controller'
 import { PersonFilesService } from './person-files.service'
 import { PersonFile, PersonFileSchema } from './schemas/person-file.schema'
