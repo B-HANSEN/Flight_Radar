@@ -4,27 +4,19 @@ import { useEffect } from 'react'
 import { RotateCcw } from 'lucide-react'
 import './globals.css'
 
-// Props declared as an `interface` (not the repo's usual `type`) on purpose:
-// Next's TS plugin flags any function-typed prop in a client-entry file
-// unless it's a Server Action, and its error-file exception still only
-// allowlists `reset`, not `unstable_retry` (v16.2). Declaring the shape as
-// an interface keeps the plugin from walking the members at all.
-interface GlobalErrorProps {
+type GlobalErrorProps = {
   error: Error & { digest?: string }
   // Re-runs the failed server render (router.refresh + reset) — the useful
   // recovery here, since this boundary catches the layout's own
   // `await fetchApi(...)` failures. A plain `reset()` would only re-render
   // the same cached error.
-  unstable_retry: () => void
+  retry: () => void
 }
 
 // Last-resort boundary: this replaces the root layout when even
 // app/[locale]/layout.tsx throws (it fetches /students and /instructors),
 // so it can't rely on NextIntlClientProvider — the copy is fixed English.
-export default function GlobalError({
-  error,
-  unstable_retry,
-}: GlobalErrorProps) {
+export default function GlobalError({ error, retry }: GlobalErrorProps) {
   useEffect(() => {
     console.error(error)
   }, [error])
@@ -43,7 +35,7 @@ export default function GlobalError({
           </p>
           <button
             type='button'
-            onClick={() => unstable_retry()}
+            onClick={() => retry()}
             className='font-primary mt-1.5 flex items-center gap-2 rounded-lg bg-blue-200 px-6 py-3.25 text-sm font-semibold text-black-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black-300'
           >
             <RotateCcw size={16} aria-hidden='true' />
