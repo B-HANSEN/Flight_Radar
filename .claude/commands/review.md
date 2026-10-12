@@ -1,23 +1,25 @@
 ---
-description: Pre-commit review, scaled to the size of the change — diff captured once and handed to each subagent, correctness always, simplification for non-trivial diffs, accessibility only when UI files changed.
+description: Pre-commit review, scaled to the size of the change — diff captured once and handed to each subagent, correctness always, simplification for non-trivial diffs, React best practices and accessibility only when UI files changed.
 ---
 
 Run a pre-commit review of the current uncommitted changes (staged and unstaged), scaled to how big and what kind of a change it is. Do not run more subagents than the change warrants, and do not let each subagent independently re-derive the diff — capture it once yourself and hand it over.
 
-1. Run `git status`, `git diff --stat`, and the full `git diff` (and `git diff --staged` if anything is staged) yourself. This is the one canonical snapshot every subagent below will review — capturing it once, here, means three subagents don't each spend a tool round-trip re-deriving the same thing, and guarantees they're all reviewing the identical snapshot rather than whatever the working tree looks like microseconds later.
+1. Run `git status`, `git diff --stat`, and the full `git diff` (and `git diff --staged` if anything is staged) yourself. This is the one canonical snapshot every subagent below will review — capturing it once, here, means the subagents don't each spend a tool round-trip re-deriving the same thing, and guarantees they're all reviewing the identical snapshot rather than whatever the working tree looks like microseconds later.
 
 2. Decide which agents are warranted:
    - **Trivial diff** (roughly under ~15 changed lines, and no logic change — e.g. a config tweak, a copy/text edit, a comment, a version bump): skip subagents entirely. Review it yourself, inline, in a couple of sentences. Stop here.
    - Otherwise, **correctness-reviewer** always runs — it's the cheapest insurance against a real bug slipping into a commit.
    - **simplification-reviewer** runs whenever the diff is more than a trivial tweak (i.e., whenever you didn't stop at the bullet above).
+   - **react-reviewer** runs only if the diff touches `.tsx`/`.jsx` files under `app/` or `components/` (excluding `*.stories.tsx` and `*.test.tsx`-only changes) — i.e. actual React code changed.
    - **accessibility-reviewer** runs only if the diff touches `.tsx`/`.jsx` files, or any Storybook `*.stories.tsx` files — i.e. actual UI/markup changed. Skip it for pure logic, config, test, or non-UI changes.
 
 3. Build each subagent's prompt with the diff already embedded, instead of telling it to go fetch one:
    - For **correctness-reviewer** and **simplification-reviewer**: paste in the full diff from step 1 verbatim, and say so explicitly ("here is the diff already captured — do not re-run `git diff`").
+   - For **react-reviewer**: paste in only the hunks touching `.ts`/`.tsx` files under `app/`, `components/`, `i18n/`, plus any `messages/*.json` hunks (it checks for missing translation keys).
    - For **accessibility-reviewer**: paste in only the hunks touching `.tsx`/`.jsx`/`*.stories.tsx` files, not the full diff — it doesn't need to see unrelated backend/config changes, and trimming its input is real token savings on a larger diff. If literally every changed file is UI, this is just the same diff.
    - In every case, remind the subagent it can still `Read` files beyond what's in the diff for surrounding context (e.g. to check existing conventions, or code outside the hunk) — you're only sparing it the redundant `git diff` call, not restricting what it can look at.
 
-4. Invoke whichever agents you selected in a single message, in parallel, via the Agent tool — never sequentially. If only one agent qualifies, it's fine to invoke just that one instead of all three.
+4. Invoke whichever agents you selected in a single message, in parallel, via the Agent tool — never sequentially. If only one agent qualifies, it's fine to invoke just that one instead of all of them.
 
 5. Wait for all invoked agents to report back. Each reports through the `ReportFindings` tool.
 

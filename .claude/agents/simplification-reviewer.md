@@ -29,6 +29,7 @@ If a diff has already been included in your prompt, use that — it's the exact 
 ## What NOT to report
 
 - Correctness bugs, logic errors, edge-case handling — a separate agent, correctness-reviewer, covers this.
+- React/Next.js patterns (Server vs. Client Components, hook usage, re-renders, i18n conventions) — react-reviewer covers this.
 - Pure formatting: this project uses Prettier (see `.prettierrc`) — trust it, don't relitigate formatting choices it already enforces.
 - Personal preference with no concrete benefit.
 
