@@ -1,5 +1,3 @@
-'use client'
-
 import { ClipboardCheck, TriangleAlert, Wrench } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'

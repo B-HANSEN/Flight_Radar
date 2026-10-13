@@ -1,5 +1,3 @@
-'use client'
-
 import { useTranslations } from 'next-intl'
 import { NEWS_TAG_STYLES } from '@/lib/newsTags'
 import type { NewsItem } from './Homepage.types'

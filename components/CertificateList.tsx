@@ -1,5 +1,3 @@
-'use client'
-
 import { Archive, Check, Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { apiUrl } from '@/lib/api'
