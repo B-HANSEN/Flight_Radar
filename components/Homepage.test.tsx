@@ -1,11 +1,8 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ComponentProps, ReactNode } from 'react'
 import Homepage from './Homepage'
-import { fetchApi } from '@/lib/api'
 import enMessages from '@/messages/en.json'
-
-vi.mock('@/lib/api', () => ({ fetchApi: vi.fn() }))
 
 vi.mock('@/i18n/navigation', () => ({
   Link: ({
@@ -108,10 +105,6 @@ function renderHomepage(props: Partial<ComponentProps<typeof Homepage>> = {}) {
   )
 }
 
-beforeEach(() => {
-  vi.mocked(fetchApi).mockReset().mockResolvedValue(undefined)
-})
-
 describe('Homepage', () => {
   it('greets the given name and renders weather, bookings, signatures, and news', () => {
     renderHomepage({ weather, bookings, signatures, news })
@@ -175,47 +168,5 @@ describe('Homepage', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('No upcoming bookings.')).toBeInTheDocument()
     expect(screen.getByText('No missing signatures.')).toBeInTheDocument()
-  })
-
-  it('opens the evaluation modal and removes the signature from the list once signed', async () => {
-    renderHomepage({ signatures })
-
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Sign Flight #4041369',
-      }),
-    )
-
-    const dialog = screen.getByRole('dialog')
-    expect(
-      within(dialog).getByRole('heading', { name: 'Evaluation #4041369' }),
-    ).toBeInTheDocument()
-
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Sign' }))
-
-    expect(
-      await screen.findByText('No missing signatures.'),
-    ).toBeInTheDocument()
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(fetchApi).toHaveBeenCalledWith(
-      '/flight-evaluations/flight-15/sign',
-      { method: 'PATCH', cache: 'no-store' },
-    )
-  })
-
-  it('shows an under-development note instead of the signatures list in instructor view', () => {
-    renderHomepage({ signatures, signaturesUnderDevelopment: true })
-
-    const signaturesSection = screen
-      .getByRole('heading', { name: 'Missing signatures' })
-      .closest('section') as HTMLElement
-    expect(
-      within(signaturesSection).getByText(
-        'Report creation is still under development.',
-      ),
-    ).toBeInTheDocument()
-    expect(
-      within(signaturesSection).queryByText('Flight #4041369'),
-    ).not.toBeInTheDocument()
   })
 })

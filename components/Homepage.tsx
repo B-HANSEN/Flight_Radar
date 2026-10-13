@@ -1,23 +1,12 @@
-'use client'
-
-import { useState } from 'react'
-import {
-  Clock,
-  ExternalLink,
-  GraduationCap,
-  PenLine,
-  Plane,
-  User,
-} from 'lucide-react'
+import { Clock, ExternalLink, GraduationCap, Plane, User } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { AIRFIELD_NAMES } from '@/lib/airfields'
-import { fetchApi } from '@/lib/api'
 import { NEWS_TAG_STYLES } from '@/lib/newsTags'
 import { focusRing } from '@/lib/styles'
-import { useDragScroll } from '@/lib/useDragScroll'
-import FlightEvaluationModal from './FlightEvaluationModal'
+import DragScrollRegion from './DragScrollRegion'
 import type { Booking, NewsItem, WeatherReport } from './Homepage.types'
+import HomepageSignatures from './HomepageSignatures'
 import type { FlightEvaluation } from './Signatures.types'
 
 type Props = {
@@ -61,7 +50,6 @@ function oldestObservedAt(stations: WeatherReport[]) {
 function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
   const t = useTranslations('Homepage')
   const locale = useLocale()
-  const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>()
 
   return (
     <section>
@@ -71,13 +59,10 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
         </p>
       ) : (
         <div className='overflow-hidden rounded-xl border border-black-200 bg-white'>
-          <div
+          <DragScrollRegion
             role='table'
             aria-label={t('weather.label')}
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
-            tabIndex={0}
-            className={`grid grid-cols-[max-content_max-content_1fr] items-baseline gap-x-2 overflow-x-auto px-5.5 py-4.5 ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
-            {...dragHandlers}
+            className='grid grid-cols-[max-content_max-content_1fr] items-baseline gap-x-2 overflow-x-auto px-5.5 py-4.5'
           >
             {stations.map((station, index) => (
               <div key={station.code} role='row' className='contents'>
@@ -109,7 +94,7 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
                 </span>
               </div>
             ))}
-          </div>
+          </DragScrollRegion>
           <div className='flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-black-100 bg-black-100/40 px-5.5 py-3'>
             <span className='flex items-center gap-1.5 font-secondary text-xs text-black-300'>
               <Clock size={13} aria-hidden='true' />
@@ -135,7 +120,6 @@ function WeatherBriefing({ stations }: { stations: WeatherReport[] }) {
 
 function BookingsCard({ bookings }: { bookings: Booking[] }) {
   const t = useTranslations('Homepage')
-  const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>('y')
 
   return (
     <section
@@ -153,13 +137,11 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
           {t('bookings.empty')}
         </p>
       ) : (
-        <div
+        <DragScrollRegion
+          axis='y'
           role='group'
           aria-labelledby='homepage-bookings-heading'
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
-          tabIndex={0}
-          className={`max-h-44.25 overflow-y-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
-          {...dragHandlers}
+          className='max-h-44.25 overflow-y-auto'
         >
           <ul className='flex list-none flex-col'>
             {bookings.map((booking) => (
@@ -218,85 +200,7 @@ function BookingsCard({ bookings }: { bookings: Booking[] }) {
               </li>
             ))}
           </ul>
-        </div>
-      )}
-    </section>
-  )
-}
-
-function SignaturesCard({
-  signatures,
-  underDevelopment = false,
-  onSelect,
-}: {
-  signatures: FlightEvaluation[]
-  underDevelopment?: boolean
-  onSelect: (flight: FlightEvaluation) => void
-}) {
-  const t = useTranslations('Homepage')
-  const { isDragging, dragHandlers } = useDragScroll<HTMLDivElement>('y')
-
-  return (
-    <section
-      aria-labelledby='homepage-signatures-heading'
-      className='overflow-hidden rounded-xl border border-black-200 bg-white'
-    >
-      <h2
-        id='homepage-signatures-heading'
-        className='border-b border-black-200 px-5 py-4 font-primary text-base font-bold text-black-300'
-      >
-        {t('signatures.title')}
-      </h2>
-      {underDevelopment ? (
-        // Instructors don't sign off evaluations — the report-authoring
-        // flow that belongs here isn't built yet.
-        <p className='px-5 py-6 text-center font-secondary text-sm text-black-200'>
-          {t('signatures.underDevelopment')}
-        </p>
-      ) : signatures.length === 0 ? (
-        <p className='px-5 py-6 text-center font-secondary text-sm text-black-200'>
-          {t('signatures.empty')}
-        </p>
-      ) : (
-        <div
-          role='group'
-          aria-labelledby='homepage-signatures-heading'
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- drag-scroll region must be keyboard-scrollable (WCAG 2.1.1)
-          tabIndex={0}
-          className={`max-h-44.25 overflow-y-auto ${focusRing} ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
-          {...dragHandlers}
-        >
-          <ul className='flex list-none flex-col'>
-            {signatures.map((signature) => {
-              const label = t('signatures.flightLabel', {
-                id: signature.sessionId,
-              })
-              return (
-                <li
-                  key={signature.id}
-                  className='flex items-center justify-between gap-4 border-b border-black-200 px-5 py-3.5 last:border-b-0 even:bg-black-100/50'
-                >
-                  <div className='flex items-center gap-4'>
-                    <span className='font-secondary text-xs font-semibold text-black-200'>
-                      {signature.date}
-                    </span>
-                    <span className='font-secondary text-sm text-black-300'>
-                      {label}
-                    </span>
-                  </div>
-                  <button
-                    type='button'
-                    onClick={() => onSelect(signature)}
-                    aria-label={t('signatures.signLabel', { label })}
-                    className={`flex-none cursor-pointer rounded-sm p-1 text-black-200 ${focusRing}`}
-                  >
-                    <PenLine size={16} aria-hidden='true' />
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+        </DragScrollRegion>
       )}
     </section>
   )
@@ -367,24 +271,11 @@ export default function Homepage({
   name,
   weather = [],
   bookings = [],
-  signatures: initialSignatures = [],
+  signatures = [],
   signaturesUnderDevelopment = false,
   news = [],
 }: Props) {
   const t = useTranslations('Homepage')
-  const [signatures, setSignatures] = useState(initialSignatures)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const selectedFlight =
-    signatures.find((flight) => flight.id === selectedId) ?? null
-
-  async function handleSign(flight: FlightEvaluation) {
-    await fetchApi(`/flight-evaluations/${flight.id}/sign`, {
-      method: 'PATCH',
-      cache: 'no-store',
-    })
-    setSignatures((current) => current.filter((item) => item.id !== flight.id))
-    setSelectedId(null)
-  }
 
   return (
     <div className='flex flex-col gap-6 py-9'>
@@ -394,19 +285,12 @@ export default function Homepage({
       <WeatherBriefing stations={weather} />
       <div className='grid grid-cols-1 gap-5 lg:grid-cols-2'>
         <BookingsCard bookings={bookings} />
-        <SignaturesCard
+        <HomepageSignatures
           signatures={signatures}
           underDevelopment={signaturesUnderDevelopment}
-          onSelect={(flight) => setSelectedId(flight.id)}
         />
       </div>
       <NewsGrid news={news} />
-
-      <FlightEvaluationModal
-        flight={selectedFlight}
-        onClose={() => setSelectedId(null)}
-        onSign={handleSign}
-      />
     </div>
   )
 }

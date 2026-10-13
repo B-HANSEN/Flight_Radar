@@ -122,8 +122,8 @@ export default async function HomePage() {
       />
       <div className='mx-auto max-w-350'>
         <Homepage
-          // Remount when the previewed persona changes so Homepage's local
-          // signature state is re-seeded from the freshly fetched props
+          // Remount when the previewed persona changes so HomepageSignatures'
+          // local state is re-seeded from the freshly fetched props
           // (RoleSwitcher does a router.refresh(), not a full navigation).
           key={persona.studentId ?? persona.instructorId}
           name={persona.name}
