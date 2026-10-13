@@ -210,13 +210,17 @@ export default function ScheduleFlightModal({
       endTime,
     })
 
-    fetchApi<AircraftAvailability[]>(`/schedule/availability?${params}`)
-      .then((busy) => {
+    async function loadBusyAircraft() {
+      try {
+        const busy = await fetchApi<AircraftAvailability[]>(
+          `/schedule/availability?${params}`,
+        )
         if (!cancelled) setFetchedBusyAircraft(Array.isArray(busy) ? busy : [])
-      })
-      .catch(() => {
+      } catch {
         if (!cancelled) setFetchedBusyAircraft([])
-      })
+      }
+    }
+    loadBusyAircraft()
 
     return () => {
       cancelled = true
@@ -239,14 +243,18 @@ export default function ScheduleFlightModal({
       date: target.slot.date,
     })
 
-    fetchApi<ScheduledFlight[]>(`/schedule/student-flights?${params}`)
-      .then((flights) => {
+    async function loadExistingFlights() {
+      try {
+        const flights = await fetchApi<ScheduledFlight[]>(
+          `/schedule/student-flights?${params}`,
+        )
         if (!cancelled)
           setExistingFlights(Array.isArray(flights) ? flights : [])
-      })
-      .catch(() => {
+      } catch {
         if (!cancelled) setExistingFlights([])
-      })
+      }
+    }
+    loadExistingFlights()
 
     return () => {
       cancelled = true
