@@ -1005,6 +1005,16 @@ const STUDENT_AVAILABILITY: Record<string, StudentAvailabilitySeed[]> = {
       endTime: '21:00',
       recurrenceMode: 'everyday',
     },
+    {
+      dateMode: 'range',
+      fromDate: '01/11/2026',
+      toDate: '31/12/2026',
+      timeMode: 'between',
+      startTime: '08:00',
+      endTime: '16:00',
+      recurrenceMode: 'days',
+      recurrenceDays: ['mon', 'thu'],
+    },
   ],
   'Alex Moreau': [
     {
@@ -1058,6 +1068,16 @@ const STUDENT_AVAILABILITY: Record<string, StudentAvailabilitySeed[]> = {
       endTime: '12:00',
       recurrenceMode: 'everyday',
     },
+    {
+      dateMode: 'range',
+      fromDate: '01/10/2026',
+      toDate: '31/12/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '17:00',
+      recurrenceMode: 'days',
+      recurrenceDays: ['tue', 'wed', 'fri'],
+    },
   ],
   'Noah Becker': [
     {
@@ -1100,6 +1120,16 @@ const STUDENT_AVAILABILITY: Record<string, StudentAvailabilitySeed[]> = {
       startTime: '09:00',
       endTime: '10:00',
       recurrenceMode: 'everyday',
+    },
+    {
+      dateMode: 'range',
+      fromDate: '01/10/2026',
+      toDate: '31/12/2026',
+      timeMode: 'between',
+      startTime: '09:00',
+      endTime: '13:00',
+      recurrenceMode: 'days',
+      recurrenceDays: ['wed', 'sat'],
     },
   ],
   'Priya Shah': [
@@ -3581,11 +3611,15 @@ type LessonPlan = {
   instructors: string[]
   tails: string[]
   firstMonday: string // ISO, a Monday
-  weeks: number
   // 1 = Monday … 7 = Sunday, paired with a fixed time window.
   slots: { weekday: number; start: string; end: string }[]
   theoryEvery: number // every Nth generated lesson is Theory
 }
+
+// Every plan runs up to this date, so the agenda stays full through the
+// end of the year; no lessons on the days the school is closed.
+const LESSON_PLAN_LAST_DATE = '2026-12-31'
+const SCHOOL_CLOSED_DATES = new Set(['2026-12-24', '2026-12-25'])
 
 const LESSON_PLANS: LessonPlan[] = [
   {
@@ -3593,7 +3627,6 @@ const LESSON_PLANS: LessonPlan[] = [
     instructors: ['James Whitfield', 'Kate Ashford'],
     tails: ['EC-ERV', 'EC-EXL', 'EC-FED'],
     firstMonday: '2026-09-07',
-    weeks: 8,
     slots: [
       { weekday: 1, start: '09:00', end: '11:00' },
       { weekday: 4, start: '13:00', end: '15:00' },
@@ -3605,7 +3638,6 @@ const LESSON_PLANS: LessonPlan[] = [
     instructors: ['James Whitfield', 'Kate Ashford'],
     tails: ['EC-ERV', 'EC-EXL', 'EC-FED'],
     firstMonday: '2026-09-07',
-    weeks: 8,
     slots: [
       { weekday: 2, start: '09:00', end: '11:00' },
       { weekday: 5, start: '14:00', end: '16:00' },
@@ -3618,7 +3650,6 @@ const LESSON_PLANS: LessonPlan[] = [
     instructors: ['Kate Ashford', 'James Whitfield'],
     tails: ['EC-EXL', 'EC-FED', 'EC-ERV'],
     firstMonday: '2026-09-14',
-    weeks: 7,
     slots: [
       { weekday: 3, start: '09:00', end: '10:30' },
       { weekday: 6, start: '11:00', end: '12:30' },
@@ -3640,9 +3671,16 @@ function generatePlanFlights(plan: LessonPlan): StudentFlightSeed[] {
   const flights: StudentFlightSeed[] = []
   let index = 0
 
-  for (let week = 0; week < plan.weeks; week += 1) {
+  for (
+    let weekMonday = plan.firstMonday;
+    weekMonday <= LESSON_PLAN_LAST_DATE;
+    weekMonday = isoAddDays(weekMonday, 7)
+  ) {
     for (const slot of plan.slots) {
-      const date = isoAddDays(plan.firstMonday, week * 7 + (slot.weekday - 1))
+      const date = isoAddDays(weekMonday, slot.weekday - 1)
+      if (date > LESSON_PLAN_LAST_DATE || SCHOOL_CLOSED_DATES.has(date)) {
+        continue
+      }
       const instructorName = plan.instructors[index % plan.instructors.length]
       const isTheoryLesson = index > 0 && index % plan.theoryEvery === 0
 
