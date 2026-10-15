@@ -46,7 +46,7 @@ function entryEndDate(entry: AvailabilityEntryDocument): Date | null {
 }
 
 // Hides availability that belongs entirely to a past month — a past date in
-// the current month is still shown (see TODO.md).
+// the current month is still shown.
 export function isEntryInOrAfterMonth(
   entry: AvailabilityEntryDocument,
   monthStart: Date,

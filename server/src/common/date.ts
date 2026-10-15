@@ -27,7 +27,7 @@ export function formatISODate(date: Date): string {
 }
 
 // First day of the month that contains "now" — the cutoff below which whole
-// past months of availability are hidden (see TODO.md).
+// past months of availability are hidden.
 export function startOfCurrentMonth(): Date {
   const now = new Date()
   return new Date(now.getFullYear(), now.getMonth(), 1)
